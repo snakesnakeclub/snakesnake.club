@@ -67,7 +67,7 @@ module.exports = function createScene(game) {
   });
   panel.addControl(inputConfirmPassword);
 
-  const btnRegister = BABYLON.GUI.Button.CreateSimpleButton('btnRegister', 'Register');
+  const btnRegister = BABYLON.GUI.Button.CreateSimpleButton('btnRegister', 'REGISTER');
   btnRegister.width = '240px';
   btnRegister.maxWidth = '240px';
   btnRegister.height = '44px';
@@ -82,6 +82,7 @@ module.exports = function createScene(game) {
   panel.addControl(btnRegister);
 
   const btnLogin = BABYLON.GUI.Button.CreateSimpleButton('btnLogin', 'already have an account?');
+  btnLogin.fontSize = '20rem';
   btnLogin.width = '240px';
   btnLogin.maxWidth = '240px';
   btnLogin.height = '44px';
@@ -96,6 +97,22 @@ module.exports = function createScene(game) {
     scene.setVisible = false;
   });
   panel.addControl(btnLogin);
+
+  const resendEmail = BABYLON.GUI.Button.CreateSimpleButton('resendEmail', 'resend email confirmation');
+  resendEmail.fontSize = '15rem';
+  resendEmail.width = '240px';
+  resendEmail.maxWidth = '240px';
+  resendEmail.height = '44px';
+  resendEmail.fontFamily = 'Patua One';
+  resendEmail.color = 'white';
+  resendEmail.background = '#33344B';
+  resendEmail.paddingTop = '15px';
+  resendEmail.thickness = 0;
+  resendEmail.onPointerUpObservable.add(() => {
+    alert("Confirmation email sent!");
+  });
+  panel.addControl(resendEmail);
+
 
   advancedTexture.addControl(panel);
 

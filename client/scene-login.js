@@ -45,7 +45,7 @@ module.exports = function createScene(game) {
 
   
 
-  const btnLogin = BABYLON.GUI.Button.CreateSimpleButton('btnLogin', 'Login');
+  const btnLogin = BABYLON.GUI.Button.CreateSimpleButton('btnLogin', 'LOGIN');
   btnLogin.width = '240px';
   btnLogin.maxWidth = '240px';
   btnLogin.height = '44px';
