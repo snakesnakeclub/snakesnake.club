@@ -15,17 +15,6 @@ module.exports = function createScene(game) {
   var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
   var panel = new BABYLON.GUI.StackPanel();
 
-  var inputEmail = new BABYLON.GUI.InputText();
-  inputEmail.width = 0.5;
-  inputEmail.maxWidth = 0.5;
-  inputEmail.height = '40px';
-  inputEmail.text = '';
-  inputEmail.placeholderText = 'Email';
-  inputEmail.color = 'indigo';
-  inputEmail.background = 'white';
-  inputEmail.focusedBackground = 'white';
-  panel.addControl(inputEmail);
-
   var inputUsername = new BABYLON.GUI.InputText();
   inputUsername.width = 0.5;
   inputUsername.maxWidth = 0.5;
@@ -57,6 +46,16 @@ module.exports = function createScene(game) {
   button.background = "indigo";
   button.topPadding = "50";
   panel.addControl(button);  
+
+  var back = BABYLON.GUI.Button.CreateSimpleButton("but", "Don't have an account?");
+  back.width = .3;
+  back.maxWidth = 0.2;
+  back.height = "40px";
+  back.color = "white";
+  back.background = "#33344B";
+  back.paddingTop = "15";
+  back.thickness = 0;
+  panel.addControl(back);  
 
   advancedTexture.addControl(panel);
 
