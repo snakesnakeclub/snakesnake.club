@@ -5,61 +5,83 @@ module.exports = function createScene(game) {
 	const scene = new BABYLON.Scene(game.engine);
 
 	const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
- 	 camera.setTarget(BABYLON.Vector3.Zero());
+  camera.setTarget(BABYLON.Vector3.Zero());
 
-  	const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
-  	light.intensity = 0.5;
+  const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
+  light.intensity = 0.5;
 
-  	var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-  	var panel = new BABYLON.GUI.StackPanel();    
+  var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI');
+  var panel = new BABYLON.GUI.StackPanel();    
 
-   var email = new BABYLON.GUI.InputText();
-    email.width = .5;
-    email.height = "40px";
-    email.placeholderText = "Email: ";
-    email.color = "white";
-    email.background = "purple";
-    panel.addControl(email);
+  var email = new BABYLON.GUI.InputText();
+  email.width = '200px';
+  email.height = '40px';
+  email.placeholderText = 'Email';
+  email.color = 'indigo';
+  email.background = 'white';
+  email.focusedBackground = 'white';
+  email.paddingTop = '5px';
+  email.paddingBottom = '5px';
+  panel.addControl(email);
 
-	var passwd = new BABYLON.GUI.InputText();
-    passwd.width = .5;
-    passwd.height = "40px";
-    passwd.placeholderText = "Password: ";
-    passwd.color = "white";
-    passwd.background = "purple";
-    panel.addControl(passwd);
+  var username = new BABYLON.GUI.InputText();
+  username.width = '200px';
+  username.height = '40px';
+  username.placeholderText = 'Username';
+  username.color = 'indigo';
+  username.background = 'white';
+  username.focusedBackground = 'white';
+  username.paddingTop = '5px';
+  username.paddingBottom = '5px';
+  panel.addControl(username);
 
-    var confirmPasswd = new BABYLON.GUI.InputText();
-    confirmPasswd.width = .5;
-    confirmPasswd.height = "40px";
-    confirmPasswd.placeholderText = "Confirm Password: ";
-    confirmPasswd.color = "white";
-    confirmPasswd.background = "purple";
-    panel.addControl(confirmPasswd); 
+	var password = new BABYLON.GUI.InputText();
+  password.width = '200px';
+  password.height = '40px';
+  password.placeholderText = 'Password';
+  password.color = 'indigo';
+  password.background = 'white';
+  password.focusedBackground = 'white';
+  password.paddingTop = '5px';
+  password.paddingBottom = '5px';
+  password.onTextChangedObservable.add((event) => {
+    password.realText = event.text
+  })
+  panel.addControl(password);
 
-    var button = BABYLON.GUI.Button.CreateSimpleButton("but", "Register");
-    button.width = .5;
-    button.maxWidth = 0.2;
-    button.height = "40px";
-    button.color = "white";
-    button.background = "purple";
-    button.topPadding = "50";
-    panel.addControl(button);    
+  var confirmPassword = new BABYLON.GUI.InputText();
+  confirmPassword.width = '200px';
+  confirmPassword.height = '40px';
+  confirmPassword.placeholderText = 'Confirm Password';
+  confirmPassword.color = 'indigo';
+  confirmPassword.background = 'white';
+  confirmPassword.focusedBackground = 'white';
+  confirmPassword.paddingTop = '5px';
+  confirmPassword.paddingBottom = '5px';
+  panel.addControl(confirmPassword); 
 
-    button.onPointerDownObservable.add(function() {
-        console.log("Button pressed.");
-    });
+  var btnSubmit = BABYLON.GUI.Button.CreateSimpleButton('btnSubmit', 'Register');
+  btnSubmit.width = '200px';
+  btnSubmit.maxWidth = '200px';
+  btnSubmit.height = '40px';
+  btnSubmit.color = 'white';
+  btnSubmit.background = 'indigo';
+  btnSubmit.paddingTop = '5px';
+  btnSubmit.paddingBottom = '5px';
+  panel.addControl(btnSubmit);    
 
+  btnSubmit.onPointerDownObservable.add(function() {
+    console.log('Button pressed.');
+  });
 
+  advancedTexture.addControl(panel);  
 
-    advancedTexture.addControl(panel);  
-
-    confirmPasswd.onTextChangedObservable.add(function() {
-    	if (passwd == confirmPasswd) {
-    		confirmPasswd.background = "Green";
-    		confirmPasswd.color = "orange";
-    	}
-    })
+  confirmPassword.onTextChangedObservable.add(function() {
+    if (password == confirmPassword) {
+      confirmPassword.background = 'Green';
+      confirmPassword.color = 'orange';
+    }
+  })
 
   return scene;
 };
