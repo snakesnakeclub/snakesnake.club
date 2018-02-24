@@ -22,6 +22,7 @@
   "homepage": "https://github.com/gebob19/htv2#readme",
   "dependencies": {
     "babylonjs": "^3.2.0-alpha10",
+    "babylonjs-gui": "^3.2.0-alpha10",
     "express": "^4.16.2",
     "mongoose": "^5.0.7",
     "socket.io": "^2.0.4",

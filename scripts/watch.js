@@ -11,7 +11,7 @@ const bundler = new Bundler('./client/index.html', {
 });
 
 bundler.bundle()
-  .then(() => {
+	.then(() => {
 	nodemon({
 		script: './server/main.js'
 	});
@@ -24,4 +24,4 @@ bundler.bundle()
 	}).on('restart', files => {
 		console.log('App restarted due to: ', files);
 	});
-});
+	});
