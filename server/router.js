@@ -3,7 +3,6 @@ var User = require('./user');
 module.exports = {
 
   set : function(app) {
-
     app.get('/verify/:token', function(req, res) {
       let token = req.params.token;
       User.updateOne(
