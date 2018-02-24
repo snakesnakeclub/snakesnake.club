@@ -1,10 +1,10 @@
-const User = require('user');
+const User = require('./user');
 const helpers = require('./helpers')
 
 module.exports = {
   set : function(socket) {
     socket.on('login', function(username, password) {
-      User.findOne({username}, function(err, user) {
+      User.findOne({username}, async function(err, user) {
         if (err) socket.emit('login->res', err, null);
         else if (!user) socket.emit('login->res', "INVALID_CREDENTIALS", null);
         else {
@@ -16,10 +16,11 @@ module.exports = {
             User.updateOne( // do not call 'login' when a token has been assigned
               {username}, 
               {$set : {"session_token" : token}}, function(err, result) {
-                if (err) socket.emit('login->res', "INVALID_CREDENTIALS", null);
+                if (err) socket.emit('login->res', err, null);
                 else user.session_token = token;
+                console.log(user.session_token)
               });
-            socket.emit('login->res', false, serialize(user))
+            socket.emit('login->res', false, serializeData(user))
           } else {
             socket.emit('login->res', "EMAIL_NOT_CONFIRMED", null);
           }
@@ -31,10 +32,9 @@ module.exports = {
       User.findOne({session_token:token}, function(err, user) {
         if (err) socket.emit('login-token->res', err, null)
         else if (!user) socket.emit('login-token->res', "INVALID_TOKEN", null) 
-        else socket.emit('login-token->res', false, serialize(user))
+        else socket.emit('login-token->res', false, serializeData(user))
       })
     }) 
-
   }
 }
 
@@ -42,6 +42,6 @@ function serializeData(user) {
   return {
     email : user.email,
     username : user.username,
-    session_token : token,
+    session_token : user.session_token
   }
 }
