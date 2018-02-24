@@ -10,78 +10,94 @@ module.exports = function createScene(game) {
   const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
   light.intensity = 0.5;
 
-  var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI');
-  var panel = new BABYLON.GUI.StackPanel();    
+  const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI');
+  const panel = new BABYLON.GUI.StackPanel();
 
-  var email = new BABYLON.GUI.InputText();
-  email.width = '200px';
-  email.height = '40px';
-  email.placeholderText = 'Email';
-  email.color = 'indigo';
-  email.background = 'white';
-  email.focusedBackground = 'white';
-  email.paddingTop = '5px';
-  email.paddingBottom = '5px';
-  panel.addControl(email);
+  const inputEmail = new BABYLON.GUI.InputText();
+  inputEmail.width = '240px';
+  inputEmail.height = '44px';
+  inputEmail.placeholderText = 'Email';
+  inputEmail.fontFamily = 'Patua One';
+  inputEmail.color = 'indigo';
+  inputEmail.background = 'white';
+  inputEmail.focusedBackground = 'white';
+  inputEmail.paddingTop = '7px';
+  inputEmail.paddingBottom = '7px';
+  panel.addControl(inputEmail);
 
-  var username = new BABYLON.GUI.InputText();
-  username.width = '200px';
-  username.height = '40px';
-  username.placeholderText = 'Username';
-  username.color = 'indigo';
-  username.background = 'white';
-  username.focusedBackground = 'white';
-  username.paddingTop = '5px';
-  username.paddingBottom = '5px';
-  panel.addControl(username);
+  const inputUsername = new BABYLON.GUI.InputText();
+  inputUsername.width = '240px';
+  inputUsername.height = '44px';
+  inputUsername.placeholderText = 'Username';
+  inputUsername.fontFamily = 'Patua One';
+  inputUsername.color = 'indigo';
+  inputUsername.background = 'white';
+  inputUsername.focusedBackground = 'white';
+  inputUsername.paddingTop = '7px';
+  inputUsername.paddingBottom = '7px';
+  panel.addControl(inputUsername);
 
-	var password = new BABYLON.GUI.InputText();
-  password.width = '200px';
-  password.height = '40px';
-  password.placeholderText = 'Password';
-  password.color = 'indigo';
-  password.background = 'white';
-  password.focusedBackground = 'white';
-  password.paddingTop = '5px';
-  password.paddingBottom = '5px';
-  password.onTextChangedObservable.add((event) => {
-    password.realText = event.text
-  })
-  panel.addControl(password);
+  const inputPassword = new BABYLON.GUI.InputText();
+  inputPassword.width = '240px';
+  inputPassword.height = '44px';
+  inputPassword.placeholderText = 'Password';
+  inputPassword.fontFamily = 'Patua One';
+  inputPassword.color = 'indigo';
+  inputPassword.background = 'white';
+  inputPassword.focusedBackground = 'white';
+  inputPassword.paddingTop = '7px';
+  inputPassword.paddingBottom = '7px';
+  panel.addControl(inputPassword);
 
-  var confirmPassword = new BABYLON.GUI.InputText();
-  confirmPassword.width = '200px';
-  confirmPassword.height = '40px';
-  confirmPassword.placeholderText = 'Confirm Password';
-  confirmPassword.color = 'indigo';
-  confirmPassword.background = 'white';
-  confirmPassword.focusedBackground = 'white';
-  confirmPassword.paddingTop = '5px';
-  confirmPassword.paddingBottom = '5px';
-  panel.addControl(confirmPassword); 
+  const inputConfirmPassword = new BABYLON.GUI.InputText();
+  inputConfirmPassword.width = '240px';
+  inputConfirmPassword.height = '44px';
+  inputConfirmPassword.placeholderText = 'Confirm Password';
+  inputConfirmPassword.fontFamily = 'Patua One';
+  inputConfirmPassword.color = 'indigo';
+  inputConfirmPassword.background = 'white';
+  inputConfirmPassword.focusedBackground = 'white';
+  inputConfirmPassword.paddingTop = '7px';
+  inputConfirmPassword.paddingBottom = '7px';
+  inputConfirmPassword.onTextChangedObservable.add(() => {
+  	if (inputPassword.text == inputConfirmPassword.text) {
+  		inputConfirmPassword.background = 'green';
+  		inputConfirmPassword.color = 'orange';
+  	}
+  });
+  panel.addControl(inputConfirmPassword);
 
-  var btnSubmit = BABYLON.GUI.Button.CreateSimpleButton('btnSubmit', 'Register');
-  btnSubmit.width = '200px';
-  btnSubmit.maxWidth = '200px';
-  btnSubmit.height = '40px';
-  btnSubmit.color = 'white';
-  btnSubmit.background = 'indigo';
-  btnSubmit.paddingTop = '5px';
-  btnSubmit.paddingBottom = '5px';
-  panel.addControl(btnSubmit);    
-
-  btnSubmit.onPointerDownObservable.add(function() {
+  const btnRegister = BABYLON.GUI.Button.CreateSimpleButton('btnRegister', 'Register');
+  btnRegister.width = '240px';
+  btnRegister.maxWidth = '240px';
+  btnRegister.height = '44px';
+  btnRegister.fontFamily = 'Patua One';
+  btnRegister.color = 'white';
+  btnRegister.background = 'indigo';
+  btnRegister.paddingTop = '7px';
+  btnRegister.paddingBottom = '7px';
+  btnRegister.onPointerDownObservable.add(() => {
     console.log('Button pressed.');
   });
+  panel.addControl(btnRegister);
 
-  advancedTexture.addControl(panel);  
+  const btnLogin = BABYLON.GUI.Button.CreateSimpleButton('btnLogin', 'already have an account?');
+  btnLogin.width = '240px';
+  btnLogin.maxWidth = '240px';
+  btnLogin.height = '44px';
+  btnLogin.fontFamily = 'Patua One';
+  btnLogin.color = 'white';
+  btnLogin.background = '#33344B';
+  btnLogin.paddingTop = '15px';
+  btnLogin.thickness = 0;
+  btnLogin.onPointerUpObservable.add(() => {
+    game.sceneHistory.push(game.activeScene);
+    game.activeScene = 'login';
+    advancedTexture.dispose();
+  });
+  panel.addControl(btnLogin);
 
-  confirmPassword.onTextChangedObservable.add(function() {
-    if (password == confirmPassword) {
-      confirmPassword.background = 'Green';
-      confirmPassword.color = 'orange';
-    }
-  })
+  advancedTexture.addControl(panel);
 
   return scene;
 };
