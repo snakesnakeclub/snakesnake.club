@@ -10,11 +10,10 @@ module.exports = {
       socket.on('register', function(email, username, password) {
         if (validate(email, username, password, (err) => socket.emit('register->res', err))) {
           const token = crypto.randomBytes(256);
-
           var userData = {
-              email : email,
-              username : name,
-              password : password,
+              email,
+              username,
+              password,
               verified : false,
               verification_token : token,
           };
@@ -23,7 +22,7 @@ module.exports = {
               if (err) {
                   socket.emit('register->res', err);
               } else {
-                  // valid registery
+                  console.log('valid registery');
               }
           });
       }
