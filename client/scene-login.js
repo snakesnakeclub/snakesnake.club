@@ -12,50 +12,63 @@ module.exports = function createScene(game) {
   light.intensity = 0.5;
 
   // GUI
-  var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-  var panel = new BABYLON.GUI.StackPanel();
+  const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI');
+  const panel = new BABYLON.GUI.StackPanel();
 
-  var inputUsername = new BABYLON.GUI.InputText();
-  inputUsername.width = 0.5;
-  inputUsername.maxWidth = 0.5;
-  inputUsername.height = '40px';
+  const inputUsername = new BABYLON.GUI.InputText();
+  inputUsername.width = '240px';
+  inputUsername.maxWidth = '240px';
+  inputUsername.height = '44px';
   inputUsername.text = '';
   inputUsername.placeholderText = 'Username';
+  inputUsername.fontFamily = 'Patua One';
   inputUsername.color = 'indigo';
   inputUsername.background = 'white';
   inputUsername.focusedBackground = 'white';
+  inputUsername.paddingTop = '7px';
+  inputUsername.paddingBottom = '7px';
   panel.addControl(inputUsername);
 
-
-  var inputPassword = new BABYLON.GUI.InputText();
-  inputPassword.width = 0.5;
-  inputPassword.maxWidth = 0.5;
-  inputPassword.height = '40px';
+  const inputPassword = new BABYLON.GUI.InputText();
+  inputPassword.width = '240px';
+  inputPassword.maxWidth = '240px';
+  inputPassword.height = '44px';
   inputPassword.text = '';
   inputPassword.placeholderText = 'Password';
+  inputPassword.fontFamily = 'Patua One';
   inputPassword.color = 'indigo';
   inputPassword.background = 'white';
   inputPassword.focusedBackground = 'white';
+  inputPassword.paddingTop = '7px';
+  inputPassword.paddingBottom = '7px';
   panel.addControl(inputPassword);
 
-  var button = BABYLON.GUI.Button.CreateSimpleButton("but", "Register");
-  button.width = .5;
-  button.maxWidth = 0.2;
-  button.height = "40px";
-  button.color = "white";
-  button.background = "indigo";
-  button.topPadding = "50";
-  panel.addControl(button);  
+  const btnLogin = BABYLON.GUI.Button.CreateSimpleButton('btnLogin', 'Login');
+  btnLogin.width = '240px';
+  btnLogin.maxWidth = '240px';
+  btnLogin.height = '44px';
+  btnLogin.fontFamily = 'Patua One';
+  btnLogin.color = 'white';
+  btnLogin.background = 'indigo';
+  btnLogin.paddingTop = '7px';
+  btnLogin.paddingBottom = '7px';
+  panel.addControl(btnLogin);
 
-  var back = BABYLON.GUI.Button.CreateSimpleButton("but", "Don't have an account?");
-  back.width = .3;
-  back.maxWidth = 0.2;
-  back.height = "40px";
-  back.color = "white";
-  back.background = "#33344B";
-  back.paddingTop = "15";
-  back.thickness = 0;
-  panel.addControl(back);  
+  const btnRegister = BABYLON.GUI.Button.CreateSimpleButton('btnRegister', 'don\'t have an account?');
+  btnRegister.width = '240px';
+  btnRegister.maxWidth = '240px';
+  btnRegister.height = '44px';
+  btnRegister.fontFamily = 'Patua One';
+  btnRegister.color = 'white';
+  btnRegister.background = '#33344B';
+  btnRegister.paddingTop = '15px';
+  btnRegister.thickness = 0;
+  btnRegister.onPointerUpObservable.add(() => {
+    game.sceneHistory.push(game.activeScene);
+    game.activeScene = 'register';
+    advancedTexture.dispose();
+  });
+  panel.addControl(btnRegister);
 
   advancedTexture.addControl(panel);
 
