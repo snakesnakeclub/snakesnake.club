@@ -24,6 +24,7 @@ module.exports = function createScene(game) {
   btnLogin.onPointerUpObservable.add(() => {
     game.sceneHistory.push(game.activeScene);
     game.activeScene = 'login';
+    advancedTexture.dispose();
   });
   btnLogin.paddingTop = '5px'
   btnLogin.paddingBottom = '5px'
@@ -37,6 +38,7 @@ module.exports = function createScene(game) {
   btnRegister.onPointerUpObservable.add(() => {
     game.sceneHistory.push(game.activeScene);
     game.activeScene = 'register';
+    advancedTexture.dispose();
   });
   btnRegister.paddingTop = '5px'
   btnRegister.paddingBottom = '5px'
