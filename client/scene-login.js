@@ -43,33 +43,8 @@ module.exports = function createScene(game) {
   inputPassword.paddingBottom = '7px';
   panel.addControl(inputPassword);
 
-<<<<<<< HEAD
-  var pwd = "";
-  inputPassword.onTextChangedObservable.add(function() {
-    pwd = pwd + inputPassword.text.charAt(pwd.length);
-    inputPassword.text = "*".repeat(pwd.length);
-  });
+  
 
-
-  var button = BABYLON.GUI.Button.CreateSimpleButton("but", "Login");
-  button.width = .5;
-  button.maxWidth = 0.2;
-  button.height = "40px";
-  button.color = "white";
-  button.background = "indigo";
-  button.topPadding = "50";
-  panel.addControl(button);  
-
-  var back = BABYLON.GUI.Button.CreateSimpleButton("but", "Don't have an account?");
-  back.width = .3;
-  back.maxWidth = 0.2;
-  back.height = "40px";
-  back.color = "white";
-  back.background = "#33344B";
-  back.paddingTop = 15;
-  back.thickness = 0;
-  panel.addControl(back);  
-=======
   const btnLogin = BABYLON.GUI.Button.CreateSimpleButton('btnLogin', 'Login');
   btnLogin.width = '240px';
   btnLogin.maxWidth = '240px';
@@ -96,10 +71,11 @@ module.exports = function createScene(game) {
     advancedTexture.dispose();
   });
   panel.addControl(btnRegister);
->>>>>>> d173e31ddd246f3301ce25c6457ad52692b9a604
 
-  button.onPointerDownObservable.add(function() {
-    inputUsername.text = pwd;
+  var pwd = "";
+  inputPassword.onTextChangedObservable.add(function() {
+    pwd = pwd + inputPassword.text.charAt(pwd.length);
+    inputPassword.text = "*".repeat(pwd.length);
   });
 
   advancedTexture.addControl(panel);
