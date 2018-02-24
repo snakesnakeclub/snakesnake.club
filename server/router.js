@@ -7,12 +7,13 @@ module.exports = {
       let token = req.params.token;
       User.updateOne(
         {verification_token : token},
-        {$set : {"verified": true,
-                 "verification_token": null}}, function(err, result) {
-                    if (err || !result) {
-                      res.status(400);
-                    } else console.log('validated');
-                 })
+        {$set: 
+          {"verified": true,
+          "verification_token": null}}, function(err, result) {
+            if (err || !result) {
+              res.status(400);
+            } else console.log('validated');
+          })
       res.redirect('/');
     });
   }

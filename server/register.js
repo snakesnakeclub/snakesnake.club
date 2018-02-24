@@ -7,9 +7,7 @@ const validator = require('validator')
 
 module.exports = {
   
-  set : function(io) {
-
-    io.on('connection', function(socket) {
+  set : function(socket) {
       socket.on('register', async function(email, username, password) {
           if (validate(email, username, password, (err) => socket.emit('register->res', err))) {
             const token = await helpers.randomString(30).catch(function() {
@@ -21,10 +19,11 @@ module.exports = {
                 password: password,
                 verified : false,
                 verification_token : token,
+                session_token : null,
             };
             User.create(userData, function(err) {
               if (err) {
-                  socket.emit('register->res', err);
+                socket.emit('register->res', err);
               } else {
                 socket.emit('register->res', false);
                 mail.sendEmailConfirmation(email, token);    
@@ -32,8 +31,6 @@ module.exports = {
             });
           }
       });
-    })
-
   }
 }
 

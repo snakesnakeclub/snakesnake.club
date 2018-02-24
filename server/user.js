@@ -25,6 +25,10 @@ var UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true
+  },
+  session_token: {
+    type: String,
+    unique: true
   }
 });
 
