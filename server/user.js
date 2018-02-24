@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var bycrypt = require('bcrypt');
+var bcrypt = require('bcrypt');
 
 var UserSchema = new mongoose.Schema({
   email: {
@@ -38,8 +38,8 @@ UserSchema.pre('save', function(next) {
 })
 
 
-UserSchema.statics.authenticate = function(name, password, callback) {
-  User.findOne({ username: name}, function(err, user) {
+UserSchema.statics.authenticate = function(username, password, callback) {
+  User.findOne({username}, function(err, user) {
       if (err) {
           return callback(err);
       } else if (!user) {
