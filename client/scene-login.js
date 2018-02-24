@@ -43,7 +43,9 @@ module.exports = function createScene(game) {
   inputPassword.paddingBottom = '7px';
   panel.addControl(inputPassword);
 
-  const btnLogin = BABYLON.GUI.Button.CreateSimpleButton('btnLogin', 'Login');
+  
+
+  const btnLogin = BABYLON.GUI.Button.CreateSimpleButton('btnLogin', 'LOGIN');
   btnLogin.width = '240px';
   btnLogin.maxWidth = '240px';
   btnLogin.height = '44px';
@@ -66,9 +68,15 @@ module.exports = function createScene(game) {
   btnRegister.onPointerUpObservable.add(() => {
     game.sceneHistory.push(game.activeScene);
     game.activeScene = 'register';
-    advancedTexture.dispose();
+    scene.setVisible = false;
   });
   panel.addControl(btnRegister);
+
+  var pwd = "";
+  inputPassword.onTextChangedObservable.add(function() {
+    pwd = pwd + inputPassword.text.charAt(pwd.length);
+    inputPassword.text = "*".repeat(pwd.length);
+  });
 
   advancedTexture.addControl(panel);
 
