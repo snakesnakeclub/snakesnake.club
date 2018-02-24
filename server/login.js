@@ -6,19 +6,18 @@ module.exports = {
     socket.on('login', function(username, password) {
       User.findOne({username}, async function(err, user) {
         if (err) socket.emit('login->res', err, null);
-        else if (!user) socket.emit('login->res', "INVALID_CREDENTIALS", null);
+        else if (!user) socket.emit('login->res', 500, null);
         else {
           if (user.verified) {
             // give the user a session_token
             const token = await helpers.randomString(30).catch(function() {
-              console.log('Promise Rejected');
+              socket.emit('login->res', 500, null)
             });
             User.updateOne( // do not call 'login' when a token has been assigned
               {username}, 
               {$set : {"session_token" : token}}, function(err, result) {
-                if (err) socket.emit('login->res', err, null);
+                if (err) socket.emit('login->res', 500, null);
                 else user.session_token = token;
-                console.log(user.session_token)
               });
             socket.emit('login->res', false, serializeData(user))
           } else {
@@ -26,16 +25,18 @@ module.exports = {
           }
         }
       })
+
     })
 
     socket.on('login-token', function(token) {
       User.findOne({session_token:token}, function(err, user) {
-        if (err) socket.emit('login-token->res', err, null)
+        if (err) socket.emit('login-token->res', 500, null)
         else if (!user) socket.emit('login-token->res', "INVALID_TOKEN", null) 
         else socket.emit('login-token->res', false, serializeData(user))
       })
-    }) 
+    })
   }
+  
 }
 
 function serializeData(user) {

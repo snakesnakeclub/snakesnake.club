@@ -11,7 +11,7 @@ module.exports = {
       socket.on('register', async function(email, username, password) {
           if (validate(email, username, password, (err) => socket.emit('register->res', err))) {
             const token = await helpers.randomString(30).catch(function() {
-              console.log('Promise Rejected');
+              socket.emit('register->res', 500);
             });
             var userData = {
                 email: email,
@@ -23,7 +23,7 @@ module.exports = {
             };
             User.create(userData, function(err) {
               if (err) {
-                socket.emit('register->res', err);
+                socket.emit('register->res', 500);
               } else {
                 socket.emit('register->res', false);
                 mail.sendEmailConfirmation(email, token);    
@@ -38,7 +38,10 @@ function validate (email, username, password, callback) {
   let error = false;
   if (validator.isEmail(email)) {
     var validEmail = User.findOne({email}, function(err, user) {
-      if (err || user) {
+      if (err) {
+        callback(500)
+        error = true
+      } else if (user) {
         callback("EMAIL_ALREADY_REGISTERED");
         error = true;
       }
@@ -48,7 +51,10 @@ function validate (email, username, password, callback) {
     error = true;
   }
   var validUsername = User.findOne({username}, function(err, user) {
-     if (err || user) {
+    if (err) {
+      callback(500)
+      error = true
+    } else if (user) {
       callback("USERNAME_TAKEN");
       error = true;
      }
