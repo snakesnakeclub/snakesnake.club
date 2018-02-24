@@ -4,6 +4,7 @@ const server = require('http').Server(app)
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const register = require('./register')
+const router = require('./router')
 
 mongoose.connect('mongodb://localhost/snakesnake');
 var db = mongoose.connection;
@@ -17,6 +18,7 @@ const io = require('socket.io')(server, {
   serveClient: false,
 })
 
+router.set(app);
 register.set(io);
 
 app.use(express.static('dist'))
