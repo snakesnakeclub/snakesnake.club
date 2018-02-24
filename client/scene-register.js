@@ -2,7 +2,6 @@ import BABYLON from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
 
 module.exports = function createScene(game) {
-	// This creates a basic Babylon Scene object (non-mesh)
 	const scene = new BABYLON.Scene(game.engine);
 
 	const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
@@ -44,6 +43,7 @@ module.exports = function createScene(game) {
     button.height = "40px";
     button.color = "white";
     button.background = "purple";
+    button.topPadding = "50";
     panel.addControl(button);    
 
     button.onPointerDownObservable.add(function() {
