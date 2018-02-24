@@ -38,7 +38,14 @@ module.exports = function createScene(game) {
   inputPassword.focusedBackground = 'white';
   panel.addControl(inputPassword);
 
-  var button = BABYLON.GUI.Button.CreateSimpleButton("but", "Register");
+  var pwd = "";
+  inputPassword.onTextChangedObservable.add(function() {
+    pwd = pwd + inputPassword.text.charAt(pwd.length);
+    inputPassword.text = "*".repeat(pwd.length);
+  });
+
+
+  var button = BABYLON.GUI.Button.CreateSimpleButton("but", "Login");
   button.width = .5;
   button.maxWidth = 0.2;
   button.height = "40px";
@@ -53,9 +60,13 @@ module.exports = function createScene(game) {
   back.height = "40px";
   back.color = "white";
   back.background = "#33344B";
-  back.paddingTop = "15";
+  back.paddingTop = 15;
   back.thickness = 0;
   panel.addControl(back);  
+
+  button.onPointerDownObservable.add(function() {
+    inputUsername.text = pwd;
+  });
 
   advancedTexture.addControl(panel);
 
