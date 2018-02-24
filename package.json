@@ -1,0 +1,35 @@
+{
+  "name": "htv2",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "main": "scripts/start.js",
+  "scripts": {
+    "start": "node scripts/start.js",
+    "watch": "node scripts/watch.js",
+    "build": "node scripts/build.js",
+    "test": "xo"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gebob19/htv2.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gebob19/htv2/issues"
+  },
+  "homepage": "https://github.com/gebob19/htv2#readme",
+  "dependencies": {
+    "babylonjs": "^3.2.0-alpha10",
+    "express": "^4.16.2",
+    "mongoose": "^5.0.7",
+    "socket.io": "^2.0.4",
+    "socket.io-client": "^2.0.4"
+  },
+  "devDependencies": {
+    "nodemon": "^1.15.1",
+    "parcel-bundler": "^1.6.2",
+    "xo": "^0.20.3"
+  }
+}
