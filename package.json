@@ -26,9 +26,11 @@
     "crypto": "1.0.1",
     "express": "^4.16.2",
     "mongoose": "^5.0.7",
+    "nodemailer": "4.6.0",
     "owasp-password-strength-test": "1.3.0",
     "socket.io": "^2.0.4",
-    "socket.io-client": "^2.0.4"
+    "socket.io-client": "^2.0.4",
+    "validator": "9.4.1"
   },
   "devDependencies": {
     "nodemon": "^1.15.1",
