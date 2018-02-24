@@ -3,6 +3,7 @@ var owasp = require('owasp-password-strength-test');
 var crypto = require('crypto');
 var mail = require('./mail');
 const helpers = require('./helpers')
+const validator = require('validator')
 
 module.exports = {
   
@@ -37,12 +38,26 @@ module.exports = {
 }
 
 function validate (email, username, password, callback) {
-  var validEmail = User.findOne({email}, function(err, user) {
-    if (err || user) callback("EMAIL_ALREADY_REGISTERED");
-  })
+  let error = false;
+  if (validator.isEmail(email)) {
+    var validEmail = User.findOne({email}, function(err, user) {
+      if (err || user) {
+        callback("EMAIL_ALREADY_REGISTERED");
+        error = true;
+      }
+    })
+  } else {
+    callback("INVALID_EMAIL");
+    error = true;
+  }
   var validUsername = User.findOne({username}, function(err, user) {
-     if (err || user) callback("USERNAME_TAKEN");
+     if (err || user) {
+      callback("USERNAME_TAKEN");
+      error = true;
+     }
   })
-  if (!owasp.test(password).strong) callback("WEAK_PASSWORD");
-  return true;
+  if (!owasp.test(password).strong) {
+    callback("WEAK_PASSWORD");
+  }
+  return !error;
 }
