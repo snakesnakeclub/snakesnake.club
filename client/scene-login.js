@@ -13,55 +13,52 @@ module.exports = function createScene(game) {
 
   // GUI
   var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-  
   var panel = new BABYLON.GUI.StackPanel();
-  advancedTexture.addControl(panel);
 
   var inputEmail = new BABYLON.GUI.InputText();
   inputEmail.width = 0.5;
   inputEmail.maxWidth = 0.5;
   inputEmail.height = '40px';
   inputEmail.text = '';
-  inputEmail.placeholderText = 'Username';
+  inputEmail.placeholderText = 'Email';
   inputEmail.color = 'indigo';
   inputEmail.background = 'white';
   inputEmail.focusedBackground = 'white';
+  panel.addControl(inputEmail);
 
   var inputUsername = new BABYLON.GUI.InputText();
-  inputEmail.width = 0.5;
-  inputEmail.maxWidth = 0.5;
-  inputEmail.height = '40px';
-  inputEmail.text = '';
-  inputEmail.placeholderText = 'Username';
-  inputEmail.color = 'indigo';
-  inputEmail.background = 'white';
-  inputEmail.focusedBackground = 'white';
-  inputEmail.focusedBackground = 'white';
+  inputUsername.width = 0.5;
+  inputUsername.maxWidth = 0.5;
+  inputUsername.height = '40px';
+  inputUsername.text = '';
+  inputUsername.placeholderText = 'Username';
+  inputUsername.color = 'indigo';
+  inputUsername.background = 'white';
+  inputUsername.focusedBackground = 'white';
+  panel.addControl(inputUsername);
+
 
   var inputPassword = new BABYLON.GUI.InputText();
-  inputEmail.width = 0.5;
-  inputEmail.maxWidth = 0.5;
-  inputEmail.height = '40px';
-  inputEmail.text = '';
-  inputEmail.placeholderText = 'Password';
-  inputEmail.color = 'indigo';
-  inputEmail.background = 'white';
-  inputEmail.focusedBackground = 'white';
-
-  var inputConfirmPassword = new BABYLON.GUI.InputText();
-  inputEmail.width = 0.5;
-  inputEmail.maxWidth = 0.5;
-  inputEmail.height = '40px';
-  inputEmail.text = '';
-  inputEmail.placeholderText = 'Confirm Password';
-  inputEmail.color = 'indigo';
-  inputEmail.background = 'white';
-  inputEmail.focusedBackground = 'white';
-
-  panel.addControl(inputEmail);
-  panel.addControl(inputUsername);
+  inputPassword.width = 0.5;
+  inputPassword.maxWidth = 0.5;
+  inputPassword.height = '40px';
+  inputPassword.text = '';
+  inputPassword.placeholderText = 'Password';
+  inputPassword.color = 'indigo';
+  inputPassword.background = 'white';
+  inputPassword.focusedBackground = 'white';
   panel.addControl(inputPassword);
-  panel.addControl(inputConfirmPassword);
+
+  var button = BABYLON.GUI.Button.CreateSimpleButton("but", "Register");
+  button.width = .5;
+  button.maxWidth = 0.2;
+  button.height = "40px";
+  button.color = "white";
+  button.background = "indigo";
+  button.topPadding = "50";
+  panel.addControl(button);  
+
+  advancedTexture.addControl(panel);
 
   return scene;
 };
