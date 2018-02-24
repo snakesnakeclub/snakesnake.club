@@ -12,11 +12,12 @@ module.exports = function createScene(game) {
   light.intensity = 0.5;
 
   const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI');
+  const panel = new BABYLON.GUI.StackPanel();
+  advancedTexture.addControl(panel)
 
   const btnLogin = BABYLON.GUI.Button.CreateSimpleButton('btnLogin', 'LOGIN');
   btnLogin.width = '180px';
   btnLogin.height = '40px';
-  btnLogin.top = -25;
   btnLogin.fontFamily = 'Patua One';
   btnLogin.color = 'white';
   btnLogin.background = 'indigo';
@@ -24,11 +25,12 @@ module.exports = function createScene(game) {
     game.sceneHistory.push(game.activeScene);
     game.activeScene = 'login';
   });
+  btnLogin.paddingTop = '5px'
+  btnLogin.paddingBottom = '5px'
 
   const btnRegister = BABYLON.GUI.Button.CreateSimpleButton('btnRegister', 'REGISTER');
   btnRegister.width = '180px';
   btnRegister.height = '40px';
-  btnRegister.top = 25;
   btnRegister.fontFamily = 'Patua One';
   btnRegister.color = 'white';
   btnRegister.background = 'indigo';
@@ -36,9 +38,11 @@ module.exports = function createScene(game) {
     game.sceneHistory.push(game.activeScene);
     game.activeScene = 'register';
   });
+  btnRegister.paddingTop = '5px'
+  btnRegister.paddingBottom = '5px'
 
-  advancedTexture.addControl(btnLogin);
-  advancedTexture.addControl(btnRegister);
+  panel.addControl(btnLogin);
+  panel.addControl(btnRegister);
 
   return scene;
 };
