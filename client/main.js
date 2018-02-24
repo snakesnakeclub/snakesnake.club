@@ -9,7 +9,7 @@ const game = {
 	socket: io(),
 	canvas: document.getElementById('canvas'),
 	engine: new BABYLON.Engine(canvas, true),
-	activeScene: 'lobby',
+	activeScene: 'authenticate',
 	sceneHistory: []
 };
 
@@ -17,7 +17,7 @@ game.scenes = {
 	authenticate: createSceneAuthenticate(game),
 	login: createSceneLogin(game),
 	register: createSceneRegister(game),
-	lobby: createSceneLobby(game),
+  lobby: createSceneLobby(game),
 };
 
 game.engine.runRenderLoop(() => game.scenes[game.activeScene].render());

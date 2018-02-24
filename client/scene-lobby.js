@@ -20,17 +20,26 @@ module.exports = function createScene(game) {
   txtUsername.color = 'white';
   txtUsername.fontFamily = 'Patua One';
   txtUsername.fontSize = 24;
+  txtUsername.paddingTop = -100;
   panel.addControl(txtUsername);
 
-  const panelCoin = new BABYLON.GUI.StackPanel();
-  panel.addControl(panelCoin);
+  var rect1 = new BABYLON.GUI.Rectangle();
+  rect1.paddingTop = 50;
+  rect1.width = 0.2;
+  rect1.height = "100px";
+  rect1.cornerRadius = 20;
+  rect1.color = "Orange";
+  rect1.thickness = 4;
+  rect1.background = "green";
+  advancedTexture.addControl(rect1);
 
   var txtCoin = new BABYLON.GUI.TextBlock();
   txtCoin.text = '# SCoins';
   txtCoin.color = 'white';
   txtCoin.fontFamily = 'Patua One';
   txtCoin.fontSize = 18;
-  panelCoin.addControl(txtCoin);
+  rect1.addControl(txtCoin);
+
 
   return scene;
 };
