@@ -93,7 +93,7 @@ module.exports = function createScene(game) {
   btnLogin.onPointerUpObservable.add(() => {
     game.sceneHistory.push(game.activeScene);
     game.activeScene = 'login';
-    advancedTexture.dispose();
+    scene.setVisible = false;
   });
   panel.addControl(btnLogin);
 

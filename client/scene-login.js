@@ -68,7 +68,7 @@ module.exports = function createScene(game) {
   btnRegister.onPointerUpObservable.add(() => {
     game.sceneHistory.push(game.activeScene);
     game.activeScene = 'register';
-    advancedTexture.dispose();
+    scene.setVisible = false;
   });
   panel.addControl(btnRegister);
 
