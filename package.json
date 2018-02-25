@@ -22,12 +22,9 @@
   "homepage": "https://github.com/gebob19/htv2#readme",
   "dependencies": {
     "babylonjs": "^3.2.0-alpha10",
-<<<<<<< HEAD
     "babylonjs-gui": "^3.2.0-alpha10",
-=======
     "bcrypt": "1.0.3",
     "crypto": "1.0.1",
->>>>>>> master
     "express": "^4.16.2",
     "mongoose": "^5.0.7",
     "node-fetch": "2.0.0",
