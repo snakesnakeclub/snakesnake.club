@@ -1,5 +1,6 @@
 import BABYLON from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
+import scoinUrl from './assets/scoin.png'
 
 module.exports = function createScene(game) {
 	// This creates a basic Babylon Scene object (non-mesh)
@@ -14,7 +15,7 @@ module.exports = function createScene(game) {
   const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI');
   const panel = new BABYLON.GUI.StackPanel();
   advancedTexture.addControl(panel);
-
+  
   var txtUsername = new BABYLON.GUI.TextBlock();
   txtUsername.text = '{{Username}}';
   txtUsername.color = 'white';
@@ -22,24 +23,33 @@ module.exports = function createScene(game) {
   txtUsername.fontSize = 24;
   txtUsername.paddingTop = -100;
   panel.addControl(txtUsername);
-
-  var rect1 = new BABYLON.GUI.Rectangle();
-  rect1.paddingTop = 50;
-  rect1.width = 0.2;
-  rect1.height = "100px";
-  rect1.cornerRadius = 20;
-  rect1.color = "Orange";
-  rect1.thickness = 4;
-  rect1.background = "green";
-  advancedTexture.addControl(rect1);
-
+  
+  var coinRect = new BABYLON.GUI.Rectangle();
+  coinRect.paddingTop = 50;
+  coinRect.width = "300px";
+  coinRect.height = "100px";
+  coinRect.color = "black";
+  coinRect.thickness = 1;
+  coinRect.background = "green";
+  
+  const coinPanel = new BABYLON.GUI.StackPanel();
+  // coinPanel.orientation = 'horizontal'
+  advancedTexture.addControl(coinPanel);
+  // coinRect.addControl(coinPanel);
+  
+  var imgCoin = new BABYLON.GUI.Image("imgCoin", scoinUrl);
+  imgCoin.width = "55px";
+  imgCoin.height = "45px";
+  coinPanel.addControl(imgCoin);    
+  
   var txtCoin = new BABYLON.GUI.TextBlock();
   txtCoin.text = '# SCoins';
   txtCoin.color = 'white';
   txtCoin.fontFamily = 'Patua One';
   txtCoin.fontSize = 18;
-  rect1.addControl(txtCoin);
-
-
+  coinPanel.addControl(txtCoin);
+  
+  
+  
   return scene;
 };
