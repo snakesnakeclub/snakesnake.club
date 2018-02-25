@@ -17,9 +17,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Start web socket server ontop of http server
 const io = require('socket.io')(server, {
-  path: '/socket.io',
-  serveClient: false,
-})
+	path: '/socket.io',
+	serveClient: false
+});
 
 router.set(app);
 
