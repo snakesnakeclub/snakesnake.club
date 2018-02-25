@@ -20,12 +20,10 @@ module.exports = function createScene(game) {
   txtUsername.text = '{{Username}}';
   txtUsername.color = 'white';
   txtUsername.fontFamily = 'Patua One';
-  txtUsername.fontSize = 30;
+  txtUsername.fontSize = 50;
   txtUsername.background = "white";
-  txtUsername.top = "-100px";
-  panel.addControl(txtUsername);
-
-  panel.scaleY = '100px';
+  txtUsername.top = "-150px";
+  advancedTexture.addControl(txtUsername);
   
   var coinRect = new BABYLON.GUI.Rectangle();
   coinRect.paddingTop = 50;
@@ -34,7 +32,7 @@ module.exports = function createScene(game) {
   coinRect.color = "black";
   coinRect.thickness = 0;
   coinRect.background = "#33344B";
-  coinRect.top = "-150px";
+  coinRect.top = "-50px";
   coinRect.isVertical = false;
 
   var coinRect2 = new BABYLON.GUI.Rectangle();
@@ -43,7 +41,8 @@ module.exports = function createScene(game) {
   coinRect2.color = "black";
   coinRect2.thickness = 0;
   coinRect2.background = "#33344B";
-  coinRect2.top = "-50px";
+  // coinRect2.top = "20px";
+  coinRect2.paddingTop = "50px";
   coinRect2.isVertical = false;
 
   var coinRect3 = new BABYLON.GUI.Rectangle();
@@ -51,14 +50,26 @@ module.exports = function createScene(game) {
   coinRect3.height = "100px";
   coinRect3.color = "black";
   coinRect3.thickness = 0;
-  coinRect3.top = "20";
+  coinRect3.top = "40px";
+  coinRect3.paddingTop = "50px";
   coinRect3.isVertical = false;
-  
+
+  var rooms = new BABYLON.GUI.Rectangle();
+  rooms.width = "300px";
+  rooms.height = "100px";
+  rooms.color = "black";
+  rooms.thickness = 0;
+  rooms.bottom = "-500px";
+  rooms.background = "green";
+  rooms.isVertical = false;
+
+
   const coinPanel = new BABYLON.GUI.StackPanel();
   
   // coinPanel.orientation = 'horizontal'
   advancedTexture.addControl(coinRect);
   advancedTexture.addControl(coinRect2);
+  // advancedTexture.addControl(rooms);
 
   
   var txtCoin = new BABYLON.GUI.TextBlock();
@@ -106,6 +117,17 @@ module.exports = function createScene(game) {
   coinRect3.addControl(adHole);
 
   advancedTexture.addControl(coinRect3);
+
+  var room1 = new BABYLON.GUI.Rectangle();
+  room1.width = "150px";
+  room1.height = "150px";
+  room1.color = "black";
+  room1.thickness = 1;
+  room1.background = "grey";
+  room1.isVertical = false;
+  rooms.bottom = "-500px";
+  // rooms.addControl(room1);
+  // advancedTexture.addControl(rooms);
 
 
   var deg = 0; 
