@@ -65,6 +65,10 @@ module.exports = function createScene(game) {
     socket.emit('login', email, password);
     socket.on('login->res', function(err, data) {
       if (err == 500) handle.handle500;
+      else if (err) alert(err);
+      else {
+        
+      }
     })
   });
   panel.addControl(btnLogin);

@@ -128,7 +128,7 @@ module.exports = function createScene(game) {
   resendEmail.paddingTop = '15px';
   resendEmail.thickness = 0;
   resendEmail.onPointerUpObservable.add(() => {
-    socket.emit('')
+    //
     
   });
   panel.addControl(resendEmail);
