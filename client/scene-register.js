@@ -2,7 +2,9 @@ import BABYLON from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
 
 module.exports = function createScene(game) {
-	const scene = new BABYLON.Scene(game.engine);
+  const scene = new BABYLON.Scene(game.engine);
+  
+  const socket = game.io;
 
 	const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
   camera.setTarget(BABYLON.Vector3.Zero());
@@ -77,10 +79,27 @@ module.exports = function createScene(game) {
   btnRegister.paddingTop = '7px';
   btnRegister.paddingBottom = '7px';
   btnRegister.onPointerDownObservable.add(() => {
-    console.log('Button pressed.');
+    var Email = inputEmail;
+    var Username = inputUsername;
+    var Password = inputPassword;
+    var PasswordConf = inputConfirmPassword;
+    if (PasswordConf == Password) {
+      socket.emit('register', email, username, password);
+      socket.on('resgister->resp', function(err) {
+        if (err == 500) {
+          alert("Something went wrong please try again.")
+        } else if (err) {
+          alert(err);
+        } else {
+          alert("registration complete! Please see your email address to confirm");
+        }
+      })
+    } else {
+      alert("Password's do not match")
+    }
   });
-  panel.addControl(btnRegister);
-
+  
+  panel.addControl(btnRegister); 
   const btnLogin = BABYLON.GUI.Button.CreateSimpleButton('btnLogin', 'already have an account?');
   btnLogin.fontSize = '20rem';
   btnLogin.width = '240px';
@@ -109,6 +128,7 @@ module.exports = function createScene(game) {
   resendEmail.paddingTop = '15px';
   resendEmail.thickness = 0;
   resendEmail.onPointerUpObservable.add(() => {
+
     alert("Confirmation email sent!");
   });
   panel.addControl(resendEmail);
