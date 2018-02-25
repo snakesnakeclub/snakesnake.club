@@ -6,6 +6,7 @@ const bodyParser = require('body-parser')
 const register = require('./register')
 const login = require('./login')
 const router = require('./router')
+const logout = require('./logout')
 const rooms = require('./rooms')
 
 mongoose.connect('mongodb://localhost/snakesnake');
