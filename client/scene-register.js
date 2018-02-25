@@ -128,8 +128,8 @@ module.exports = function createScene(game) {
   resendEmail.paddingTop = '15px';
   resendEmail.thickness = 0;
   resendEmail.onPointerUpObservable.add(() => {
-
-    alert("Confirmation email sent!");
+    socket.emit('')
+    
   });
   panel.addControl(resendEmail);
 
