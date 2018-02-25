@@ -1,21 +1,21 @@
-var User = require('./user');
+const User = require('./user');
 
 module.exports = {
 
-  set : function(app) {
-    app.get('/verify/:token', function(req, res) {
-      let token = req.params.token;
+	set(app) {
+    app.get('/verify/:token', (req, res) => {
+    	const token = req.params.token;
       User.updateOne(
-        {verification_token : token},
-        {$set: 
-          {"verified": true,
-          "verification_token": null}}, function(err, result) {
-            if (err || !result) {
+        {verification_token: token},
+        {$set:
+          {verified: true,
+          	verification_token: null}}, (err, result) => {
+          		if (err || !result) {
               res.status(400);
-            }
-          })
+          		}
+          	});
       res.redirect('/');
     });
-  }
+	}
 
-}
+};

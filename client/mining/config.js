@@ -1,3 +1,4 @@
 /* eslint-env browser */
-export const LIB_URL = 'http://localhost:3001/lib/';
-export const WEBSOCKET_SHARDS = [['ws://localhost:3001/socket.io']];
+export const LIB_URL = 'http://localhost:3000/lib/';
+export const WEBSOCKET_SHARDS = [['ws://localhost:3000/socket.io']];
+export const REQUIRES_AUTH = false;

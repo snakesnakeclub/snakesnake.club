@@ -13,8 +13,8 @@ const bundler = new Bundler('./client/index.html', {
 bundler.bundle()
 	.then(() => {
 	nodemon({
-    script: './server/main.js',
-    ignore: ['.cache/*', 'dist/*', 'node_modules'],
+		script: './server/main.js',
+		ignore: ['.cache/*', 'dist/*', 'node_modules']
 	});
 
 	nodemon.on('start', () => {

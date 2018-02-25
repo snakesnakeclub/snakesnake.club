@@ -12,7 +12,7 @@ export default class JobThread {
 
 			default:
 		}
-		this.worker.onmessage = this.onReady.bind(this);
+		this.worker.addEventListener('message', this.onReady.bind(this));
 		this.currentJob = null;
 		this.jobCallback = () => {};
 		this.verifyCallback = () => {};
@@ -28,7 +28,7 @@ export default class JobThread {
 			throw new Error('Expecting first message to be "ready", got ' + msg);
 		}
 		this._isReady = true;
-		this.worker.onmessage = this.onReceiveMsg.bind(this);
+		this.worker.addEventListener('message', this.onReceiveMsg.bind(this));
 		if (this.currentJob) {
 			this.running = true;
 			this.worker.postMessage(this.currentJob);

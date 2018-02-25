@@ -1,5 +1,6 @@
 import BABYLON from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
+import logoUrl from './assets/logo.png';
 
 module.exports = function createScene(game) {
 	// This creates a basic Babylon Scene object (non-mesh)
@@ -14,6 +15,12 @@ module.exports = function createScene(game) {
   const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI');
   const panel = new BABYLON.GUI.StackPanel();
   advancedTexture.addControl(panel);
+
+  const imgLogo = new BABYLON.GUI.Image('imgLogo', logoUrl);
+  imgLogo.width = '300px';
+  imgLogo.height = '150px';
+  panel.addControl(imgLogo);
+  // ImgLogo.left = "-50px";
 
   const btnLogin = BABYLON.GUI.Button.CreateSimpleButton('btnLogin', 'LOGIN');
   btnLogin.width = '240px';
