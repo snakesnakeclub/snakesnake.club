@@ -113,7 +113,6 @@ module.exports = function createScene(game) {
   });
   panel.addControl(resendEmail);
 
-
   advancedTexture.addControl(panel);
 
   return scene;

@@ -15,19 +15,19 @@ module.exports = function createScene(game) {
   const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI');
   const panel = new BABYLON.GUI.StackPanel();
 
-  const inputUsername = new BABYLON.GUI.InputText();
-  inputUsername.width = '240px';
-  inputUsername.maxWidth = '240px';
-  inputUsername.height = '44px';
-  inputUsername.text = '';
-  inputUsername.placeholderText = 'Username';
-  inputUsername.fontFamily = 'Patua One';
-  inputUsername.color = 'indigo';
-  inputUsername.background = 'white';
-  inputUsername.focusedBackground = 'white';
-  inputUsername.paddingTop = '7px';
-  inputUsername.paddingBottom = '7px';
-  panel.addControl(inputUsername);
+  const inputEmail = new BABYLON.GUI.InputText();
+  inputEmail.width = '240px';
+  inputEmail.maxWidth = '240px';
+  inputEmail.height = '44px';
+  inputEmail.text = '';
+  inputEmail.placeholderText = 'Email';
+  inputEmail.fontFamily = 'Patua One';
+  inputEmail.color = 'indigo';
+  inputEmail.background = 'white';
+  inputEmail.focusedBackground = 'white';
+  inputEmail.paddingTop = '7px';
+  inputEmail.paddingBottom = '7px';
+  panel.addControl(inputEmail);
 
   const inputPassword = new BABYLON.GUI.InputText();
   inputPassword.width = '240px';
@@ -41,9 +41,13 @@ module.exports = function createScene(game) {
   inputPassword.focusedBackground = 'white';
   inputPassword.paddingTop = '7px';
   inputPassword.paddingBottom = '7px';
+  let password = "";
+  inputPassword.onTextChangedObservable.add(function() {
+    password = password + inputPassword.text.charAt(password.length);
+    inputPassword.text = "*".repeat(password.length);
+  });
   panel.addControl(inputPassword);
 
-  
 
   const btnLogin = BABYLON.GUI.Button.CreateSimpleButton('btnLogin', 'LOGIN');
   btnLogin.width = '240px';
@@ -72,11 +76,20 @@ module.exports = function createScene(game) {
   });
   panel.addControl(btnRegister);
 
-  var pwd = "";
-  inputPassword.onTextChangedObservable.add(function() {
-    pwd = pwd + inputPassword.text.charAt(pwd.length);
-    inputPassword.text = "*".repeat(pwd.length);
+  const btnResetPassword = BABYLON.GUI.Button.CreateSimpleButton('btnResetPassword', 'reset password');
+  btnResetPassword.fontSize = '15rem';
+  btnResetPassword.width = '240px';
+  btnResetPassword.maxWidth = '240px';
+  btnResetPassword.height = '44px';
+  btnResetPassword.fontFamily = 'Patua One';
+  btnResetPassword.color = 'white';
+  btnResetPassword.background = '#33344B';
+  btnResetPassword.paddingTop = '15px';
+  btnResetPassword.thickness = 0;
+  btnResetPassword.onPointerUpObservable.add(() => {
+    alert("reset password email sent!");
   });
+  panel.addControl(btnResetPassword);
 
   advancedTexture.addControl(panel);
 
