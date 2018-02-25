@@ -29,12 +29,13 @@ module.exports = {
   },
 
   setRoute : function(app) {
-    app.post('/verifypassword/:token', function(req, res) {
+    app.post('/resetpassword/:token', function(req, res) {
         User.findOne({password_token : req.body.token}, function(err, result) {
           if (err) res.status(500);
           else if (!result) res.status("INVALID_TOKEN");
           else {
-            res.sendFile(__dirname+'/')
+            res.sendFile(__dirname+'/resetpswd.js');
+            // left for my boy omar
             // when a button clikc do things
           }
         })
