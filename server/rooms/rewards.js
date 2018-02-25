@@ -1,9 +1,11 @@
+const { randomInteger } = require('./helpers.js');
+
 class Rewards {
-  constructor() {
-    this.respawn();
+  constructor(world) {
+    this.respawn(world);
   }
 
-  respawn() {
+  respawn(world) {
     // Generate a random x and y position
     this.x = randomInteger(0, world.width)
     this.y = randomInteger(0, world.height)

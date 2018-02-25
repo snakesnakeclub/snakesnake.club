@@ -1,5 +1,5 @@
 const Player = require('./player');
-const Rewards = require('./rewards');
+const Reward = require('./rewards');
 const World = require('./world');
 const { randomInteger } = require('./helpers.js');
 
@@ -9,16 +9,16 @@ class Room {
     this.io = io;
     this.id = id;
     this.fee = fee;
-    this.players = new Map(); // snake which holds user's data
+    this.players = new Map(); // player which holds user's data
     this.world = new World(); // width length
     this.rewards = [];
-    setInterval(this.gameTick.bind(this), 1000 / 7)
+    setInterval(this.gameTick.bind(this), 8000)
   }
 
   addPlayer(socket, data) { // user data and socket
     socket.join(this.id)
-    this.players.set(socket.id, new Snake(data));
-    this.rewards.push(new Reward())
+    this.players.set(socket.id, new Player(data));
+    this.rewards.push(new Reward(this.world))
   }
 
   removePlayer(socket) { // user data and socket
@@ -28,15 +28,15 @@ class Room {
   }
 
   gameTick() {
-
+    console.log(this.serialize());
     const playersArray = Array.from(this.players.values())
 
     playersArray.forEach(player => {
       const head = player.head()
   
       // If the player's head collided with an apple
-      const didEatApple = rewards.some((apple) => 
-        head.isCollidingWith(apple) && apple.respawn()
+      const didEatApple = this.rewards.some((reward) => 
+        head.isCollidingWith(reward) && reward.respawn()
       )
   
       if (didEatApple) {
@@ -69,6 +69,7 @@ class Room {
       rewards : this.rewards.map(reward => reward.serialize()),
     }
   }
+
 }
 
 module.exports = Room;

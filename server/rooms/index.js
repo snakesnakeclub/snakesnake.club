@@ -18,7 +18,7 @@ function getRoom (room_id) {
   return false;
 }
 
-function EnterRoom(user, room) {
+function EnterRoom(user, room, socket) {
   var newbalance = user.balance - room.fee;
   User.updateOne(
     {token_session: user.token_session},
@@ -27,7 +27,7 @@ function EnterRoom(user, room) {
         if (err || !result) {
           socket.emit('play->res', 500)
         } else {
-          room.addPlayer(serialize(user))
+          room.addPlayer(socket, serialize(user))
         }
       }
   )
@@ -48,17 +48,18 @@ module.exports = {
     socket.emit('setRooms', roomData);
 
     socket.on('play', function(room_id, token_session) {
-      User.findOne({token_session}, function(err, user) {
+      console.log(token_session);
+      User.findOne({session_token : token_session}, function(err, user) {
         if (err) socket.emit('play->res', 500);
         else if (!user) {
           socket.emit('play->res', "INVALID_TOKEN")
         } else {
           var selectedRoom = getRoom(room_id);
           if (selectedRoom) {
-            if (selectedRoom.fee >= user.balance) {
-              EnterRoom(user, selectedRoom);
+            if (selectedRoom.fee <= user.balance) {
+              EnterRoom(user, selectedRoom, socket);
             } else {
-              socket.emit('play->res', "INSUFFICIENT_COINS");
+              socket.emit('play->res', "INSUFFICIENT_COINS")
             }
           } else {
             socket.emit('play->res', "INVALID_ROOM_ID")
