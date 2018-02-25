@@ -29,17 +29,29 @@ module.exports = {
   },
 
   setRoute : function(app) {
+    app.get('/resetpassword/:token', function(req, res) {
+      User.findOne({password_token : req.body.token}, function(err, result) {
+        if (err) res.status(500);
+        else if (!result) res.status("INVALID_TOKEN");
+        else {
+          res.sendFile(__dirname+'/resetpswd.js');
+          // format res/file replaceing {{token}} with the token
+        }
+      })
+    })
+
     app.post('/resetpassword/:token', function(req, res) {
-        User.findOne({password_token : req.body.token}, function(err, result) {
+        let token = req.body.token;
+        let newpassword = req.body.password;
+        User.getOne({password_token : req.body.token}, {$set, "password":newpassword}, function(err, result) {
           if (err) res.status(500);
-          else if (!result) res.status("INVALID_TOKEN");
+          else if (!result) res.status("INVALID_TOKEN")
           else {
-            res.sendFile(__dirname+'/resetpswd.js');
-            // left for my boy omar
-            // when a button clikc do things
+            res.redirect('/');
           }
         })
     })
+    
   }
 }
 
