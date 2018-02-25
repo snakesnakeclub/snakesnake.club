@@ -52,9 +52,9 @@ module.exports = function createScene(game) {
 
     room.players.forEach(player => {
       if (player.id === socket.id) {
-        camera.setTarget(player.pieces[0].x, 0, player.pieces[0].y);
+        camera.position = new BABYLON.Vector3(player.pieces[0].x, 15, player.pieces[0].y);
       }
-      
+
       player.pieces.forEach((piece, i) => {
         const boxPlayerPiece = BABYLON.MeshBuilder.CreateBox('player' + player.id + 'piece' + i, {
           height: 0.3,
@@ -67,6 +67,11 @@ module.exports = function createScene(game) {
       })
     });
   
+  })
+  socket.on('death', () => {
+    meshes.forEach((mesh) => mesh.dispose())
+    game.setActiveScene('lobby', { advancedTexture: null, scene })
+    alert('You died :(')
   })
 
   return scene;

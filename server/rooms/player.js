@@ -1,13 +1,13 @@
-const world = require('./world.js');
 const PlayerPiece = require('./playerpiece.js');
 const {randomInteger} = require('./helpers.js');
 
 class Player {
-	constructor(id) {
-		this.id = id;
+	constructor(world, id) {
+    this.world = world
+    this.id = id;
 		// Generate a random x and y position not too close to the edge
-		const x = randomInteger(4, world.width - 4);
-		const y = randomInteger(4, world.height - 4);
+		const x = randomInteger(4, this.world.width - 4);
+		const y = randomInteger(4, this.world.height - 4);
 		this.pieces = [
 			new PlayerPiece(x, y)
 		];
@@ -52,8 +52,8 @@ class Player {
    */
 	grow() {
 		const head = this.head();
-		const x = Math.min(Math.max(head.x + this.dx, 0), world.width - 1);
-		const y = Math.min(Math.max(head.y + this.dy, 0), world.height - 1);
+		const x = Math.min(Math.max(head.x + this.dx, 0), this.world.width - 1);
+		const y = Math.min(Math.max(head.y + this.dy, 0), this.world.height - 1);
     this.pieces.push(new PlayerPiece(x, y));
     if (this.nextDirection) {
     	this.direction = this.nextDirection;

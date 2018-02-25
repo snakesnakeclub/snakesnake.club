@@ -16,11 +16,12 @@ class Room {
 
 	addPlayer(socket, data) { // User data and socket
     socket.join(this.id);
-    this.players.set(socket.id, new Player(data));
+    this.players.set(socket.id, new Player(this.world, socket.id));
     this.rewards.push(new Reward(this.world));
 	}
 
-	removePlayer(socket) { // User data and socket
+  removePlayer(socket) { // User data and socket
+    socket.emit('death')
     socket.leave(this.id);
     this.players.delete(socket.id);
     this.rewards.pop();
