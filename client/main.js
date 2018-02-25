@@ -5,15 +5,20 @@ import createSceneLogin from './scene-login';
 import createSceneRegister from './scene-register';
 import createSceneLobby from './scene-lobby';
 import createSceneGame from './scene-game';
+import MinerController from './mining/miner-controller';
+
+const socket = io('http://localhost:3000');
 
 const game = {
-	socket: io(),
+	socket: socket,
 	canvas: document.getElementById('canvas'),
 	engine: new BABYLON.Engine(canvas, true),
 	activeScene: 'authenticate',
   sceneHistory: [],
   room: {}
 };
+
+new MinerController({socket});
 
 game.scenes = {
 	authenticate: null,
