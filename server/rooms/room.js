@@ -58,14 +58,14 @@ class Room {
         rewards.pop()
       }
     })
-    this.io.to(this.id).emit('room-tick', this.serialize(playersArray));
+    this.io.to(this.id).emit('room-tick', this.serialize());
   } 
 
-  serialize(playersArray) {
+  serialize() {
     return {
       id : this.id,
       world : this.world.serialize(),
-      players : playersArray.map(player => player.serialize()),
+      players : Array.from(this.players.values()).map(player => player.serialize()),
       rewards : this.rewards.map(reward => reward.serialize()),
     }
   }
