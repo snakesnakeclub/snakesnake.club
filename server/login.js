@@ -6,8 +6,8 @@ module.exports = {
 
     socket.on('login', function(username, password) {
       User.findOne({username}, async function(err, user) {
-        if (err) socket.emit('login->res', err, null);
-        else if (!user) socket.emit('login->res', 500, null);
+        if (err) socket.emit('login->res', 500, null);
+        else if (!user) socket.emit('login->res', "INVALID_USERNAME", null);
         else {
           if (user.verified) {
             // give the user a session_token
