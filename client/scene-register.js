@@ -84,15 +84,22 @@ module.exports = function createScene(game) {
     var Password = inputPassword;
     var PasswordConf = inputConfirmPassword;
     if (PasswordConf == Password) {
-      socket.emit('register', e)
+      socket.emit('register', email, username, password);
+      socket.on('resgister->resp', function(err) {
+        if (err == 500) {
+          alert("Something went wrong please try again.")
+        } else if (err) {
+          alert(err);
+        } else {
+          alert("registration complete! Please see your email address to confirm");
+        }
+      })
     } else {
       alert("Password's do not match")
     }
-    socket.emit('login', )
-    console.log('Button pressed.');
   });
-  panel.addControl(btnRegister);
-
+  
+  panel.addControl(btnRegister); 
   const btnLogin = BABYLON.GUI.Button.CreateSimpleButton('btnLogin', 'already have an account?');
   btnLogin.fontSize = '20rem';
   btnLogin.width = '240px';
@@ -121,6 +128,7 @@ module.exports = function createScene(game) {
   resendEmail.paddingTop = '15px';
   resendEmail.thickness = 0;
   resendEmail.onPointerUpObservable.add(() => {
+
     alert("Confirmation email sent!");
   });
   panel.addControl(resendEmail);
