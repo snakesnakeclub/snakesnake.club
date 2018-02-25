@@ -9,7 +9,7 @@ class Room {
     this.io = io;
     this.id = id;
     this.fee = fee;
-    this.players = new Map(); // player which holds user's data
+    this.players = new Map(); // socket -> player which holds user's data
     this.world = new World(); // width length
     this.rewards = [];
     setInterval(this.gameTick.bind(this), 10000 / 7)
@@ -32,13 +32,12 @@ class Room {
 
     playersArray.forEach(player => {
       const head = player.head()
-  
       // If the player's head collided with an apple
-      const didEatApple = this.rewards.some((reward) => 
+      const hitReward = this.rewards.some((reward) => 
         head.isCollidingWith(reward) && reward.respawn()
       )
   
-      if (didEatApple) {
+      if (hitReward) {
         player.grow()
       } else {
         player.move()
@@ -51,10 +50,17 @@ class Room {
       )
   
       if (didCollideWithPlayerPiece) {
-        // Remove the player from the world
-        players.delete(player.id)
-        // Remove an apple from the world
-        rewards.pop()
+        // socket id of dead player
+        var length = player.pieces.length;
+        var socket = this.io.sockets.connected[player.id];
+        removePlayer(socket);
+        rewards.pop();
+
+        updateBalance(this.players.get(aPlayer.id));
+        while ((i--) < length) {
+          aPlayer.grow();
+        }
+        
       }
     })
     this.io.to(this.id).emit('room-tick', this.serialize());
@@ -69,6 +75,11 @@ class Room {
     }
   }
 
+}
+
+function updateBalance(player) {
+    // update the players balance = balance + fee
+    // Number of kills +1 
 }
 
 module.exports = Room;
