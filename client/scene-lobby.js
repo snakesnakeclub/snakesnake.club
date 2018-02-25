@@ -17,12 +17,12 @@ module.exports = function createScene(game) {
   const panel = new BABYLON.GUI.StackPanel();
   
   var txtUsername = new BABYLON.GUI.TextBlock();
-  txtUsername.text = '{{Username}}';
+  txtUsername.text = game.user.username;
   txtUsername.color = 'white';
   txtUsername.fontFamily = 'Patua One';
   txtUsername.fontSize = 50;
   txtUsername.background = "white";
-  txtUsername.top = "-150px";
+  txtUsername.top = "-120px";
   advancedTexture.addControl(txtUsername);
   
   var coinRect = new BABYLON.GUI.Rectangle();
@@ -73,7 +73,7 @@ module.exports = function createScene(game) {
 
   
   var txtCoin = new BABYLON.GUI.TextBlock();
-  txtCoin.text = '# SCoins';
+  txtCoin.text = `${Math.floor(game.user.balance)} SCoins`;
   txtCoin.color = 'white';
   txtCoin.fontFamily = 'Patua One';
   txtCoin.fontSize = 18;
@@ -87,7 +87,7 @@ module.exports = function createScene(game) {
 
   coinRect.addControl(imgCoin); 
 
-  var bankCoin = new BABYLON.GUI.Image("imgCoin", piggy);
+  var bankCoin = new BABYLON.GUI.Image("bankCoin", piggy);
   bankCoin.width = "55px";
   bankCoin.height = "45px";  
   bankCoin.left = "-50px";
@@ -97,7 +97,7 @@ module.exports = function createScene(game) {
   cashOut.fontFamily = 'Patua One';
   cashOut.color = 'white';
   cashOut.background = '#33344B';
-  cashOut.thickness = 0;
+  cashOut.thickness = 1;
   cashOut.paddingLeft = '200px';
   cashOut.left = "-50px";
 

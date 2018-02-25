@@ -14,7 +14,7 @@ module.exports = {
     });
 
     let mailOptions = {
-      from : 'SnakeSnake',
+      from : 'SnakeSnake <snake@snakesnake.club>',
       to : email,
       subject : 'Email Confirmation',
       text : 'Visit the link : http://localhost:3000/verify/'+token,

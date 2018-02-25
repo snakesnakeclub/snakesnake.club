@@ -12,7 +12,7 @@ module.exports = {
           "verification_token": null}}, function(err, result) {
             if (err || !result) {
               res.status(400);
-            } else console.log('validated');
+            }
           })
       res.redirect('/');
     });

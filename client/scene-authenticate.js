@@ -45,20 +45,5 @@ module.exports = function createScene(game) {
   });
   panel.addControl(btnRegister);
 
-  const user = BABYLON.GUI.Button.CreateSimpleButton('user', 'User');
-  user.width = '240px';
-  user.height = '75px';
-  user.fontFamily = 'Patua One';
-  user.color = 'white';
-  user.background = 'indigo';
-  user.paddingTop = '7px';
-  user.paddingBottom = '7px';
-  user.onPointerUpObservable.add(() => {
-    game.sceneHistory.push(game.activeScene);
-    game.activeScene = 'lobby';
-    advancedTexture.dispose();
-  });
-  panel.addControl(user);
-
   return scene;
 };

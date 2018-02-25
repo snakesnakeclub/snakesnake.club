@@ -1,10 +1,13 @@
 import BABYLON from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
+import validator from 'validator'
 import { handle500 } from './helpers';
 
 module.exports = function createScene(game) {
 	// This creates a basic Babylon Scene object (non-mesh)
-	const scene = new BABYLON.Scene(game.engine);
+  const scene = new BABYLON.Scene(game.engine);
+  
+  const socket = game.socket
 
 	const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
   camera.setTarget(BABYLON.Vector3.Zero());
@@ -42,11 +45,6 @@ module.exports = function createScene(game) {
   inputPassword.focusedBackground = 'white';
   inputPassword.paddingTop = '7px';
   inputPassword.paddingBottom = '7px';
-  let password = "";
-  inputPassword.onTextChangedObservable.add(function() {
-    password = password + inputPassword.text.charAt(password.length);
-    inputPassword.text = "*".repeat(password.length);
-  });
   panel.addControl(inputPassword);
 
   const btnLogin = BABYLON.GUI.Button.CreateSimpleButton('btnLogin', 'LOGIN');
@@ -59,17 +57,26 @@ module.exports = function createScene(game) {
   btnLogin.paddingTop = '7px';
   btnLogin.paddingBottom = '7px';
   btnLogin.onPointerUpObservable.add(() => {
-    var email = inputEmail;
-    var password = password;
+    var email = inputEmail.text;
+    var password = inputPassword.text;
     socket.emit('login', email, password);
-    socket.on('login->res', function(err, data) {
+    socket.on('login->res', function(err, user) {
       if (err == 500) {
         return handle500(err);
       } else if (err) {
-        alert(err);
-      } else {
-        
+        return alert({
+          INVALID_EMAIL: 'Email address is invalid.',
+          INVALID_PASSWORD: 'Password is invalid.',
+          EMAIL_NOT_VERIFIED: 'Please verify email address before you can continue.',
+        }[err]);
       }
+      /*
+      user: { email, username, balance, takedowns, session_token }
+      */
+      game.user = user
+      game.sceneHistory.push(game.activeScene);
+      game.activeScene = 'lobby';
+      scene.setVisible = false;
     })
   });
   panel.addControl(btnLogin);
@@ -101,7 +108,12 @@ module.exports = function createScene(game) {
   btnResetPassword.paddingTop = '15px';
   btnResetPassword.thickness = 0;
   btnResetPassword.onPointerUpObservable.add(() => {
-    alert("reset password email sent!");
+    const email = inputEmail.text
+    if (validator.isEmail(email)) {
+      alert('Email address is invalid.')
+      return
+    }
+    socket.emit('reset-password', email)
   });
   panel.addControl(btnResetPassword);
 

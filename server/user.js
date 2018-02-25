@@ -20,7 +20,9 @@ var UserSchema = new mongoose.Schema({
   },
   balance: {
     type: Number,
-    required: false
+  },
+  takedowns: {
+    type: Number,
   },
   password: {
     type: String,
@@ -48,19 +50,21 @@ UserSchema.pre('save', function(next) {
 })
 
 
-UserSchema.statics.authenticate = function(username, password, callback) {
-  User.findOne({username}, function(err, user) {
+UserSchema.statics.authenticate = function(email, password, callback) {
+  User.findOne({ email }, function(err, user) {
       if (err) {
-          return callback(err);
+        return callback(err);
       } else if (!user) {
-          callback("INCORRECT_USERNAME");
+        callback("INVALID_EMAIL");
+        return
       }
-      bcrypt.compare(password, user.password, function(err, result) {
-          if (result) {
-              callback("INCORRECT_PASSWORD");
-          } else {
-              callback(null, user);
-          }
+
+      bcrypt.compare(password, user.password, function(err, success) {
+        if (!success) {
+          callback("INVALID_PASSWORD");
+          return
+        }
+        callback(null, user);
       });
   });
 }
