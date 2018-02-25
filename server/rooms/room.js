@@ -64,10 +64,17 @@ class Room {
 
 	serialize() {
 		return {
-			id: this.id,
+      id: this.id,
 			world: this.world.serialize(),
 			players: Array.from(this.players.values()).map(player => player.serialize()),
 			rewards: this.rewards.map(reward => reward.serialize())
+		};
+	}
+
+	serializeForLobby() {
+		return {
+      id: this.id,
+      fee: this.fee,
 		};
 	}
 }

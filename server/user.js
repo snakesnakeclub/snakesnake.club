@@ -44,32 +44,37 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.pre('save', function (next) {
-	const user = this;
-  bcrypt.hash(user.password, 10, (err, hash) => {
+  if (!this.isModified('password')) {
+    return next()
+  }
+
+  bcrypt.hash(this.password, 10, (err, hash) => {
   	if (err) {
   		return next(err);
   	}
-  	user.password = hash;
-      next();
+  	this.password = hash;
+    next();
   });
 });
 
 UserSchema.statics.authenticate = function (email, password, callback) {
-  User.findOne({email}, (err, user) => {
+  User.findOne({ email }, (err, user) => {
   	if (err) {
   		return callback(err);
-  	} if (!user) {
-        callback('INVALID_EMAIL');
-        return;
+    }
+    
+    if (!user) {
+      callback('INVALID_EMAIL');
+      return;
   	}
 
-      bcrypt.compare(password, user.password, (err, success) => {
-      	if (!success) {
-          callback('INVALID_PASSWORD');
-          return;
-      	}
-        callback(null, user);
-      });
+    bcrypt.compare(password, user.password, (err, success) => {
+      if (!success) {
+        callback('INVALID_PASSWORD');
+        return;
+      }
+      callback(null, user);
+    });
   });
 };
 

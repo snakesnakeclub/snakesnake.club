@@ -10,13 +10,15 @@ module.exports = {
     socket.on('register', async (email, username, password) => {
     	const valid = await validateAndCallbackWithErrors(email, username, password,
         err => socket.emit('register->res', err));
-    	if (valid) {
-    		const verification_token = await helpers.randomString(30)
-    			.catch(err => {
-            console.error(err);
-            socket.emit('register->res', 500);
-    			});
+    	if (!valid) {
+        // handled by validator
+        return
     	}
+      const token = await helpers.randomString(30)
+        .catch(err => {
+          console.error(err);
+          socket.emit('register->res', 500);
+        });
     	const userData = {
     		email,
     		username,

@@ -14,7 +14,7 @@ module.exports = {
       	}
 
         User.authenticate(email, password, async (err, success) => {
-        	if (!success) {
+        	if (err) {
             socket.emit('login->res', err);
             return;
         	}

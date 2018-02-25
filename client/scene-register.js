@@ -62,12 +62,6 @@ module.exports = function createScene(game) {
   inputConfirmPassword.focusedBackground = 'white';
   inputConfirmPassword.paddingTop = '7px';
   inputConfirmPassword.paddingBottom = '7px';
-  inputConfirmPassword.onTextChangedObservable.add(() => {
-  	if (inputPassword.text == inputConfirmPassword.text) {
-  		inputConfirmPassword.background = 'green';
-  		inputConfirmPassword.color = 'orange';
-  	}
-  });
   panel.addControl(inputConfirmPassword);
 
   const btnRegister = BABYLON.GUI.Button.CreateSimpleButton('btnRegister', 'REGISTER');
@@ -79,7 +73,7 @@ module.exports = function createScene(game) {
   btnRegister.background = 'indigo';
   btnRegister.paddingTop = '7px';
   btnRegister.paddingBottom = '7px';
-  btnRegister.onPointerDownObservable.add(() => {
+  btnRegister.onPointerUpObservable.add(() => {
   	const email = inputEmail.text;
   	const username = inputUsername.text;
   	const password = inputPassword.text;
@@ -121,9 +115,7 @@ module.exports = function createScene(game) {
   btnLogin.paddingTop = '15px';
   btnLogin.thickness = 0;
   btnLogin.onPointerUpObservable.add(() => {
-    game.sceneHistory.push(game.activeScene);
-    game.activeScene = 'login';
-    scene.setVisible = false;
+    game.setActiveScene('login', { advancedTexture, scene });
   });
   panel.addControl(btnLogin);
 

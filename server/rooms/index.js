@@ -1,7 +1,7 @@
 const Room = require('./room');
 const User = require('../user');
 
-const open = [];
+const openRooms = [];
 
 function serialize(user) {
 	return {
@@ -11,9 +11,9 @@ function serialize(user) {
 }
 
 function getRoom(room_id) {
-	for (i = 0; i < open.length; i++) {
-		if (open[i].id == room_id) {
-			return open[i];
+	for (i = 0; i < openRooms.length; i++) {
+		if (openRooms[i].id == room_id) {
+			return openRooms[i];
 		}
 	}
 	return false;
@@ -36,23 +36,19 @@ function EnterRoom(user, room, socket) {
 
 module.exports = {
 	setRooms(io) {
-		room1 = new Room(io, 0, 0);
-		room2 = new Room(io, 1, 1);
-    open.push(room1);
-    open.push(room2);
+    openRooms.push(new Room(io, 0, 0));
+    openRooms.push(new Room(io, 1, 1));
 	},
 
 	setConnections(socket) {
-		const roomData = {
-			rooms: open.map(room => room.serialize())
-		};
-    socket.emit('setRooms', roomData);
-
+    socket.on('getRooms', () => {
+      socket.emit('getRooms->res', openRooms.map(room => room.serializeForLobby()));
+    })
+    
     socket.on('play', (room_id, token_session) => {
-      console.log(token_session);
       User.findOne({session_token: token_session}, (err, user) => {
       	if (err) {
-socket.emit('play->res', 500);
+          socket.emit('play->res', 500);
       	} else if (!user) {
           socket.emit('play->res', 'INVALID_TOKEN');
       	} else {

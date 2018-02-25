@@ -60,24 +60,22 @@ module.exports = function createScene(game) {
   	const email = inputEmail.text;
   	const password = inputPassword.text;
     socket.emit('login', email, password);
-    socket.on('login->res', (err, user) => {
-    	if (err == 500) {
-    		return handle500(err);
-    	} if (err) {
-    		return alert({
-    			INVALID_EMAIL: 'Email address is invalid.',
-    			INVALID_PASSWORD: 'Password is invalid.',
-    			EMAIL_NOT_VERIFIED: 'Please verify email address before you can continue.'
-    		}[err]);
-    	}
-    	/*
-      User: { email, username, balance, takedowns, session_token }
-      */
-    	game.user = user;
-      game.sceneHistory.push(game.activeScene);
-      game.activeScene = 'lobby';
-      scene.setVisible = false;
-    });
+  });
+  socket.on('login->res', (err, user) => {
+    if (err == 500) {
+      return handle500(err);
+    } if (err) {
+      return alert({
+        INVALID_EMAIL: 'Email address is invalid.',
+        INVALID_PASSWORD: 'Password is invalid.',
+        EMAIL_NOT_VERIFIED: 'Please verify email address before you can continue.'
+      }[err]);
+    }
+    /*
+    User: { email, username, balance, takedowns, session_token }
+    */
+    game.user = user;
+    game.setActiveScene('lobby', { advancedTexture, scene });
   });
   panel.addControl(btnLogin);
 
@@ -91,9 +89,7 @@ module.exports = function createScene(game) {
   btnRegister.paddingTop = '15px';
   btnRegister.thickness = 0;
   btnRegister.onPointerUpObservable.add(() => {
-    game.sceneHistory.push(game.activeScene);
-    game.activeScene = 'register';
-    scene.setVisible = false;
+    game.setActiveScene('register', { advancedTexture, scene });
   });
   panel.addControl(btnRegister);
 
