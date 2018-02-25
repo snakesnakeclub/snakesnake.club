@@ -15,6 +15,9 @@ const game = {
   room: {}
 };
 
+const handle500 = () => {
+  alert("Something went wrong, please try again.");
+}
 game.scenes = {
 	authenticate: createSceneAuthenticate(game),
 	login: createSceneLogin(game),
