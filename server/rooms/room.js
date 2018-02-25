@@ -9,14 +9,19 @@ class Room {
 		this.id = id;
 		this.fee = fee;
 		this.players = new Map(); // Socket -> player which holds user's data
-		this.world = new World(); // Width length
+		this.world = new World(20, 20); // Width length
 		this.rewards = [];
-    setInterval(this.gameTick.bind(this), 10000 / 7);
+    setInterval(this.gameTick.bind(this), 1000 / 2);
 	}
 
 	addPlayer(socket, data) { // User data and socket
     socket.join(this.id);
-    this.players.set(socket.id, new Player(this.world, socket.id));
+    const player = new Player(this.world, socket.id)
+    socket.on('setDirection', function (direction) {
+      player.setDirection(direction)
+    })
+    this.players.set(socket.id, player);
+    this.rewards.push(new Reward(this.world));
     this.rewards.push(new Reward(this.world));
 	}
 
@@ -53,10 +58,10 @@ class Room {
     		// Socket id of dead player
     		const length = player.pieces.length;
     		const socket = this.io.sockets.connected[player.id];
-        removePlayer(socket);
-        rewards.pop();
+        this.removePlayer(socket);
+        this.rewards.pop();
 
-        updateBalance(this.players.get(aPlayer.id));
+        // this.updateBalance(this.players.get(aPlayer.id));
         // Across tick length
     	}
     });

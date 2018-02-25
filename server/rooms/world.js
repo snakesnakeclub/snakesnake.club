@@ -1,7 +1,7 @@
 class World {
-	constructor() {
-		this.width = 30;
-		this.height = 30;
+	constructor(width=30, height=30) {
+		this.width = width;
+		this.height = height;
 	}
 
 	increaseHeight(amount) {

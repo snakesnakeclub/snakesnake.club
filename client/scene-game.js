@@ -1,11 +1,18 @@
 import BABYLON from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
+import { attach as attachKeyboard } from './keyboard-controls';
+import { attach as attachTouch } from './touch-controls';
 
 module.exports = function createScene(game) {
 	// This creates a basic Babylon Scene object (non-mesh)
   const scene = new BABYLON.Scene(game.engine);
+  const detachKeyboard = attachKeyboard(handleChangeDirection)
+  const detachTouch = attachTouch(handleChangeDirection)
   
   const socket = game.socket
+  function handleChangeDirection(direction) {
+    socket.emit('setDirection', direction)
+  }
 
 	const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 15, 0), scene);
   camera.setTarget(BABYLON.Vector3.Zero());
@@ -23,6 +30,9 @@ module.exports = function createScene(game) {
   matApple.diffuseColor = new BABYLON.Color3(1, 0, 0);
 
   let meshes = []
+  let animationId
+  const animationTicks = 5
+  let isFirstTick = true
   socket.on('room-tick', (room) => {
     meshes.forEach((mesh) => mesh.dispose())
     meshes = []
@@ -52,7 +62,24 @@ module.exports = function createScene(game) {
 
     room.players.forEach(player => {
       if (player.id === socket.id) {
-        camera.position = new BABYLON.Vector3(player.pieces[0].x, 15, player.pieces[0].y);
+        const head = player.pieces[player.pieces.length - 1];
+        let i = 0
+        const end = new BABYLON.Vector3(head.x, 15, head.y)
+        if (isFirstTick) {
+          isFirstTick = false
+          camera.position = end
+        }
+        const start = camera.position
+        clearInterval(animationId)
+        animationId = setInterval(() => {
+          if (i < animationTicks) {
+            camera.position = BABYLON.Vector3.Lerp(start, end, i / animationTicks);
+          } else {
+            clearInterval(animationId)
+            camera.position = end
+          }
+          i += 1
+        }, (1000 / 3) / animationTicks)
       }
 
       player.pieces.forEach((piece, i) => {
@@ -68,11 +95,15 @@ module.exports = function createScene(game) {
     });
   
   })
-  socket.on('death', () => {
+  function onDeath() {
     meshes.forEach((mesh) => mesh.dispose())
     game.setActiveScene('lobby', { advancedTexture: null, scene })
+    detachKeyboard()
+    detachTouch()
     alert('You died :(')
-  })
+    socket.removeListener('death', onDeath)
+  }
+  socket.on('death', onDeath)
 
   return scene;
 };
