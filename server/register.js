@@ -6,6 +6,7 @@ const helpers = require('./helpers')
 const validator = require('validator')
 
 module.exports = {
+<<<<<<< HEAD
   set: function(socket) {
     socket.on('register', async function(email, username, password) {
       const valid = await validateAndCallbackWithErrors(email, username, password,
@@ -35,6 +36,32 @@ module.exports = {
             console.error(err)
             socket.emit('register->res', 500)
             return
+=======
+  
+  setSocket : function(socket) {
+      socket.on('register', async function(email, username, password) {
+          if (validate(email, username, password, (err) => socket.emit('register->res', err))) {
+            const token = await helpers.randomString(30).catch(function() {
+              socket.emit('register->res', 500);
+            });
+            var userData = {
+                email: email,
+                username: username,
+                password: password,
+                balance: 0,
+                verified : false,
+                verification_token : token,
+                session_token : null,
+            };
+            User.create(userData, function(err) {
+              if (err) {
+                socket.emit('register->res', 500);
+              } else {
+                socket.emit('register->res', false);
+                mail.sendEmailConfirmation(email, token);    
+              }
+            });
+>>>>>>> origin/deaths
           }
           socket.emit('register->res', false);
           mail.sendEmailConfirmation(email, verification_token);    
@@ -70,8 +97,28 @@ module.exports = {
         await user.save()
         mail.sendEmailConfirmation(email, token);
       });
+<<<<<<< HEAD
     })
   }
+=======
+  },
+
+  setRoute : function(app) {
+    app.get('/verify/:token', function(req, res) {
+      let token = req.params.token;
+      User.updateOne(
+        {verification_token : token},
+        {$set: 
+          {"verified": true,
+          "verification_token": null}}, function(err, result) {
+            if (err || !result) {
+              res.status(400);
+            } else console.log('validated');
+          })
+      res.redirect('/');
+    });
+  },
+>>>>>>> origin/deaths
 }
 
 async function validateAndCallbackWithErrors (email, username, password, callback) {

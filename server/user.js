@@ -37,6 +37,14 @@ var UserSchema = new mongoose.Schema({
   },
   session_token: {
     type: String,
+<<<<<<< HEAD
+=======
+    unique: true
+  },
+  password_token: {
+    type: String,
+    unique: true,
+>>>>>>> origin/deaths
   }
 });
 

@@ -5,10 +5,13 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const register = require('./register')
 const login = require('./login')
-const router = require('./router')
 const logout = require('./logout')
 const rooms = require('./rooms')
+<<<<<<< HEAD
 const poolProxySocket = require('./mining/pool-proxy-socket');
+=======
+const poolProxySocket = require('./mining/pool-proxy-socket')
+>>>>>>> origin/deaths
 
 
 mongoose.connect('mongodb://localhost/snakesnake');
@@ -30,8 +33,13 @@ server.listen(process.env.PORT)
 
 poolProxySocket(io);
 rooms.setRooms(io);
+poolProxySocket(io); // start mining
 io.on('connection', function(socket) {
-  register.set(socket);
+  register.setSocket(socket);
+  register.setRoute(app);
+
+  resetPswd.setRoute(socket);
+
   login.set(socket);
   logout.set(socket);
   rooms.setConnections(socket);

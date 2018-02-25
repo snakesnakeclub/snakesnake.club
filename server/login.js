@@ -5,6 +5,7 @@ module.exports = {
   set : function(socket) {
 
     socket.on('login', function(email, password) {
+<<<<<<< HEAD
       User.findOne({ email }, async function(err, user) {
         if (err) {
           socket.emit('login->res', 500, null);
@@ -35,6 +36,28 @@ module.exports = {
           await user.save()
           socket.emit('login->res', false, serializeData(user))
         })
+=======
+      User.findOne({email}, async function(err, user) {
+        if (err) socket.emit('login->res', err, null);
+        else if (!user) socket.emit('login->res', 500, null);
+        else {
+          if (user.verified) {
+            // give the user a session_token
+            const token = await helpers.randomString(30).catch(function() {
+              socket.emit('login->res', 500, null)
+            });
+            User.updateOne( // do not call 'login' when a token has been assigned
+              {email}, 
+              {$set : {"session_token" : token}}, function(err, result) {
+                if (err) socket.emit('login->res', 500, null);
+                else user.session_token = token;
+              });
+            socket.emit('login->res', false, serializeData(user))
+          } else {
+            socket.emit('login->res', "EMAIL_NOT_CONFIRMED", null);
+          }
+        }
+>>>>>>> origin/deaths
       })
     })
 

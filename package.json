@@ -26,6 +26,7 @@
     "bcrypt": "1.0.3",
     "crypto": "1.0.1",
     "express": "^4.16.2",
+    "js-beautify": "1.7.5",
     "mongoose": "^5.0.7",
     "node-fetch": "2.0.0",
     "nodemailer": "4.6.0",

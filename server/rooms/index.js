@@ -18,7 +18,7 @@ function getRoom (room_id) {
   return false;
 }
 
-function EnterRoom(user, room, socket) {
+function EnterRoom (user, room, socket) {
   var newbalance = user.balance - room.fee;
   User.updateOne(
     {token_session: user.token_session},
@@ -67,6 +67,7 @@ module.exports = {
         }
       })
     })
+
 
   }
 }
