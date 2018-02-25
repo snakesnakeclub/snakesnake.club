@@ -12,7 +12,7 @@ class Room {
     this.players = new Map(); // player which holds user's data
     this.world = new World(); // width length
     this.rewards = [];
-    setInterval(this.gameTick.bind(this), 8000)
+    setInterval(this.gameTick.bind(this), 10000 / 7)
   }
 
   addPlayer(socket, data) { // user data and socket

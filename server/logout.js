@@ -8,6 +8,7 @@ module.exports = {
       User.updateOne(
         {session_token}, 
         {$set : {"session_token" : null}}, function (err, result) {
+          console.log(result);
           if (err) socket.emit('logout->res', 500);
           else if (!result) socket.emit('logout->res', 'INVALID_TOKEN');
           socket.emit('logout->res', false);
