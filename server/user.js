@@ -5,21 +5,26 @@ var UserSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
-    required: true
+    required: true,
+    lowercase: true,
   },
   username: {
     type: String,
     unique: true,
     required: true,
-    trim: true
+    trim: true,
+    lowercase: true,
+    minlength: 3,
+    maxlength: 25,
+    match: /^\w(\w|\d)+$/
   },
-  balance : {
+  balance: {
     type: Number,
     required: false
   },
   password: {
     type: String,
-    require: true
+    require: true,
   },
   verified: {
     type: Boolean,
@@ -27,12 +32,9 @@ var UserSchema = new mongoose.Schema({
   },
   verification_token: {
     type: String,
-    required: true,
-    unique: true
   },
   session_token: {
     type: String,
-    unique: true
   }
 });
 

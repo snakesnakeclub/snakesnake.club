@@ -1,10 +1,11 @@
 import BABYLON from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
+import validator from 'validator'
 
 module.exports = function createScene(game) {
   const scene = new BABYLON.Scene(game.engine);
   
-  const socket = game.io;
+  const socket = game.socket;
 
 	const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
   camera.setTarget(BABYLON.Vector3.Zero());
@@ -79,25 +80,35 @@ module.exports = function createScene(game) {
   btnRegister.paddingTop = '7px';
   btnRegister.paddingBottom = '7px';
   btnRegister.onPointerDownObservable.add(() => {
-    var Email = inputEmail;
-    var Username = inputUsername;
-    var Password = inputPassword;
-    var PasswordConf = inputConfirmPassword;
-    if (PasswordConf == Password) {
+    var email = inputEmail.text;
+    var username = inputUsername.text;
+    var password = inputPassword.text;
+    var passwordConfirmation = inputConfirmPassword.text;
+    if (passwordConfirmation === password) {
       socket.emit('register', email, username, password);
-      socket.on('resgister->resp', function(err) {
-        if (err == 500) {
-          alert("Something went wrong please try again.")
-        } else if (err) {
-          alert(err);
-        } else {
-          alert("registration complete! Please see your email address to confirm");
-        }
-      })
+
     } else {
-      alert("Password's do not match")
+      alert("Passwords do not match.")
     }
   });
+  socket.on('register->res', function(err) {
+    if (err == 500) {
+      alert("Internal error occurred. Please try again at a later time.")
+      return
+    } else if (err) {
+      console.log(err)
+      alert({
+        // hehehe, excused cuz we are at a hackathon :) <3 to the reader
+        USERNAME_TAKEN: 'Username is already in use.',
+        EMAIL_ALREADY_REGISTERED: 'Email is already in use.',
+        INVALID_EMAIL: 'Email field must be an email.',
+        WEAK_PASSWORD: 'Password too weak.',
+      }[err]);
+      return
+    }
+    
+    alert("Registration complete! Please check your inbox to continue.");
+  })
   
   panel.addControl(btnRegister); 
   const btnLogin = BABYLON.GUI.Button.CreateSimpleButton('btnLogin', 'already have an account?');
@@ -128,9 +139,33 @@ module.exports = function createScene(game) {
   resendEmail.paddingTop = '15px';
   resendEmail.thickness = 0;
   resendEmail.onPointerUpObservable.add(() => {
-    //
-    
+    const email = inputEmail.text
+    if (!email) {
+      alert('Email address is required.')
+      return
+    }
+    if (!validator.isEmail(email)) {
+      alert('Email address is invalid.')
+      return
+    }
+    socket.emit('resend-confirmation', email)
   });
+  socket.on('resend-confirmation->res', function(err) {
+    if (err == 500) {
+      alert("Internal error occurred. Please try again at a later time.")
+      return
+    } else if (err) {
+      console.log(err)
+      alert({
+        // hehehe, excused cuz we are at a hackathon :) <3 to the reader
+        USER_ALREADY_VERIFIED: 'User is already verified.',
+        INVALID_EMAIL: 'Email field must be an email.',
+      }[err]);
+      return
+    }
+    
+    alert("Confirmation email has been resent! Please check your inbox to continue.");
+  })
   panel.addControl(resendEmail);
 
   advancedTexture.addControl(panel);

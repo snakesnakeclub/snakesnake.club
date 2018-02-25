@@ -1,6 +1,6 @@
 import BABYLON from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
-import * as handle from './helpers';
+import { handle500 } from './helpers';
 
 module.exports = function createScene(game) {
 	// This creates a basic Babylon Scene object (non-mesh)
@@ -49,7 +49,6 @@ module.exports = function createScene(game) {
   });
   panel.addControl(inputPassword);
 
-
   const btnLogin = BABYLON.GUI.Button.CreateSimpleButton('btnLogin', 'LOGIN');
   btnLogin.width = '240px';
   btnLogin.maxWidth = '240px';
@@ -64,9 +63,11 @@ module.exports = function createScene(game) {
     var password = password;
     socket.emit('login', email, password);
     socket.on('login->res', function(err, data) {
-      if (err == 500) handle.handle500;
-      else if (err) alert(err);
-      else {
+      if (err == 500) {
+        return handle500(err);
+      } else if (err) {
+        alert(err);
+      } else {
         
       }
     })
