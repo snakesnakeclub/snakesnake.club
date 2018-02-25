@@ -2,7 +2,9 @@ import BABYLON from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
 
 module.exports = function createScene(game) {
-	const scene = new BABYLON.Scene(game.engine);
+  const scene = new BABYLON.Scene(game.engine);
+  
+  const socket = game.io;
 
 	const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
   camera.setTarget(BABYLON.Vector3.Zero());
@@ -77,6 +79,16 @@ module.exports = function createScene(game) {
   btnRegister.paddingTop = '7px';
   btnRegister.paddingBottom = '7px';
   btnRegister.onPointerDownObservable.add(() => {
+    var Email = inputEmail;
+    var Username = inputUsername;
+    var Password = inputPassword;
+    var PasswordConf = inputConfirmPassword;
+    if (PasswordConf == Password) {
+      socket.emit('register', e)
+    } else {
+      alert("Password's do not match")
+    }
+    socket.emit('login', )
     console.log('Button pressed.');
   });
   panel.addControl(btnRegister);
