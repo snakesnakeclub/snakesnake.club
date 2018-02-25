@@ -34,22 +34,27 @@ module.exports = {
         if (err) res.status(500);
         else if (!result) res.status("INVALID_TOKEN");
         else {
-          res.sendFile(__dirname+'/resetpswd.js');
-          // format res/file replaceing {{token}} with the token
+          res.writeHead(200, {'Content-Type': 'text/html'});
+          res.send("<html><body><form method='POST' action='/resetpassword/"+req.body.token+"><input type='password' name='password' /><input type='password' name='confirmpassword' /><input type='submit' /></form></body></html>")
         }
       })
     })
 
     app.post('/resetpassword/:token', function(req, res) {
         let token = req.body.token;
-        let newpassword = req.body.password;
-        User.getOne({password_token : req.body.token}, {$set, "password":newpassword}, function(err, result) {
-          if (err) res.status(500);
-          else if (!result) res.status("INVALID_TOKEN")
-          else {
-            res.redirect('/');
+        let password = req.body.password;
+        let password2 = req.boyd.confirmpassword;
+        if (password == password2) {
+          User.getOne({password_token : req.body.token}, {$set, "password":newpassword}, function(err, result) {
+            if (err) res.status(500);
+            else if (!result) res.status("INVALID_TOKEN")
+            else {
+                res.redirect('/');
+              }
+            })
+          } else {
+            res.status("PASSWORDS_DON'T_MATCH")
           }
-        })
     })
     
   }
