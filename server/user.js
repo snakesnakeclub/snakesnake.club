@@ -13,6 +13,10 @@ var UserSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  balance : {
+    type: Number,
+    required: false
+  },
   password: {
     type: String,
     require: true

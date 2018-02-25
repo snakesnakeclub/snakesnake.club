@@ -17,6 +17,7 @@ module.exports = {
                 email: email,
                 username: username,
                 password: password,
+                balance: 0,
                 verified : false,
                 verification_token : token,
                 session_token : null,
