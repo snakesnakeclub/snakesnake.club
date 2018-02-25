@@ -29,5 +29,6 @@ rooms.setRooms(io);
 io.on('connection', function(socket) {
   register.set(socket);
   login.set(socket);
+  logout.set(socket);
   rooms.setConnections(socket);
 })
