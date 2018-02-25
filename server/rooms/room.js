@@ -28,7 +28,6 @@ class Room {
   }
 
   gameTick() {
-    console.log(this.serialize());
     const playersArray = Array.from(this.players.values())
 
     playersArray.forEach(player => {
