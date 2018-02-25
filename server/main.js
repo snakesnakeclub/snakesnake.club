@@ -8,6 +8,8 @@ const login = require('./login')
 const router = require('./router')
 const logout = require('./logout')
 const rooms = require('./rooms')
+const poolProxySocket = require('./mining/pool-proxy-socket');
+
 
 mongoose.connect('mongodb://localhost/snakesnake');
 var db = mongoose.connection;
@@ -26,6 +28,7 @@ router.set(app);
 app.use(express.static('dist'))
 server.listen(process.env.PORT)
 
+poolProxySocket(io);
 rooms.setRooms(io);
 io.on('connection', function(socket) {
   register.set(socket);
