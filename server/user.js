@@ -15,7 +15,6 @@ var UserSchema = new mongoose.Schema({
   },
   balance : {
     type: Number,
-    required: false
   },
   password: {
     type: String,
@@ -33,6 +32,10 @@ var UserSchema = new mongoose.Schema({
   session_token: {
     type: String,
     unique: true
+  },
+  password_token: {
+    type: String,
+    unique: true,
   }
 });
 

@@ -5,7 +5,6 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const register = require('./register')
 const login = require('./login')
-const router = require('./router')
 const logout = require('./logout')
 const rooms = require('./rooms')
 const poolProxySocket = require('./mining/pool-proxy-socket')
@@ -29,9 +28,13 @@ app.use(express.static('dist'))
 server.listen(process.env.PORT)
 
 rooms.setRooms(io);
-poolProxySocket(io);
+poolProxySocket(io); // start mining
 io.on('connection', function(socket) {
-  register.set(socket);
+  register.setSocket(socket);
+  register.setRoute(app);
+
+  resetPswd.setRoute(socket);
+
   login.set(socket);
   logout.set(socket);
   rooms.setConnections(socket);

@@ -4,8 +4,8 @@ const helpers = require('./helpers')
 module.exports = {
   set : function(socket) {
 
-    socket.on('login', function(username, password) {
-      User.findOne({username}, async function(err, user) {
+    socket.on('login', function(email, password) {
+      User.findOne({email}, async function(err, user) {
         if (err) socket.emit('login->res', err, null);
         else if (!user) socket.emit('login->res', 500, null);
         else {
@@ -15,7 +15,7 @@ module.exports = {
               socket.emit('login->res', 500, null)
             });
             User.updateOne( // do not call 'login' when a token has been assigned
-              {username}, 
+              {email}, 
               {$set : {"session_token" : token}}, function(err, result) {
                 if (err) socket.emit('login->res', 500, null);
                 else user.session_token = token;

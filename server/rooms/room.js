@@ -57,9 +57,7 @@ class Room {
         rewards.pop();
 
         updateBalance(this.players.get(aPlayer.id));
-        while ((i--) < length) {
-          aPlayer.grow();
-        }
+        // across tick length
         
       }
     })

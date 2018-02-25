@@ -7,7 +7,7 @@ const validator = require('validator')
 
 module.exports = {
   
-  set : function(socket) {
+  setSocket : function(socket) {
       socket.on('register', async function(email, username, password) {
           if (validate(email, username, password, (err) => socket.emit('register->res', err))) {
             const token = await helpers.randomString(30).catch(function() {
@@ -32,7 +32,23 @@ module.exports = {
             });
           }
       });
-  }
+  },
+
+  setRoute : function(app) {
+    app.get('/verify/:token', function(req, res) {
+      let token = req.params.token;
+      User.updateOne(
+        {verification_token : token},
+        {$set: 
+          {"verified": true,
+          "verification_token": null}}, function(err, result) {
+            if (err || !result) {
+              res.status(400);
+            } else console.log('validated');
+          })
+      res.redirect('/');
+    });
+  },
 }
 
 function validate (email, username, password, callback) {
