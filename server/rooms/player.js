@@ -52,8 +52,8 @@ class Player {
    */
 	grow() {
 		const head = this.head();
-		const x = Math.min(Math.max(head.x + this.dx, 5), this.world.width - 5);
-		const y = Math.min(Math.max(head.y + this.dy, 5), this.world.height - 5);
+		const x = Math.min(Math.max(head.x + this.dx, 0), this.world.width - 1);
+		const y = Math.min(Math.max(head.y + this.dy, 0), this.world.height - 1);
     this.pieces.push(new PlayerPiece(x, y));
     if (this.nextDirection) {
     	this.direction = this.nextDirection;
