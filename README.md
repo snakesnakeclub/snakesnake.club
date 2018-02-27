@@ -3,7 +3,7 @@
 npm install
 
 # to run in production
-npm build </br> 
+npm run-script build </br> 
 npm start </br>
 
 # to run in development
