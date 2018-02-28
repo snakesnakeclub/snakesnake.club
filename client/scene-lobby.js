@@ -4,11 +4,11 @@ import scoinUrl from './assets/scoin.png';
 import piggy from './assets/bank.png';
 
 module.exports = function createScene(game) {
-  const socket = game.socket
-	// This creates a basic Babylon Scene object (non-mesh)
-	const scene = new BABYLON.Scene(game.engine);
+  const socket = game.socket;
+  // This creates a basic Babylon Scene object (non-mesh)
+  const scene = new BABYLON.Scene(game.engine);
 
-	const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
+  const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
   camera.setTarget(BABYLON.Vector3.Zero());
 
   const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
@@ -54,7 +54,7 @@ module.exports = function createScene(game) {
   coinRect3.paddingTop = '50px';
   coinRect3.isVertical = false;
   advancedTexture.addControl(coinRect3);
-  
+
   const coinRect4 = new BABYLON.GUI.Rectangle();
   coinRect4.thickness = 0;
   coinRect4.top = '80px';
@@ -114,11 +114,11 @@ module.exports = function createScene(game) {
   adHole.paddingBottom = '7px';
   adHole.left = '-50px';
   coinRect3.addControl(adHole);
-  
-  socket.emit('getRooms')
-  socket.on('getRooms->res', (rooms) => {
-    game.rooms = rooms
-    
+
+  socket.emit('getRooms');
+  socket.on('getRooms->res', rooms => {
+    game.rooms = rooms;
+
     if (rooms[0]) {
       const freeRoom = BABYLON.GUI.Button.CreateSimpleButton('freeRoom', 'join free room');
       freeRoom.fontFamily = 'Patua One';
@@ -131,12 +131,12 @@ module.exports = function createScene(game) {
       freeRoom.paddingBottom = '7px';
       freeRoom.left = '-80px';
       freeRoom.onPointerUpObservable.add(() => {
-        socket.emit('play', rooms[0].id, game.user.session_token)
-        game.setActiveScene('game', { advancedTexture, scene });
-      })
+        socket.emit('play', rooms[0].id, game.user.session_token);
+        game.setActiveScene('game', {advancedTexture, scene});
+      });
       coinRect4.addControl(freeRoom);
     }
-  
+
     if (rooms[1]) {
       const paidRoom = BABYLON.GUI.Button.CreateSimpleButton('paidRoom', rooms[1].fee + 'c room');
       paidRoom.fontFamily = 'Patua One';
@@ -149,29 +149,28 @@ module.exports = function createScene(game) {
       paidRoom.paddingBottom = '7px';
       paidRoom.left = '80px';
       paidRoom.onPointerUpObservable.add(() => {
-        socket.emit('play', rooms[1].id, game.user.session_token)
+        socket.emit('play', rooms[1].id, game.user.session_token);
         game.setActiveScene('game');
-      })
-      socket.on('play->res', (err) => {
+      });
+      socket.on('play->res', err => {
         if (err) {
           alert({
             INVALID_TOKEN: 'Invalid session token.',
             INSUFFICIENT_COINS: 'Insufficient coins.',
-            INVALID_ROOM_ID: 'Invalid room id',
-          }[err])
-          return
+            INVALID_ROOM_ID: 'Invalid room id'
+          }[err]);
         }
-      })
+      });
       coinRect4.addControl(paidRoom);
     }
-  })
+  });
 
   let deg = 0;
   setInterval(rotate_coin, 50);
   function rotate_coin() {
-  	const a = Math.sin(deg) * 0.5 + 0.5;
-  	imgCoin.width = 55 * a;
-  	deg += 0.15;
+    const a = Math.sin(deg) * 0.5 + 0.5;
+    imgCoin.width = 55 * a;
+    deg += 0.15;
   }
 
   return scene;

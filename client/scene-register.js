@@ -3,11 +3,11 @@ import * as GUI from 'babylonjs-gui';
 import validator from 'validator';
 
 module.exports = function createScene(game) {
-	const scene = new BABYLON.Scene(game.engine);
+  const scene = new BABYLON.Scene(game.engine);
 
-	const socket = game.socket;
+  const socket = game.socket;
 
-	const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
+  const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
   camera.setTarget(BABYLON.Vector3.Zero());
 
   const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
@@ -74,31 +74,31 @@ module.exports = function createScene(game) {
   btnRegister.paddingTop = '7px';
   btnRegister.paddingBottom = '7px';
   btnRegister.onPointerUpObservable.add(() => {
-  	const email = inputEmail.text;
-  	const username = inputUsername.text;
-  	const password = inputPassword.text;
-  	const passwordConfirmation = inputConfirmPassword.text;
-  	if (passwordConfirmation === password) {
+    const email = inputEmail.text;
+    const username = inputUsername.text;
+    const password = inputPassword.text;
+    const passwordConfirmation = inputConfirmPassword.text;
+    if (passwordConfirmation === password) {
       socket.emit('register', email, username, password);
-  	} else {
+    } else {
       alert('Passwords do not match.');
-  	}
+    }
   });
   socket.on('register->res', err => {
-  	if (err == 500) {
+    if (err == 500) {
       alert('Internal error occurred. Please try again at a later time.');
       return;
-  	} if (err) {
+    } if (err) {
       console.log(err);
       alert({
-      	// Hehehe, excused cuz we are at a hackathon :) <3 to the reader
-      	USERNAME_TAKEN: 'Username is already in use.',
-      	EMAIL_ALREADY_REGISTERED: 'Email is already in use.',
-      	INVALID_EMAIL: 'Email field must be an email.',
-      	WEAK_PASSWORD: 'Password too weak.'
+        // Hehehe, excused cuz we are at a hackathon :) <3 to the reader
+        USERNAME_TAKEN: 'Username is already in use.',
+        EMAIL_ALREADY_REGISTERED: 'Email is already in use.',
+        INVALID_EMAIL: 'Email field must be an email.',
+        WEAK_PASSWORD: 'Password too weak.'
       }[err]);
       return;
-  	}
+    }
 
     alert('Registration complete! Please check your inbox to continue.');
   });
@@ -115,7 +115,7 @@ module.exports = function createScene(game) {
   btnLogin.paddingTop = '15px';
   btnLogin.thickness = 0;
   btnLogin.onPointerUpObservable.add(() => {
-    game.setActiveScene('login', { advancedTexture, scene });
+    game.setActiveScene('login', {advancedTexture, scene});
   });
   panel.addControl(btnLogin);
 
@@ -130,30 +130,30 @@ module.exports = function createScene(game) {
   resendEmail.paddingTop = '15px';
   resendEmail.thickness = 0;
   resendEmail.onPointerUpObservable.add(() => {
-  	const email = inputEmail.text;
-  	if (!email) {
+    const email = inputEmail.text;
+    if (!email) {
       alert('Email address is required.');
       return;
-  	}
-  	if (!validator.isEmail(email)) {
+    }
+    if (!validator.isEmail(email)) {
       alert('Email address is invalid.');
       return;
-  	}
+    }
     socket.emit('resend-confirmation', email);
   });
   socket.on('resend-confirmation->res', err => {
-  	if (err == 500) {
+    if (err == 500) {
       alert('Internal error occurred. Please try again at a later time.');
       return;
-  	} if (err) {
+    } if (err) {
       console.log(err);
       alert({
-      	// Hehehe, excused cuz we are at a hackathon :) <3 to the reader
-      	USER_ALREADY_VERIFIED: 'User is already verified.',
-      	INVALID_EMAIL: 'Email field must be an email.'
+        // Hehehe, excused cuz we are at a hackathon :) <3 to the reader
+        USER_ALREADY_VERIFIED: 'User is already verified.',
+        INVALID_EMAIL: 'Email field must be an email.'
       }[err]);
       return;
-  	}
+    }
 
     alert('Confirmation email has been resent! Please check your inbox to continue.');
   });

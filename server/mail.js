@@ -1,47 +1,81 @@
 const nodemailer = require('nodemailer');
+const fs = require('fs');
+const path = require('path');
+const Handlebars = require('handlebars');
+const stripTags = require('striptags')
+const {
+  SMTP_HOST,
+  SMTP_PORT,
+  SMTP_USER,
+  SMTP_PASS,
+  SMTP_SECURE,
+  SMTP_FROM,
+  CLIENT_URL,
+} = require('./credentials.js')
+const verificationMailTemplate = Handlebars.compile(String(fs.readFileSync(
+  path.join(__dirname, './templates/mail-verification.handlebars'))));
+const resetPasswordMailTemplate = Handlebars.compile(String(fs.readFileSync(
+  path.join(__dirname, './templates/mail-reset-password.handlebars'))));
 
 const transporter = nodemailer.createTransport({
-	host: 'smtp.mailtrap.io',
-	port: 2525,
-	secure: false, // True for 465, false for other ports
-	auth: {
-		user: '2aa25f7a76e897',
-		pass: '67104bae3640b4'
-	}
+  host: SMTP_HOST,
+  port: SMTP_PORT,
+  secure: SMTP_SECURE,
+  auth: {
+    user: SMTP_USER,
+    pass: SMTP_PASS,
+  }
 });
 
+const defaultOptions = {
+  from: `snakesnake.club <${SMTP_FROM}>`,
+}
+
 module.exports = {
-
-	sendEmailConfirmation(email, token) {
-		const mailOptions = {
-			from: 'SnakeSnake <snake@snakesnake.club>',
-			to: email,
-			subject: 'Email Confirmation',
-			text: 'Visit the link : http://localhost:3000/verify/' + token,
-			html: '<b>Click the link : <a href="http://localhost:3000/verify/' + token + '">Confirm</b>'
-		};
-
-    transporter.sendMail(mailOptions, (err, info) => {
-    	if (err) {
-    		return console.log(err);
-    	}
+  sendEmailVerification(toEmail, verificationToken) {
+    const html = verificationMailTemplate({
+      CLIENT_URL,
+      verificationToken,
+    })
+    const text = stripTags(html)
+    return new Promise((resolve, reject) => {
+      transporter.sendMail({
+        ...defaultOptions,
+        to: toEmail,
+        subject: 'Email Verification Request',
+        text,
+        html
+      }, (err, info) => {
+        if (err) {
+          reject(err)
+          return
+        }
+        resolve(info)
+      });
     });
-	},
+  },
 
-	sendPasswordReset(email, token) {
-		const mailOptions = {
-			from: 'SnakeSnake',
-			to: email,
-			subject: 'Password Confirmation',
-			text: String('Visit the link : http://localhost:3000/verifypassword/' + token),
-			html: '<b>Click the link : <a href="http://localhost:3000/verifypassword/' + token + '">Confirm</b>'
-		};
-
-    transporter.sendMail(mailOptions, (err, info) => {
-    	if (err) {
-    		return console.log(err);
-    	}
+  sendPasswordReset(toEmail, passwordToken) {
+    const html = resetPasswordMailTemplate({
+      CLIENT_URL,
+      passwordToken,
     });
-	}
+    const text = stripTags(html);
+    return new Promise((resolve, reject) => {
+      transporter.sendMail({
+        ...defaultOptions,
+        to: toEmail,
+        subject: 'Reset Password Request',
+        text,
+        html,
+      }, (err, info) => {
+        if (err) {
+          reject(err)
+          return
+        }
+        resolve(info)
+      });
+    })
+  }
 
 };

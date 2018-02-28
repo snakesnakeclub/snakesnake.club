@@ -1,10 +1,16 @@
 # htv2
 
+```
 npm install
+```
 
-# to run in production
-npm run-script build </br> 
-npm start </br>
+# Run in production
+```
+npm run-script build
+npm start
+```
 
-# to run in development
+# Run in development
+```
 npm run watch
+```

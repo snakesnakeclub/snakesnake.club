@@ -4,12 +4,12 @@ import validator from 'validator';
 import {handle500} from './helpers';
 
 module.exports = function createScene(game) {
-	// This creates a basic Babylon Scene object (non-mesh)
-	const scene = new BABYLON.Scene(game.engine);
+  // This creates a basic Babylon Scene object (non-mesh)
+  const scene = new BABYLON.Scene(game.engine);
 
-	const socket = game.socket;
+  const socket = game.socket;
 
-	const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
+  const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
   camera.setTarget(BABYLON.Vector3.Zero());
 
   const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
@@ -57,8 +57,8 @@ module.exports = function createScene(game) {
   btnLogin.paddingTop = '7px';
   btnLogin.paddingBottom = '7px';
   btnLogin.onPointerUpObservable.add(() => {
-  	const email = inputEmail.text;
-  	const password = inputPassword.text;
+    const email = inputEmail.text;
+    const password = inputPassword.text;
     socket.emit('login', email, password);
   });
   socket.on('login->res', (err, user) => {
@@ -75,7 +75,7 @@ module.exports = function createScene(game) {
     User: { email, username, balance, takedowns, session_token }
     */
     game.user = user;
-    game.setActiveScene('lobby', { advancedTexture, scene });
+    game.setActiveScene('lobby', {advancedTexture, scene});
   });
   panel.addControl(btnLogin);
 
@@ -89,7 +89,7 @@ module.exports = function createScene(game) {
   btnRegister.paddingTop = '15px';
   btnRegister.thickness = 0;
   btnRegister.onPointerUpObservable.add(() => {
-    game.setActiveScene('register', { advancedTexture, scene });
+    game.setActiveScene('register', {advancedTexture, scene});
   });
   panel.addControl(btnRegister);
 
@@ -104,13 +104,23 @@ module.exports = function createScene(game) {
   btnResetPassword.paddingTop = '15px';
   btnResetPassword.thickness = 0;
   btnResetPassword.onPointerUpObservable.add(() => {
-  	const email = inputEmail.text;
-  	if (validator.isEmail(email)) {
-      alert('Email address is invalid.');
+    const email = inputEmail.text;
+    if (!validator.isEmail(email)) {
+      alert('Invalid email address.');
       return;
-  	}
+    }
     socket.emit('reset-password', email);
   });
+  socket.on('reset-password->res', (err) => {
+    if (err) {
+      alert({
+        'INVALID_EMAIL': 'Invalid email address.',
+        '500': 'Internal error has occurred',
+      }[err])
+      return
+    }
+    alert('Password reset email has been sent! Please check your inbox.')
+  })
   panel.addControl(btnResetPassword);
 
   advancedTexture.addControl(panel);
