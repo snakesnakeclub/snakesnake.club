@@ -8,7 +8,7 @@ import createSceneLobby from './scene-lobby';
 import createSceneGame from './scene-game';
 import MinerController from './mining/miner-controller';
 
-const socket = io.connect(SOCKET_SERVER, { resource: SOCKET_SERVER_PATH });
+const socket = io.connect(SOCKET_SERVER, { path: SOCKET_SERVER_PATH });
 
 // New MinerController({socket});
 
