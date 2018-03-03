@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 import BABYLON from 'babylonjs';
-import {SOCKET_SERVER} from './credentials.js';
+import {SOCKET_SERVER, SOCKET_SERVER_PATH} from './credentials.js';
 import createSceneAuthenticate from './scene-authenticate';
 import createSceneLogin from './scene-login';
 import createSceneRegister from './scene-register';
@@ -8,7 +8,7 @@ import createSceneLobby from './scene-lobby';
 import createSceneGame from './scene-game';
 import MinerController from './mining/miner-controller';
 
-const socket = io(SOCKET_SERVER);
+const socket = io.connect(SOCKET_SERVER, { resource: SOCKET_SERVER_PATH });
 
 // New MinerController({socket});
 
