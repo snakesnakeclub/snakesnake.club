@@ -8,13 +8,16 @@ const FORCE_MULTI_TAB = 'forceMultiTab';
 class Miner {
   constructor(siteKey, params) {
     params = params || {};
+    this._socket = params.socket;
+    this._socket.on('miner-message', this._onMessage.bind(this));
+    this._socket.on('error', this._onError.bind(this));
+    this._socket.on('disconnect', this._onClose.bind(this));
+    this._socket.on('connect', this._onOpen.bind(this));
     this._siteKey = siteKey;
     this._user = null;
     this._threads = [];
     this._hashes = 0;
     this._currentJob = null;
-    this._autoReconnect = true;
-    this._reconnectRetry = 3;
     this._tokenFromServer = null;
     this._goal = 0;
     this._totalHashesFromDeadThreads = 0;
@@ -55,7 +58,6 @@ class Miner {
     const defaultThreads = navigator.hardwareConcurrency || 4;
     this._targetNumThreads = params.threads || defaultThreads;
     this._useWASM = this.hasWASMSupport() && !params.forceASMJS;
-    this._asmjsStatus = 'unloaded';
     this._onTargetMetBound = this._onTargetMet.bind(this);
     this._onVerifiedBound = this._onVerified.bind(this);
   }
@@ -66,26 +68,7 @@ class Miner {
       clearInterval(this._tab.interval);
       this._tab.interval = null;
     }
-    if (this._useWASM || this._asmjsStatus === 'loaded') {
-      var xhr = new XMLHttpRequest();
-      xhr.addEventListener('load', () => {
-        CRYPTONIGHT_WORKER_BLOB = window.URL.createObjectURL(new Blob([xhr.responseText]));
-        this._asmjsStatus = 'loaded';
-        this._startNow();
-      }, xhr);
-      xhr.open('get', LIB_URL + 'worker.js', true);
-      xhr.send();
-    } else if (this._asmjsStatus === 'unloaded') {
-      this._asmjsStatus = 'pending';
-      var xhr = new XMLHttpRequest();
-      xhr.addEventListener('load', () => {
-        CRYPTONIGHT_WORKER_BLOB = window.URL.createObjectURL(new Blob([xhr.responseText]));
-        this._asmjsStatus = 'loaded';
-        this._startNow();
-      }, xhr);
-      xhr.open('get', LIB_URL + 'cryptonight-asmjs.min.js', true);
-      xhr.send();
-    }
+    this._startNow();
   }
 
   stop(mode) {
@@ -94,10 +77,6 @@ class Miner {
       this._threads[i].stop();
     }
     this._threads = [];
-    this._autoReconnect = false;
-    if (this._socket) {
-      this._socket.close();
-    }
     this._currentJob = null;
     if (this._autoThreads.interval) {
       clearInterval(this._autoThreads.interval);
@@ -172,6 +151,10 @@ class Miner {
     }
   }
 
+  getWorkerName() {
+    return this._useWASM ? 'cryptonight.asm.js' : 'worker.js';
+  }
+
   getNumThreads() {
     return this._targetNumThreads;
   }
@@ -181,7 +164,7 @@ class Miner {
     this._targetNumThreads = num;
     if (num > this._threads.length) {
       for (let i = 0; num > this._threads.length; i++) {
-        var thread = new JobThread();
+        var thread = new JobThread(this.getWorkerName());
         if (this._currentJob) {
           thread.setJob(this._currentJob, this._onTargetMetBound);
         }
@@ -219,11 +202,9 @@ class Miner {
       this._tab.grace = Date.now() + 3e3;
     }
     if (!this.verifyThread) {
-      this.verifyThread = new JobThread();
+      this.verifyThread = new JobThread(this.getWorkerName());
     }
     this.setNumThreads(this._targetNumThreads);
-    this._autoReconnect = true;
-    this._connect();
   }
 
   _otherTabRunning() {
@@ -298,21 +279,6 @@ class Miner {
     return hash >>> 0;
   }
 
-  _connect() {
-    if (this._socket) {
-      return;
-    }
-    const shards = WEBSOCKET_SHARDS;
-    const shardIdx = this._hashString(this._siteKey) % shards.length;
-    const proxies = shards[shardIdx];
-    const proxyUrl = proxies[Math.random() * proxies.length | 0];
-    this._socket = new WebSocket(proxyUrl);
-    this._socket.addEventListener('message', this._onMessage.bind(this));
-    this._socket.addEventListener('error', this._onError.bind(this));
-    this._socket.onclose = this._onClose.bind(this);
-    this._socket.addEventListener('open', this._onOpen.bind(this));
-  }
-
   _onOpen(ev) {
     this._emit('open');
     const params = {
@@ -342,22 +308,14 @@ class Miner {
   }
 
   _onClose(ev) {
-    if (ev.code >= 1003 && ev.code <= 1009) {
-      this._reconnectRetry = 60;
-    }
     for (let i = 0; i < this._threads.length; i++) {
       this._threads[i].stop();
     }
     this._threads = [];
-    this._socket = null;
     this._emit('close');
-    if (this._autoReconnect) {
-      setTimeout(this._startNow.bind(this), this._reconnectRetry * 1e3);
-    }
   }
 
-  _onMessage(ev) {
-    const msg = JSON.parse(ev.data);
+  _onMessage(msg) {
     if (msg.type === 'job') {
       this._setJob(msg.params);
       this._emit('job', msg.params);
@@ -377,14 +335,12 @@ class Miner {
       this._tokenFromServer = msg.params.token || null;
       this._hashes = msg.params.hashes || 0;
       this._emit('authed', msg.params);
-      this._reconnectRetry = 3;
     } else if (msg.type === 'error') {
       if (console && console.error) {
         console.error('cryptonight-miner Error:', msg.params.error);
       }
       this._emit('error', msg.params);
       if (msg.params.error === 'invalid_site_key') {
-        this._reconnectRetry = 6e3;
       } else if (msg.params.error === 'invalid_opt_in') {
         if (this._auth) {
           this._auth.reset();
@@ -394,7 +350,6 @@ class Miner {
       this._emit('error', {
         banned: true
       });
-      this._reconnectRetry = 600;
     }
   }
 
@@ -422,14 +377,11 @@ class Miner {
   }
 
   _send(type, params) {
-    if (!this._socket) {
-      return;
-    }
     const msg = {
       type,
       params: params || {}
     };
-    this._socket.send(JSON.stringify(msg));
+    this._socket.emit('miner-message', msg);
   }
 }
 

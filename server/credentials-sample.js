@@ -1,6 +1,7 @@
 module.exports = {
   CLIENT_URL: 'http://localhost:3000',
   MONGO_URL: 'mongodb://localhost/snakesnake',
+  PORT: 3000,
   SOCKET_SERVER_PATH: '/socket.io',
   SMTP_HOST: 'smtp.mailtrap.io',
   SMTP_PORT: 2525,

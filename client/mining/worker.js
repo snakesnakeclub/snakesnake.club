@@ -1,6 +1,7 @@
 /* eslint-env browser */
 /* eslint-disable */
-import {LIB_URL} from '../credentials';
+// import {LIB_URL} from '../../credentials';
+const LIB_URL = 'http://localhost:3000/lib/';
 var Module = {
     locateFile: (function (path) {
         return LIB_URL + path

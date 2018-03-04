@@ -2,7 +2,7 @@
     "lhost": "127.0.0.1",
     "lport": 3001,
     "domain": "localhost",
-    "pool": "pool.cryptonoter.com:1111",
+    "pool": "xmr-usa.dwarfpool.com:8005",
     "addr": "46ohwMd5kazMMLxSWLnrP7UeRd1bASkLcGJFQr3MpYXedrz8c3m1utAcQJkWswBNL359vNZQwWA9kat1tZ9iResWCXZQCsH",
     "pass": "x"
 }

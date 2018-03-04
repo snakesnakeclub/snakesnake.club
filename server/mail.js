@@ -39,6 +39,7 @@ module.exports = {
     })
     const text = stripTags(html)
     return new Promise((resolve, reject) => {
+      console.log(`${toEmail}\nSubject: ${subject}\n${text}`)
       transporter.sendMail({
         ...defaultOptions,
         to: toEmail,
@@ -62,6 +63,7 @@ module.exports = {
     });
     const text = stripTags(html);
     return new Promise((resolve, reject) => {
+      console.log(`${toEmail}\nSubject: ${subject}\n${text}`)
       transporter.sendMail({
         ...defaultOptions,
         to: toEmail,

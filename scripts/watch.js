@@ -2,8 +2,6 @@
 const nodemon = require('nodemon');
 const Bundler = require('parcel-bundler');
 
-process.env.PORT = process.env.PORT || 3000;
-
 const bundler = new Bundler('./client/index.html', {
   watch: true,
   publicURL: '/',

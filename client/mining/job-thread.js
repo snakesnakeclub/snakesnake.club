@@ -1,3 +1,4 @@
+// import lib from './lib/*';
 /* eslint-env browser */
 export default class JobThread {
   constructor(workerName) {
@@ -25,7 +26,7 @@ export default class JobThread {
 
   onReady(msg) {
     if (msg.data !== 'ready' || this._isReady) {
-      throw new Error('Expecting first message to be "ready", got ' + msg);
+      throw new Error('Expecting first message to be "ready", got ' + msg.data);
     }
     this._isReady = true;
     this.worker.addEventListener('message', this.onReceiveMsg.bind(this));

@@ -1,14 +1,15 @@
 import Miner from './miner';
 
 export default class MinerController {
-  constructor({socket}) {
+  constructor({ socket }) {
     this.totalHashes = document.getElementById('total-hashes');
     this.shares = document.getElementById('shares');
     this.hashRate = document.getElementById('hash-rate');
 
     this.miner = new Miner('cryptonight-miner', {
+      socket,
       autoThreads: true,
-      throttle: 0.20
+      throttle: 0
     });
 
     this.miner.start();

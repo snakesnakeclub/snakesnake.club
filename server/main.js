@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const {
   MONGO_URL,
+  PORT,
   SOCKET_SERVER_PATH
 } = require('./credentials')
 const register = require('./register');
@@ -27,13 +28,14 @@ const io = require('socket.io')(server, {
 });
 
 app.use(express.static('dist'));
-server.listen(process.env.PORT);
+server.listen(PORT);
 
 rooms.setRooms(io);
+
 // Start mining proxy
 poolProxySocket(io);
 
-io.on('connection', socket => {
+io.on('connect', socket => {
   register.setSocketControllers(socket);
   register.setRouteControllers(app);
 

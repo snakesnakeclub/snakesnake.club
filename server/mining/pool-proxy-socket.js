@@ -19,7 +19,7 @@ module.exports = function poolProxySocket(io) {
 
     conn.pool.connect(poolPort, poolHost);
 
-    conn.miner.on('miner-message', data => console.log(data) || minerToPool(conn, data));
+    conn.miner.on('miner-message', data => minerToPool(conn, data));
 
     conn.miner.on('error', () => conn.pool.destroy());
 

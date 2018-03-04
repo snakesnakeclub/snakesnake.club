@@ -1,11 +1,5 @@
-/* eslint-env browser */
 /* eslint-disable */
-import {LIB_URL} from '../credentials';
-var Module = {
-    locateFile: (function (path) {
-        return LIB_URL + path
-    })
-};
+import memoryInitializer from './lib/cryptonight.asm.js.mem';
 var Module;
 if (!Module) Module = (typeof Module !== "undefined" ? Module : null) || {};
 var moduleOverrides = {};
@@ -1047,12 +1041,12 @@ function removeRunDependency(id) {
 Module["removeRunDependency"] = removeRunDependency;
 Module["preloadedImages"] = {};
 Module["preloadedAudios"] = {};
-var memoryInitializer = null;
+// var memoryInitializer = null;
 var ASM_CONSTS = [];
 STATIC_BASE = Runtime.GLOBAL_BASE;
 STATICTOP = STATIC_BASE + 11504;
 __ATINIT__.push();
-memoryInitializer = "cryptonight.asm.js.mem";
+// memoryInitializer = "cryptonight.asm.js.mem";
 var tempDoublePtr = STATICTOP;
 STATICTOP += 16;
 var PROCINFO = {
@@ -16145,11 +16139,6 @@ Runtime.setTempRet0 = Module["setTempRet0"];
 Runtime.getTempRet0 = Module["getTempRet0"];
 Module["asm"] = asm;
 if (memoryInitializer) {
-    if (typeof Module["locateFile"] === "function") {
-        memoryInitializer = Module["locateFile"](memoryInitializer)
-    } else if (Module["memoryInitializerPrefixURL"]) {
-        memoryInitializer = Module["memoryInitializerPrefixURL"] + memoryInitializer
-    }
     addRunDependency("memory initializer");
     var applyMemoryInitializer = (function (data) {
         if (data.byteLength) data = new Uint8Array(data);
