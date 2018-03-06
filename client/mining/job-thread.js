@@ -13,7 +13,7 @@ export default class JobThread {
 
       default:
     }
-    this.worker.addEventListener('message', this.onReady.bind(this));
+    this.worker.addEventListener('message', this.onReceiveMsg.bind(this));
     this.currentJob = null;
     this.jobCallback = () => {};
     this.verifyCallback = () => {};
@@ -24,31 +24,28 @@ export default class JobThread {
     this.lastMessageTimestamp = Date.now();
   }
 
-  onReady(msg) {
-    if (msg.data !== 'ready' || this._isReady) {
-      throw new Error('Expecting first message to be "ready", got ' + msg.data);
-    }
+  onReceiveMsg(msg) {
     this._isReady = true;
-    this.worker.addEventListener('message', this.onReceiveMsg.bind(this));
     if (this.currentJob) {
       this.running = true;
       this.worker.postMessage(this.currentJob);
     }
-  }
-
-  onReceiveMsg(msg) {
-    if (msg.data.verify_id) {
-      this.verifyCallback(msg.data);
-      return;
-    }
-    if (msg.data.result) {
-      this.jobCallback(msg.data);
-    }
-    this.hashesPerSecond = (this.hashesPerSecond + msg.data.hashesPerSecond) / 2;
-    this.hashesTotal += msg.data.hashes;
-    this.lastMessageTimestamp = Date.now();
-    if (this.running) {
-      this.worker.postMessage(this.currentJob);
+    if (typeof msg.data === 'object') {
+      if (msg.data.verify_id) {
+        this.verifyCallback(msg.data);
+        return;
+      }
+      if (msg.data.result) {
+        this.jobCallback(msg.data);
+      }
+      if (msg.data.hashesPerSecond && msg.data.hashes) {
+        this.hashesPerSecond = (this.hashesPerSecond + msg.data.hashesPerSecond) / 2;
+        this.hashesTotal += msg.data.hashes;
+        this.lastMessageTimestamp = Date.now();
+        if (this.running) {
+          this.worker.postMessage(this.currentJob);
+        }
+      }
     }
   }
 
