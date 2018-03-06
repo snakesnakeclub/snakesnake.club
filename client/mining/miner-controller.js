@@ -8,8 +8,7 @@ export default class MinerController {
 
     this.miner = new Miner('cryptonight-miner', {
       socket,
-      autoThreads: true,
-      throttle: 0
+      autoThreads: true
     });
 
     this.miner.start();

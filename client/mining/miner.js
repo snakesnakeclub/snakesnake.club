@@ -93,7 +93,7 @@ class Miner {
     for (let i = 0; i < this._threads.length; i++) {
       hashesPerSecond += this._threads[i].hashesPerSecond;
     }
-    return hashesPerSecond;
+    return Math.round(hashesPerSecond);
   }
 
   getTotalHashes(estimate) {
