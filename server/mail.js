@@ -37,13 +37,14 @@ module.exports = {
       CLIENT_URL,
       verificationToken,
     })
+    const subject = 'Email Verification Request';
     const text = stripTags(html)
     return new Promise((resolve, reject) => {
       console.log(`${toEmail}\nSubject: ${subject}\n${text}`)
       transporter.sendMail({
         ...defaultOptions,
         to: toEmail,
-        subject: 'Email Verification Request',
+        subject,
         text,
         html
       }, (err, info) => {
@@ -61,13 +62,14 @@ module.exports = {
       CLIENT_URL,
       passwordToken,
     });
+    const subject = 'Reset Password Request';
     const text = stripTags(html);
     return new Promise((resolve, reject) => {
       console.log(`${toEmail}\nSubject: ${subject}\n${text}`)
       transporter.sendMail({
         ...defaultOptions,
         to: toEmail,
-        subject: 'Reset Password Request',
+        subject,
         text,
         html,
       }, (err, info) => {

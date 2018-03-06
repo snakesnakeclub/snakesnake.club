@@ -11,8 +11,6 @@ export default class MinerController {
       autoThreads: true
     });
 
-    this.miner.start();
-
     requestAnimationFrame(this.updateMiningStatistics.bind(this));
   }
 

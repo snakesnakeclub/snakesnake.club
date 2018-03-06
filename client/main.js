@@ -1,72 +1,68 @@
 import io from 'socket.io-client';
 import BABYLON from 'babylonjs';
 import {SOCKET_SERVER, SOCKET_SERVER_PATH} from './credentials.js';
-import createSceneAuthenticate from './scene-authenticate';
-import createSceneLogin from './scene-login';
-import createSceneRegister from './scene-register';
-import createSceneLobby from './scene-lobby';
-import createSceneGame from './scene-game';
-import MinerController from './mining/miner-controller';
-
-const socket = io(SOCKET_SERVER, { path: SOCKET_SERVER_PATH });
-
-new MinerController({ socket });
+import createScene from './scenes';
+import MinerController from './miner';
 
 const game = {
-  socket,
-  canvas: document.getElementById('canvas'),
-  engine: new BABYLON.Engine(canvas, true),
-  activeScene: 'authenticate',
-  setActiveScene(activeScene, {advancedTexture, scene}) {
-    game.activeScene = activeScene;
-    game.sceneInitialized = false;
+  // socket.io-client#Socket
+  socket: io(SOCKET_SERVER, { path: SOCKET_SERVER_PATH }),
+  // HTMLCanvasElement
+  canvas: document.getElementById('game-canvas'),
+  // HTMLDivElement
+  overlay: document.getElementById('game-overlay'),
+  /**
+   * Disposes of the current active scene and creates the given scene.
+   * 
+   * @param {string} scene key from #createScene object
+   */
+  setActiveScene(scene) {
+    if (game.scene) {
+      game.scene.dispose()
+      while (game.overlay.firstChild) {
+        game.overlay.removeChild(game.overlay.firstChild);
+      }
+    }
+    game.scene = createScene[scene](game)
   },
-  disposeAllScenes() {
-    if (game.scenes.authenticate) {
-      game.scenes.authenticate = game.scenes.authenticate.dispose();
-    }
-    if (game.scenes.login) {
-      game.scenes.login = game.scenes.login.dispose();
-    }
-    if (game.scenes.register) {
-      game.scenes.register = game.scenes.register.dispose();
-    }
-    if (game.scenes.lobby) {
-      game.scenes.lobby = game.scenes.lobby.dispose();
-    }
-    if (game.scenes.game) {
-      game.scenes.game = game.scenes.game.dispose();
-    }
-  },
-  sceneInitialized: false,
-  room: {}
+  startSession(user) {
+    game.user = user;
+  }
 };
 
-game.scenes = {
-  authenticate: null,
-  login: null,
-  register: null,
-  lobby: null,
-  game: null
-};
+// babylonjs#Engine
+game.engine = new BABYLON.Engine(game.canvas, true);
+// babylonjs#Scene
+game.scene = null;
+// MinerController
+game.minerController = new MinerController({ socket: game.socket });
+game.minerController.miner.start();
+/*
+User {
+  email: string
+  username: string
+  balance: number
+  takedowns: number
+  session_token: string
+}
+*/
+game.user = null
+/*
+Room {
+  id: string
+  fee: number
+  world: {
+    width: number
+    height: number
+  }
+}
+*/
+game.room = null;
+
+game.setActiveScene('authenticate');
 
 game.engine.runRenderLoop(() => {
-  if (game.sceneInitialized === false) {
-    game.disposeAllScenes();
-    if (game.activeScene === 'authenticate') {
-      game.scenes.authenticate = createSceneAuthenticate(game);
-    } else if (game.activeScene === 'login') {
-      game.scenes.login = createSceneLogin(game);
-    } else if (game.activeScene === 'register') {
-      game.scenes.register = createSceneRegister(game);
-    } else if (game.activeScene === 'lobby') {
-      game.scenes.lobby = createSceneLobby(game);
-    } else if (game.activeScene === 'game') {
-      game.scenes.game = createSceneGame(game);
-    }
-    game.sceneInitialized = true;
-  }
-
-  game.scenes[game.activeScene].render();
+  game.scene.render();
 });
+
 window.addEventListener('resize', () => game.engine.resize());

@@ -9,9 +9,9 @@ class Room {
     this.id = id;
     this.fee = fee;
     this.players = new Map(); // Socket -> player which holds user's data
-    this.world = new World(20, 20); // Width length
+    this.world = new World(30, 30); // Width length
     this.rewards = [];
-    setInterval(this.gameTick.bind(this), 1000 / 2);
+    setInterval(this.gameTick.bind(this), 1000 / 6);
   }
 
   addPlayer(socket, data) { // User data and socket
@@ -80,7 +80,8 @@ class Room {
   serializeForLobby() {
     return {
       id: this.id,
-      fee: this.fee
+      fee: this.fee,
+      world: this.world.serialize(),
     };
   }
 }

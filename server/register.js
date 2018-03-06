@@ -44,30 +44,30 @@ module.exports = {
       });
     });
 
-    socket.on('resend-confirmation', async email => {
+    socket.on('resend-verification', async email => {
       if (!validator.isEmail(email)) {
-        socket.emit('resend-confirmation->res', 'INVALID_EMAIL');
+        socket.emit('resend-verification->res', 'INVALID_EMAIL');
         return;
       }
 
       const token = await helpers.randomString(30)
         .catch(err => {
           console.error(err);
-          socket.emit('resend-confirmation->res', 500);
+          socket.emit('resend-verification->res', 500);
         });
 
       User.findOne({
         email
       }, async (err, user) => {
         if (err && !user) {
-          socket.emit('resend-confirmation->res', 500);
+          socket.emit('resend-verification->res', 500);
           return;
         }
         if (user.verified) {
-          socket.emit('resend-confirmation->res', 'USER_ALREADY_VERIFIED');
+          socket.emit('resend-verification->res', 'USER_ALREADY_VERIFIED');
           return;
         }
-        socket.emit('resend-confirmation->res', false);
+        socket.emit('resend-verification->res', false);
         user.verification_token = token;
         await user.save();
         mail.sendEmailVerification(email, token);
@@ -76,7 +76,7 @@ module.exports = {
   },
 
   setRouteControllers(app) {
-    app.get('/verify/:token', (req, res) => {
+    app.get('/verification/:token', (req, res) => {
       const token = req.params.token;
       User.findOne({
         verification_token: token

@@ -1,3 +1,0 @@
-export function handle500() {
-  alert('Something went wrong please try again.');
-}
