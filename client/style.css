@@ -5,6 +5,7 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+  background-color: #38324e;
 }
 
 #game-canvas {
@@ -49,7 +50,9 @@ p {
 }
 
 input[type="text"],
+input[type="email"],
 input[type="password"] {
+  display: block;
   font-family: 'Patua One';
   width: 240px;
   height: 32px;

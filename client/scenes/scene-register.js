@@ -19,60 +19,51 @@ module.exports = function createScene(game) {
   imgLogo.height = 150;
   game.overlay.appendChild(imgLogo);
   
+  const formRegister = document.createElement('form');
+  game.overlay.appendChild(formRegister);
+  formRegister.addEventListener('submit', handleRegisterClick);
+  socket.once('register->res', handleRegisterResponse);
+  
   const inputEmail = document.createElement('input');
-  inputEmail.type = 'text';
+  inputEmail.id = 'register-email';
+  inputEmail.name = 'register-email';
+  inputEmail.type = 'email';
+  inputEmail.required = true;
+  inputEmail.autocomplete = false;
   inputEmail.placeholder = 'Email';
-  game.overlay.appendChild(inputEmail);
+  formRegister.appendChild(inputEmail);
   
   const inputUsername = document.createElement('input');
+  inputUsername.id = 'register-username';
+  inputUsername.name = 'register-username';
   inputUsername.type = 'text';
+  inputUsername.required = true;
+  inputUsername.autocomplete = false;
   inputUsername.placeholder = 'Username';
-  game.overlay.appendChild(inputUsername);
+  formRegister.appendChild(inputUsername);
   
   const inputPassword = document.createElement('input');
+  inputPassword.id = 'register-password';
+  inputPassword.id = 'register-password';
   inputPassword.type = 'password';
+  inputPassword.required = true;
+  inputPassword.autocomplete = false;
   inputPassword.placeholder = 'Password';
-  game.overlay.appendChild(inputPassword);
+  formRegister.appendChild(inputPassword);
   
   const inputConfirmPassword = document.createElement('input');
+  inputConfirmPassword.id = 'register-confirm-password';
+  inputConfirmPassword.name = 'register-confirm-password';
   inputConfirmPassword.type = 'password';
+  inputConfirmPassword.required = true;
+  inputConfirmPassword.autocomplete = false;
   inputConfirmPassword.placeholder = 'Confirm Password';
-  game.overlay.appendChild(inputConfirmPassword);
+  formRegister.appendChild(inputConfirmPassword);
 
   const btnRegister = document.createElement('button');
-  btnRegister.innerText = 'Register'
-  btnRegister.addEventListener('click', () => {
-    const email = inputEmail.value;
-    const username = inputUsername.value;
-    const password = inputPassword.value;
-    const passwordConfirmation = inputConfirmPassword.value;
-    if (passwordConfirmation === password) {
-      btnRegister.disabled = true;
-      socket.emit('register', email, username, password);
-    } else {
-      alert('Passwords do not match.');
-    }
-  });
-  socket.once('register->res', err => {
-    btnRegister.disabled = false;
-    if (err == 500) {
-      alert('Internal error occurred. Please try again at a later time.');
-      return;
-    } if (err) {
-      console.error(err);
-      alert({
-        // Hehehe, excused cuz we are at a hackathon :) <3 to the reader
-        USERNAME_TAKEN: 'Username is already in use.',
-        EMAIL_ALREADY_REGISTERED: 'Email is already in use.',
-        INVALID_EMAIL: 'Email field must be an email.',
-        WEAK_PASSWORD: 'Password too weak.'
-      }[err]);
-      return;
-    }
-
-    alert('Registration complete! Please check your inbox to continue.');
-  });
-  game.overlay.appendChild(btnRegister);
+  btnRegister.type = 'submit';
+  btnRegister.innerText = 'Register';
+  formRegister.appendChild(btnRegister);
 
   const btnLogin = document.createElement('button');
   btnLogin.className = 'btn-frameless'
@@ -82,11 +73,50 @@ module.exports = function createScene(game) {
   });
   game.overlay.appendChild(btnLogin);
 
-  const resendEmail = document.createElement('button');
-  resendEmail.className = 'btn-frameless'
-  resendEmail.innerText = 'resend email verification'
-  resendEmail.addEventListener('click', () => {
+  const btnResendEmail = document.createElement('button');
+  btnResendEmail.className = 'btn-frameless'
+  btnResendEmail.innerText = 'resend email verification'
+  btnResendEmail.addEventListener('click', handleResendVerficationClick);
+  socket.once('resend-verification->res', handleResendVerficationResponse);
+  game.overlay.appendChild(btnResendEmail);
+
+  function handleRegisterClick(event) {
+    event.preventDefault();
     const email = inputEmail.value;
+    const username = inputUsername.value;
+    const password = inputPassword.value;
+    const passwordConfirmation = inputConfirmPassword.value;
+
+    if (passwordConfirmation !== password) {
+      alert('Passwords do not match.');
+      return;
+    }
+    btnRegister.disabled = true;
+    socket.emit('register', email, username, password);
+  }
+
+  function handleRegisterResponse(err) {
+    btnRegister.disabled = false;
+    socket.once('register->res', handleRegisterResponse);
+    if (err) {
+      console.error(err);
+      alert({
+        USERNAME_TAKEN: 'Username is already in use.',
+        EMAIL_ALREADY_REGISTERED: 'Email is already in use.',
+        INVALID_EMAIL: 'Email is invalid.',
+        INVALID_USERNAME: 'Username is invalid.',
+        WEAK_PASSWORD: 'Password too weak.',
+        500: 'Internal error occurred. Please try again at a later time.'
+      }[err]);
+      return;
+    }
+
+    alert('Registration complete! Please check your inbox to continue.');
+  }
+
+  function handleResendVerficationClick() {
+    const email = inputEmail.value;
+
     if (!email) {
       alert('Email address is required.');
       return;
@@ -95,15 +125,17 @@ module.exports = function createScene(game) {
       alert('Email address is invalid.');
       return;
     }
-    resendEmail.disabled = true;
+
+    btnResendEmail.disabled = true;
     socket.emit('resend-verification', email);
-  });
-  socket.once('resend-verification->res', err => {
-    resendEmail.disabled = false;
+  }
+
+  function handleResendVerficationResponse(err) {
+    btnResendEmail.disabled = false;
+    socket.once('resend-verification->res', handleResendVerficationResponse);
     if (err) {
       console.error(err);
       alert({
-        // Hehehe, excused cuz we are at a hackathon :) <3 to the reader
         USER_ALREADY_VERIFIED: 'User is already verified.',
         INVALID_EMAIL: 'Email field must be an email.',
         500: 'Internal error occurred. Please try again at a later time.',
@@ -111,8 +143,7 @@ module.exports = function createScene(game) {
       return;
     }
     alert('Verification email has been resent! Please check your inbox to continue.');
-  });
-  game.overlay.appendChild(resendEmail);
-
+  }
+  
   return scene;
 };
