@@ -35,6 +35,12 @@ module.exports = {
             // Handled by validator
             return;
           }
+          if (err.name === 'ValidationError') {
+            const errors = Object.values(err.errors)
+              .map((error) => 'INVALID_' + error.path.toUpperCase())
+              socket.emit('register->res', errors[0])
+            return;
+          }
           console.error(err);
           socket.emit('register->res', 500);
           return;
@@ -59,8 +65,12 @@ module.exports = {
       User.findOne({
         email
       }, async (err, user) => {
-        if (err && !user) {
+        if (err) {
           socket.emit('resend-verification->res', 500);
+          return;
+        }
+        if (!user) {
+          socket.emit('resend-verification->res', 'INVALID_EMAIL');
           return;
         }
         if (user.verified) {
