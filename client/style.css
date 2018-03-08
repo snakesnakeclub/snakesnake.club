@@ -27,7 +27,7 @@ html, body {
   justify-content: center;
 }
 
-#mining-statistics {
+#mining {
   position: fixed;
   top: 5px;
   left: 50%;
@@ -38,7 +38,7 @@ html, body {
   text-align: center;
 }
 
-#mining-statistics td {
+#mining td {
   min-width: 80px;
 }
 

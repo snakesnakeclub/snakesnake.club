@@ -11,16 +11,27 @@
     
     <canvas id="game-canvas"></canvas>
 
-    <table id="mining-statistics">
+    <table id="mining">
       <tr>
+        <td>
+          <input id="mining--toggle" type="checkbox" checked>
+        </td>
         <td>Hash Rate</td>
         <td>Hashes</td>
         <td>Shares</td>
       </tr>
       <tr>
-        <td id="hash-rate">0 H/s</td>
-        <td id="total-hashes">0 H</td>
-        <td id="shares">0</td>
+        <td>
+          <img id="mining--download"
+            src="assets/ic_cloud_download_red_24px.svg"
+            alt="Download" />
+          <img id="mining--upload"
+            src="assets/ic_cloud_upload_green_24px.svg"
+            alt="Upload" />
+        </td>
+        <td id="mining--hash-rate">0 H/s</td>
+        <td id="mining--total-hashes">0 H</td>
+        <td id="mining--shares">0</td>
       </tr>
     </table>
     

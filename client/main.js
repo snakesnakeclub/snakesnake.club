@@ -36,7 +36,7 @@ game.engine = new BABYLON.Engine(game.canvas, true);
 game.scene = null;
 // MinerController
 game.minerController = new MinerController({ socket: game.socket });
-game.minerController.miner.start();
+
 /*
 User {
   email: string
