@@ -19,11 +19,12 @@ const game = {
   setActiveScene(scene) {
     if (game.scene) {
       game.scene.dispose()
-      while (game.overlay.firstChild) {
-        game.overlay.removeChild(game.overlay.firstChild);
-      }
+      game.scene = null
     }
-    game.scene = createScene[scene](game)
+    while (game.overlay.firstChild) {
+      game.overlay.removeChild(game.overlay.firstChild);
+    }
+    createScene[scene](game)
   },
   startSession(user) {
     game.user = user;
@@ -62,7 +63,7 @@ game.room = null;
 game.setActiveScene('authenticate');
 
 game.engine.runRenderLoop(() => {
-  game.scene.render();
+  if (game.scene) game.scene.render();
 });
 
 window.addEventListener('resize', () => game.engine.resize());

@@ -3,9 +3,10 @@ import {attach as attachKeyboard} from '../keyboard-controls';
 import {attach as attachTouch} from '../touch-controls';
 
 module.exports = function createScene(game) {
-  const scene = new BABYLON.Scene(game.engine);
-
   const socket = game.socket;
+
+  const scene = new BABYLON.Scene(game.engine);
+  game.scene = scene
 
   const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 15, 0), scene);
   camera.setTarget(BABYLON.Vector3.Zero());
@@ -83,6 +84,4 @@ module.exports = function createScene(game) {
     socket.removeListener('death', onDeath);
   }
   socket.on('death', onDeath);
-
-  return scene;
 };
