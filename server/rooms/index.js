@@ -55,6 +55,7 @@ module.exports = {
           const selectedRoom = getRoom(room_id);
           if (selectedRoom) {
             if (selectedRoom.fee <= user.balance) {
+              socket.emit('play->res', null);
               EnterRoom(user, selectedRoom, socket);
             } else {
               socket.emit('play->res', 'INSUFFICIENT_COINS');

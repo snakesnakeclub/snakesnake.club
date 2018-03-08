@@ -43,31 +43,35 @@ module.exports = function createScene(game) {
   btnAdHole.disabled = true;
   game.overlay.appendChild(btnAdHole);
 
-  socket.emit('getRooms');
   socket.once('getRooms->res', rooms => {
     rooms.forEach((room) => {
       const btnJoinRoom = document.createElement('button');
+      if (room.fee > game.user.balance) {
+        btnJoinRoom.disabled = true;
+      }
       btnJoinRoom.innerText = room.fee ? `join ${room.fee}c room` : 'join free room';
       btnJoinRoom.addEventListener('click', () => {
         btnJoinRoom.disabled = true;
-        game.room = room;
+        socket.once('play->res', err => {
+          btnJoinRoom.disabled = false;
+          if (err) {
+            console.error(err);
+            alert({
+              INVALID_TOKEN: 'Invalid session token.',
+              INSUFFICIENT_COINS: 'Insufficient coins.',
+              INVALID_ROOM_ID: 'Invalid room id'
+            }[err]);
+            return;
+          }
+          game.room = room;
+          game.setActiveScene('game');
+        });
         socket.emit('play', room.id, game.user.session_token);
-        game.setActiveScene('game');
       });
       game.overlay.appendChild(btnJoinRoom);
     })
   });
-  socket.once('play->res', err => {
-    btnJoinRoom.disabled = false;
-    if (err) {
-      game.room = null;
-      alert({
-        INVALID_TOKEN: 'Invalid session token.',
-        INSUFFICIENT_COINS: 'Insufficient coins.',
-        INVALID_ROOM_ID: 'Invalid room id'
-      }[err]);
-    }
-  });
+  socket.emit('getRooms');
 
   return scene;
 };
