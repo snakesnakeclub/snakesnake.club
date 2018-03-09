@@ -94,6 +94,7 @@ const session_token = localforage.getItem('session_token')
 
 game.engine.runRenderLoop(() => {
   if (game.scene) game.scene.render();
+  else game.engine.clear();
 });
 
 window.addEventListener('resize', () => game.engine.resize());

@@ -79,7 +79,7 @@ module.exports = function createScene(game) {
   }
 
   function handleDeath() {
-    scene.dispose();
+    meshes.forEach(mesh => mesh.dispose());
     socket.removeListener('room-tick', handleRoomTick);
     game.setActiveScene('lobby');
     detachKeyboard();
