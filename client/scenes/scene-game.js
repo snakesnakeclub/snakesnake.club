@@ -13,8 +13,10 @@ module.exports = function createScene(game) {
     scene);
   camera.setTarget(new BABYLON.Vector3(game.room.world.width / 2, 0, game.room.world.height / 2));
 
-  const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 7.5, 0), scene);
-  light.intensity = 0.65;
+  const light = new BABYLON.PointLight('light1',
+    new BABYLON.Vector3(game.room.world.width / 2, 300, game.room.world.height / 2),
+    scene);
+  light.intensity = 0.6;
 
   const detachKeyboard = attachKeyboard(handleChangeDirection);
   const detachTouch = attachTouch(handleChangeDirection);
@@ -36,10 +38,10 @@ module.exports = function createScene(game) {
     Array.from(new Array(game.room.world.width)).forEach((s, x) => {
       const boxGround = BABYLON.MeshBuilder.CreateBox('ground' + x + ',' + z, {
         height: 1,
-        width: 0.95,
-        depth: 0.95
+        width: 0.9875,
+        depth: 0.9875,
       }, scene);
-      boxGround.position = new BABYLON.Vector3(x + 0.025, 0, z + 0.025);
+      boxGround.position = new BABYLON.Vector3(x + 0.00625, 0, z + 0.00625);
     });
   });
   let meshes = [];
@@ -66,11 +68,11 @@ module.exports = function createScene(game) {
 
     room.rewards.forEach((reward, i) => {
       const boxReward = BABYLON.MeshBuilder.CreateBox('reward' + i, {
-        height: 0.2,
+        height: 0.25,
         width: 0.5,
         depth: 0.5
       }, scene);
-      boxReward.position = new BABYLON.Vector3(reward.x, 0.6, reward.y);
+      boxReward.position = new BABYLON.Vector3(reward.x, 0.625, reward.y);
       boxReward.material = matApple;
       meshes.push(boxReward);
     });
@@ -91,11 +93,11 @@ module.exports = function createScene(game) {
 
       player.pieces.forEach((piece, i) => {
         const boxPlayerPiece = BABYLON.MeshBuilder.CreateBox('player' + player.id + 'piece' + i, {
-          height: 0.3,
-          width: 0.95,
-          depth: 0.95
+          height: 0.5,
+          width: 1,
+          depth: 1
         }, scene);
-        boxPlayerPiece.position = new BABYLON.Vector3(piece.x + 0.025, 0.65, piece.y + 0.025);
+        boxPlayerPiece.position = new BABYLON.Vector3(piece.x, 0.75, piece.y);
         boxPlayerPiece.material = game.socket.id === player.id ? matMySnake : matSnake;
         meshes.push(boxPlayerPiece);
       });
