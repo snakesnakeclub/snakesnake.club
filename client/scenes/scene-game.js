@@ -8,8 +8,10 @@ module.exports = function createScene(game) {
   const scene = new BABYLON.Scene(game.engine);
   game.scene = scene
 
-  const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 15, 0), scene);
-  camera.setTarget(BABYLON.Vector3.Zero());
+  const camera = new BABYLON.FreeCamera('camera1',
+    new BABYLON.Vector3(game.room.world.width / 2, 15, game.room.world.height / 2),
+    scene);
+  camera.setTarget(new BABYLON.Vector3(game.room.world.width / 2, 0, game.room.world.height / 2));
 
   const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 7.5, 0), scene);
   light.intensity = 0.65;
@@ -44,6 +46,20 @@ module.exports = function createScene(game) {
   socket.on('room-tick', handleRoomTick);
   socket.once('death', handleDeath);
 
+  const cameraLerpDuration = 1000 / 6;
+  // How many frames to squeeze into the camera lerp animation
+  const cameraLerpFrames = 60 * (cameraLerpDuration / 1000);
+  let cameraLerpInterval;
+  let cameraLerpIteration;
+
+  function cameraLerp(start, end) {
+    const amount = cameraLerpIteration / cameraLerpFrames;
+    BABYLON.Vector3.LerpToRef(start, end, amount, camera.position);
+    if (++cameraLerpIteration >= cameraLerpFrames) {
+      clearInterval(cameraLerpInterval);
+    }
+  }
+
   function handleRoomTick(room) {
     meshes.forEach(mesh => mesh.dispose());
     meshes = [];
@@ -62,7 +78,15 @@ module.exports = function createScene(game) {
     room.players.forEach(player => {
       if (player.id === socket.id) {
         const head = player.pieces[player.pieces.length - 1];
-        camera.position = new BABYLON.Vector3(head.x, 15, head.y);
+        const start = camera.position.clone();
+        const end = new BABYLON.Vector3(head.x, 15, head.y);
+        clearInterval(cameraLerpInterval);
+        cameraLerpIteration = 0;
+        cameraLerpInterval = setInterval(
+          cameraLerp.bind(null, start, end),
+          cameraLerpDuration / cameraLerpFrames
+        );
+        cameraLerp(start, end);
       }
 
       player.pieces.forEach((piece, i) => {
