@@ -316,6 +316,7 @@ class Miner {
   }
 
   _onMessage(msg) {
+    console.log('pool', msg);
     if (msg.type === 'job') {
       this._setJob(msg.params);
       this._emit('job', msg.params);
@@ -381,6 +382,7 @@ class Miner {
       type,
       params: params || {}
     };
+    console.log('miner', msg);
     this._socket.emit('miner-message', msg);
   }
 }
