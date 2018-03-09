@@ -38,7 +38,11 @@ module.exports = {
     });
 
     socket.on('login-token', token => {
-      User.findOne({session_token: token}, (err, user) => {
+      if (!token) {
+        socket.emit('login-token->res', 'INVALID_TOKEN', null);
+        return
+      }
+      User.findOne({ session_token: token }, (err, user) => {
         if (err) {
           socket.emit('login-token->res', 500, null);
         } else if (!user) {

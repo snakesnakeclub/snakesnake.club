@@ -8,6 +8,12 @@ module.exports = function createScene(game) {
   txtUsername.innerText = game.user.username;
   game.overlay.appendChild(txtUsername);
 
+  const btnLogout = document.createElement('button');
+  btnLogout.className = 'btn-frameless'
+  btnLogout.innerText = 'logout'
+  btnLogout.addEventListener('click', game.endSession);
+  game.overlay.appendChild(btnLogout);
+
   // const imgCoin = document.createElement('img');
   // imgCoin.width = 32;
   // imgCoin.height = 32;

@@ -1,8 +1,13 @@
 import io from 'socket.io-client';
 import BABYLON from 'babylonjs';
+import localforage from 'localforage';
 import {SOCKET_SERVER, SOCKET_SERVER_PATH} from './credentials.js';
 import createScene from './scenes';
 import MinerController from './miner';
+
+localforage.config({
+  name: 'snakesnake',
+});
 
 const game = {
   // socket.io-client#Socket
@@ -28,6 +33,14 @@ const game = {
   },
   startSession(user) {
     game.user = user;
+    localforage.setItem('session_token', user.session_token)
+      .catch(console.error.bind(null, 'localforage', 'session_token'));
+    game.setActiveScene('lobby');
+  },
+  endSession() {
+    localforage.setItem('session_token', null)
+      .catch(console.error.bind(null, 'localforage', 'session_token'));
+    game.setActiveScene('authenticate');
   }
 };
 
@@ -60,7 +73,24 @@ Room {
 */
 game.room = null;
 
-game.setActiveScene('authenticate');
+const session_token = localforage.getItem('session_token')
+  .then(session_token => {
+    if (session_token) {
+      game.socket.emit('login-token', session_token);
+      game.socket.once('login-token->res', (err, user) => {
+        if (err) {
+          game.endSession();
+          return alert({
+            INVALID_TOKEN: 'Invalid session token.',
+            '500': 'Internal error has occurred',
+          }[err]);
+        }
+        game.startSession(user);
+      })
+    } else {
+      game.setActiveScene('authenticate');
+    }
+  });
 
 game.engine.runRenderLoop(() => {
   if (game.scene) game.scene.render();

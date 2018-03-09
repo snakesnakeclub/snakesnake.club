@@ -13,7 +13,6 @@ module.exports = function createScene(game) {
   const formRegister = document.createElement('form');
   game.overlay.appendChild(formRegister);
   formRegister.addEventListener('submit', handleRegisterClick);
-  socket.once('register->res', handleRegisterResponse);
   
   const inputEmail = document.createElement('input');
   inputEmail.id = 'register-email';
@@ -68,7 +67,6 @@ module.exports = function createScene(game) {
   btnResendEmail.className = 'btn-frameless'
   btnResendEmail.innerText = 'resend email verification'
   btnResendEmail.addEventListener('click', handleResendVerficationClick);
-  socket.once('resend-verification->res', handleResendVerficationResponse);
   game.overlay.appendChild(btnResendEmail);
 
   function handleRegisterClick(event) {
@@ -84,11 +82,11 @@ module.exports = function createScene(game) {
     }
     btnRegister.disabled = true;
     socket.emit('register', email, username, password);
+    socket.once('register->res', handleRegisterResponse);
   }
 
   function handleRegisterResponse(err) {
     btnRegister.disabled = false;
-    socket.once('register->res', handleRegisterResponse);
     if (err) {
       console.error(err);
       alert({
@@ -119,11 +117,11 @@ module.exports = function createScene(game) {
 
     btnResendEmail.disabled = true;
     socket.emit('resend-verification', email);
+    socket.once('resend-verification->res', handleResendVerficationResponse);
   }
 
   function handleResendVerficationResponse(err) {
     btnResendEmail.disabled = false;
-    socket.once('resend-verification->res', handleResendVerficationResponse);
     if (err) {
       console.error(err);
       alert({

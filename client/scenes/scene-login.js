@@ -13,7 +13,6 @@ module.exports = function createScene(game) {
   const formLogin = document.createElement('form');
   game.overlay.appendChild(formLogin);
   formLogin.addEventListener('submit', handleLoginClick);
-  socket.once('login->res', handleLoginResponse);
   
   const inputEmail = document.createElement('input');
   inputEmail.id = 'login-email';
@@ -52,7 +51,6 @@ module.exports = function createScene(game) {
   btnResetPassword.addEventListener('click', (event) => {
     handleResetPasswordClick(event)
   });
-  socket.once('reset-password->res', handleResetPasswordResponse)
   game.overlay.appendChild(btnResetPassword);
 
   function handleLoginClick(event) {
@@ -61,11 +59,11 @@ module.exports = function createScene(game) {
     const password = inputPassword.value;
     btnLogin.disabled = true;
     socket.emit('login', email, password);
+    socket.once('login->res', handleLoginResponse);
   }
   
   function handleLoginResponse(err, user) {
     btnLogin.disabled = false;
-    socket.once('login->res', handleLoginResponse);
     if (err) {
       return alert({
         INVALID_EMAIL: 'Email address is invalid.',
@@ -75,7 +73,6 @@ module.exports = function createScene(game) {
       }[err]);
     }
     game.startSession(user);
-    game.setActiveScene('lobby');
   }
 
   function handleResetPasswordClick() {
@@ -86,11 +83,11 @@ module.exports = function createScene(game) {
     }
     btnResetPassword.disabled = true;
     socket.emit('reset-password', email);
+    socket.once('reset-password->res', handleResetPasswordResponse)
   }
 
   function handleResetPasswordResponse(err) {
     btnResetPassword.disabled = false;
-    socket.once('reset-password->res', handleResetPasswordResponse)
     if (err) {
       alert({
         'INVALID_EMAIL': 'Invalid email address.',
