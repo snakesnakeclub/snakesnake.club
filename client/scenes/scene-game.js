@@ -16,6 +16,7 @@ module.exports = function createScene(game) {
 
   const detachKeyboard = attachKeyboard(handleChangeDirection);
   const detachTouch = attachTouch(handleChangeDirection);
+
   function handleChangeDirection(direction) {
     socket.emit('setDirection', direction);
   }
@@ -29,7 +30,6 @@ module.exports = function createScene(game) {
   const matApple = new BABYLON.StandardMaterial('matApple', scene);
   matApple.diffuseColor = new BABYLON.Color3(1, 0, 0);
 
-
   Array.from(new Array(game.room.world.height)).forEach((t, z) => {
     Array.from(new Array(game.room.world.width)).forEach((s, x) => {
       const boxGround = BABYLON.MeshBuilder.CreateBox('ground' + x + ',' + z, {
@@ -41,8 +41,10 @@ module.exports = function createScene(game) {
     });
   });
   let meshes = [];
-  socket.on('room-tick', room => {
-    game.room
+  socket.on('room-tick', handleRoomTick);
+  socket.once('death', handleDeath);
+
+  function handleRoomTick(room) {
     meshes.forEach(mesh => mesh.dispose());
     meshes = [];
 
@@ -74,14 +76,14 @@ module.exports = function createScene(game) {
         meshes.push(boxPlayerPiece);
       });
     });
-  });
-  function onDeath() {
-    meshes.forEach(mesh => mesh.dispose());
+  }
+
+  function handleDeath() {
+    scene.dispose();
+    socket.removeListener('room-tick', handleRoomTick);
     game.setActiveScene('lobby');
     detachKeyboard();
     detachTouch();
     alert('You died :(');
-    socket.removeListener('death', onDeath);
   }
-  socket.on('death', onDeath);
 };

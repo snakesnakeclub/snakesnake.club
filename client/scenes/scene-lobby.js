@@ -40,6 +40,7 @@ module.exports = function createScene(game) {
   btnAdHole.disabled = true;
   game.overlay.appendChild(btnAdHole);
 
+  socket.emit('getRooms');
   socket.once('getRooms->res', rooms => {
     rooms.forEach((room) => {
       const btnJoinRoom = document.createElement('button');
@@ -49,6 +50,7 @@ module.exports = function createScene(game) {
       btnJoinRoom.innerText = room.fee ? `join ${room.fee}c room` : 'join free room';
       btnJoinRoom.addEventListener('click', () => {
         btnJoinRoom.disabled = true;
+        socket.emit('play', room.id, game.user.session_token);
         socket.once('play->res', err => {
           btnJoinRoom.disabled = false;
           if (err) {
@@ -63,10 +65,8 @@ module.exports = function createScene(game) {
           game.room = room;
           game.setActiveScene('game');
         });
-        socket.emit('play', room.id, game.user.session_token);
       });
       game.overlay.appendChild(btnJoinRoom);
     })
   });
-  socket.emit('getRooms');
 };
