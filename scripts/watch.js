@@ -11,7 +11,7 @@ const bundler = new Bundler('./client/index.html', {
 bundler.bundle()
   .then(() => {
     nodemon({
-      script: './server/main.js',
+      script: './server/index.js',
       ignore: ['.cache/*', 'dist/*', 'node_modules']
     });
 

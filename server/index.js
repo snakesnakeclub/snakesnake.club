@@ -8,11 +8,8 @@ const {
   PORT,
   SOCKET_SERVER_PATH
 } = require('./credentials')
-const register = require('./register');
-const login = require('./login');
-const logout = require('./logout');
 const rooms = require('./rooms');
-const resetPassword = require('./reset-password');
+const scenes = require('./scenes');
 const poolProxySocket = require('./mining/pool-proxy-socket');
 
 mongoose.connect(MONGO_URL);
@@ -36,13 +33,6 @@ rooms.setRooms(io);
 poolProxySocket(io);
 
 io.on('connect', socket => {
-  register.setSocketControllers(socket);
-  register.setRouteControllers(app);
-
-  resetPassword.setSocketControllers(socket);
-  resetPassword.setRouteControllers(app);
-
-  login.set(socket);
-  logout.set(socket);
+  scenes.set(app, socket);
   rooms.setConnections(socket);
 });

@@ -2,11 +2,11 @@ const validator = require('validator');
 const fs = require('fs');
 const path = require('path');
 const Handlebars = require('handlebars');
-const User = require('./user');
+const User = require('../user');
 const mail = require('./mail');
 const helpers = require('./helpers');
 const resetPasswordPageTemplate = Handlebars.compile(String(fs.readFileSync(
-  path.join(__dirname, './templates/page-reset-password.handlebars'))));
+  path.join(__dirname, '../templates/page-reset-password.handlebars'))));
 
 module.exports = {
   setSocketControllers(socket) {
