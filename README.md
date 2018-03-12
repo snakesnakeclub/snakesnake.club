@@ -1,16 +1,9 @@
 # snakesnake.club/
+For the live version please vist, https://snakesnake.club/
 
+# For Development
 ```
 npm install
-```
-
-# Run in production
-```
-npm run-script build
-npm start
-```
-
-# Run in development
-```
 npm run watch
 ```
+
