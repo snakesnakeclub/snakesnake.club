@@ -25,16 +25,21 @@ class Room {
     this.rewards.push(new Reward(this.world));
   }
 
-  removePlayer(socket) { // User data and socket
+  playerDeath(socket) {
     socket.emit('death');
-    socket.leave(this.id);
+    this.rewards.pop();
+  }
+  
+  removePlayer(socket) { // User data and socket
     this.players.delete(socket.id);
     this.rewards.pop();
   }
 
   gameTick() {
     const playersArray = Array.from(this.players.values());
-
+    //console.log(playersArray);
+    //console.log("PLAYERS :");
+    //console.log(this.players);
     playersArray.forEach(player => {
       const head = player.head();
       // If the player's head collided with an apple
@@ -58,7 +63,7 @@ class Room {
         // Socket id of dead player
         const length = player.pieces.length;
         const socket = this.io.sockets.connected[player.id];
-        this.removePlayer(socket);
+        this.playerDeath(socket);
         this.rewards.pop();
 
         // This.updateBalance(this.players.get(aPlayer.id));

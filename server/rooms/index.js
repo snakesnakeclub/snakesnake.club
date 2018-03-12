@@ -29,6 +29,7 @@ function EnterRoom(user, room, socket) {
         socket.emit('play->res', 500);
       } else {
         room.addPlayer(socket, serialize(user));
+        socket.room_id = room;
       }
     }
   );
@@ -36,8 +37,8 @@ function EnterRoom(user, room, socket) {
 
 module.exports = {
   setRooms(io) {
-    openRooms.push(new Room(io, 0, 0));
-    openRooms.push(new Room(io, 1, 1));
+    openRooms.push(new Room(io, 1, 0));
+    openRooms.push(new Room(io, 2, 1));
   },
 
   setConnections(socket) {
@@ -57,6 +58,7 @@ module.exports = {
             if (selectedRoom.fee <= user.balance) {
               socket.emit('play->res', null);
               EnterRoom(user, selectedRoom, socket);
+              socket.current_room = room_id;
             } else {
               socket.emit('play->res', 'INSUFFICIENT_COINS');
             }
@@ -66,5 +68,12 @@ module.exports = {
         }
       });
     });
+
+    socket.on('disconnect', function() { // player disconnects from game
+      if (socket.current_room > 0) {
+        getRoom(socket.current_room).removePlayer(socket);
+      }
+    }); 
+
   }
 };
