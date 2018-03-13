@@ -11,13 +11,11 @@ class Player {
     this.pieces = [
       new PlayerPiece(x, y)
     ];
-    this.loading = true;
     this.direction = 'right';
     this.nextDirection = null;
   }
 
   reset() {
-    this.loading = true;
     this.x = randomInteger(10, this.world.width - 10);
     this.y = randomInteger(10, this.world.height - 10);
     this.pieces = [

@@ -17,12 +17,15 @@ module.exports = function createScene(game) {
     new BABYLON.Vector3(game.room.world.width / 2, 300, game.room.world.height / 2),
     scene);
   light.intensity = 0.6;
-
+  var dead = true;
   const detachKeyboard = attachKeyboard(handleChangeDirection);
   const detachTouch = attachTouch(handleChangeDirection);
 
   function handleChangeDirection(direction) {
-    socket.emit('spawn');
+    if (dead) {
+      socket.emit('spawn');
+      dead = false;
+    }
     socket.emit('setDirection', direction);
   }
 
@@ -112,5 +115,6 @@ module.exports = function createScene(game) {
     detachKeyboard();
     detachTouch();*/
     alert('You died :(');
+    dead = true;
   }
 };
