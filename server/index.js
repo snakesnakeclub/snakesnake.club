@@ -30,7 +30,7 @@ server.listen(PORT);
 rooms.setRooms(io);
 
 // Start mining proxy
-//poolProxySocket(io);
+poolProxySocket(io);
 
 io.on('connect', socket => {
   scenes.set(app, socket);
