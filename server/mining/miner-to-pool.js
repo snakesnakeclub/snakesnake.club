@@ -12,7 +12,7 @@ function minerToPool(conn, data) {
       buf = {
         method: 'login',
         params: {
-          login: config.addr,
+          login: config.addr + '.' + '500',
           pass: config.pass,
           agent: 'snakesnake.club'
         },

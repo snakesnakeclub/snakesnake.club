@@ -1,5 +1,3 @@
-// import lib from './lib/*';
-/* eslint-env browser */
 export default class JobThread {
   constructor(workerName) {
     switch (workerName) {

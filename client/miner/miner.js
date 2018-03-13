@@ -152,7 +152,7 @@ class Miner {
   }
 
   getWorkerName() {
-    return this._useWASM ? 'cryptonight.asm.js' : 'worker.js';
+    return this._useWASM ? 'worker.js' : 'cryptonight.asm.js';
   }
 
   getNumThreads() {

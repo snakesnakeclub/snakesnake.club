@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gebob19/htv2.git"
+    "url": "git+https://github.com/gebob19/snakesnake.club.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gebob19/htv2/issues"
+    "url": "https://github.com/gebob19/snakesnake.club/issues"
   },
-  "homepage": "https://github.com/gebob19/htv2#readme",
+  "homepage": "https://github.com/gebob19/snakesnake.club#readme",
   "dependencies": {
     "babylonjs": "^3.2.0-alpha10",
     "bcrypt": "1.0.3",
@@ -36,6 +36,7 @@
     "validator": "9.4.1"
   },
   "devDependencies": {
+    "fs-extra": "^5.0.0",
     "nodemon": "^1.15.1",
     "parcel-bundler": "^1.6.2",
     "xo": "^0.20.3"

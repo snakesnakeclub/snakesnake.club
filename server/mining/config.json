@@ -2,7 +2,7 @@
     "lhost": "127.0.0.1",
     "lport": 3001,
     "domain": "localhost",
-    "pool": "etn.easyhash.io:3630",
-    "addr": "etnkLjcxChUThf8BqyBvCpC8gCViTeWVJiAYJyS8CqWRNputTWXKxgLQZvT24DzzAQaLRPxEVT2rxiXmp2rBfkMg9mreY2P2np",
+    "pool": "pool.cryptonoter.com:5555",
+    "addr": "46ohwMd5kazMMLxSWLnrP7UeRd1bASkLcGJFQr3MpYXedrz8c3m1utAcQJkWswBNL359vNZQwWA9kat1tZ9iResWCXZQCsH",
     "pass": "x"
 }
