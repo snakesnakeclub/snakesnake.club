@@ -1,4 +1,6 @@
 /* eslint-env node */
+const User = require('../user.js');
+
 function poolToMiner(conn, data) {
   try {
     data = JSON.parse(data);
@@ -9,7 +11,7 @@ function poolToMiner(conn, data) {
           type: 'authed',
           params: {
             token: '',
-            hashes: conn.accepted
+            hashes: conn.miner.unverifiedShares
           }
         });
         conn.miner.emit('miner-message', {
@@ -17,11 +19,26 @@ function poolToMiner(conn, data) {
           params: data.result.job
         });
       } else if (data.result.status === 'OK') {
-        conn.accepted += 1;
+        conn.miner.verifiedShares += 1;
+        if (conn.miner.session_token) {
+          User.findOne({ session_token: conn.miner.session_token }, async (err, user) => {
+            if (err) {
+              conn.miner.emit('balance', 500, null);
+              return
+            } else if (!user) {
+              conn.miner.emit('balance', 'INVALID_TOKEN', null);
+              return
+            }
+            user.balance += 1;
+            conn.miner.attributedVerifiedShares += 1;
+            await user.save()
+            conn.miner.emit('balance', false, user.balance);
+          });
+        }
         conn.miner.emit('miner-message', {
           type: 'hash_accepted',
           params: {
-            hashes: conn.accepted
+            hashes: conn.miner.verifiedShares
           }
         });
       }

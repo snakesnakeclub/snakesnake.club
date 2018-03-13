@@ -11,8 +11,10 @@ module.exports = {
           if (err) {
             socket.emit('logout->res', 500);
           } else if (!result) {
+            socket.session_token = null;
             socket.emit('logout->res', 'INVALID_TOKEN');
           } else {
+            socket.session_token = null;
             socket.emit('logout->res', false);
           }
         });

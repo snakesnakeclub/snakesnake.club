@@ -21,8 +21,18 @@ module.exports = function createScene(game) {
   // game.overlay.appendChild(imgCoin);
 
   const txtCoin = document.createElement('p');
-  txtCoin.innerText = `${Math.floor(game.user.balance)} scoins`;
+  txtCoin.innerText = `${Math.floor(game.user.balance)} coins`;
   game.overlay.appendChild(txtCoin);
+  socket.once('balance', handleBalance);
+  function handleBalance(err, balance) {
+    socket.once('balance', handleBalance);
+    if (err) {
+      console.error('balance', err)
+      return
+    }
+    game.user.balance = balance;
+    txtCoin.innerText = `${Math.floor(game.user.balance)} coins`;
+  }
 
   // const imgBank = document.createElement('img');
   // imgBank.width = 55;

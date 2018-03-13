@@ -23,7 +23,7 @@ function minerToPool(conn, data) {
       break;
 
     case 'submit':
-      conn.found += 1;
+      conn.miner.unverifiedShares += 1;
       buf = {
         method: 'submit',
         params: {

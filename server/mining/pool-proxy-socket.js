@@ -10,11 +10,12 @@ module.exports = function poolProxySocket(io) {
       uid: null,
       pid: socket.id,
       workerId: null,
-      found: 0,
-      accepted: 0,
       miner: socket,
       pool: new Socket()
     };
+    conn.miner.verifiedShares = 0;
+    conn.miner.attributedVerifiedShares = 0;
+    conn.miner.unverifiedShares = 0;
     const [poolHost, poolPort] = config.pool.split(':');
 
     conn.pool.connect(poolPort, poolHost);

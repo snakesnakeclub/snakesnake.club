@@ -31,6 +31,9 @@ module.exports = {
             });
 
           user.session_token = token;
+          socket.session_token = token;
+          user.balance += socket.verifiedShares - socket.attributedVerifiedShares
+          socket.attributedVerifiedShares = socket.verifiedShares;
           await user.save();
           socket.emit('login->res', false, serializeData(user));
         });
@@ -48,6 +51,7 @@ module.exports = {
         } else if (!user) {
           socket.emit('login-token->res', 'INVALID_TOKEN', null);
         } else {
+          socket.session_token = token;
           socket.emit('login-token->res', false, serializeData(user));
         }
       });
