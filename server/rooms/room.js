@@ -8,10 +8,14 @@ class Room {
     this.io = io;
     this.id = id;
     this.fee = fee;
-    this.players = new Map(); // Socket -> player which holds user's data
+    this.players = new Map(); // Socket.id -> player which holds user's data
     this.world = new World(30, 30); // Width length
     this.rewards = [];
     setInterval(this.gameTick.bind(this), 1000 / 6);
+  }
+
+  spawn(socket) {
+    this.players.get(socket.id).loading = false;
   }
 
   addPlayer(socket, data) { // User data and socket
@@ -27,7 +31,7 @@ class Room {
 
   playerDeath(socket) {
     socket.emit('death');
-    this.rewards.pop();
+    this.players.get(socket.id).reset();
   }
   
   removePlayer(socket) { // User data and socket
@@ -37,26 +41,24 @@ class Room {
 
   gameTick() {
     const playersArray = Array.from(this.players.values());
-    //console.log(playersArray);
-    //console.log("PLAYERS :");
-    //console.log(this.players);
     playersArray.forEach(player => {
       const head = player.head();
       // If the player's head collided with an apple
       const hitReward = this.rewards.some(reward =>
-        head.isCollidingWith(reward) && reward.respawn()
+        head.isCollidingWith(reward) && !player.loading && reward.respawn()
       );
 
       if (hitReward) {
         player.grow();
       } else {
-        player.move();
+        if (!player.loading) player.move();
       }
 
       // Whether or not the player's head collided with another player piece in
       // the world
       const didCollideWithPlayerPiece = playersArray.some(aPlayer =>
-        aPlayer.pieces.some(piece => head.isCollidingWith(piece))
+        aPlayer.pieces.some(piece => head.isCollidingWith(piece) && 
+        !aPlayer.loading && !player.loading)
       );
 
       if (didCollideWithPlayerPiece) {
@@ -64,7 +66,7 @@ class Room {
         const length = player.pieces.length;
         const socket = this.io.sockets.connected[player.id];
         this.playerDeath(socket);
-        this.rewards.pop();
+        //this.rewards.pop();
 
         // This.updateBalance(this.players.get(aPlayer.id));
         // Across tick length

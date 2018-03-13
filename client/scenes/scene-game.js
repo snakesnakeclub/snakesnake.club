@@ -22,6 +22,7 @@ module.exports = function createScene(game) {
   const detachTouch = attachTouch(handleChangeDirection);
 
   function handleChangeDirection(direction) {
+    socket.emit('spawn');
     socket.emit('setDirection', direction);
   }
 
@@ -46,7 +47,7 @@ module.exports = function createScene(game) {
   });
   let meshes = [];
   socket.on('room-tick', handleRoomTick);
-  socket.once('death', handleDeath);
+  socket.on('death', handleDeath);
 
   const cameraLerpDuration = 1000 / 6;
   // How many frames to squeeze into the camera lerp animation
@@ -105,11 +106,11 @@ module.exports = function createScene(game) {
   }
 
   function handleDeath() {
-    meshes.forEach(mesh => mesh.dispose());
+    /*meshes.forEach(mesh => mesh.dispose());
     socket.removeListener('room-tick', handleRoomTick);
     game.setActiveScene('lobby');
     detachKeyboard();
-    detachTouch();
+    detachTouch();*/
     alert('You died :(');
   }
 };

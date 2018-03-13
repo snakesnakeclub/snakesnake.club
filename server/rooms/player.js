@@ -6,15 +6,24 @@ class Player {
     this.world = world;
     this.id = id;
     // Generate a random x and y position not too close to the edge
-    const x = randomInteger(4, this.world.width - 4);
-    const y = randomInteger(4, this.world.height - 4);
+    const x = randomInteger(10, this.world.width - 10);
+    const y = randomInteger(10, this.world.height - 10);
     this.pieces = [
       new PlayerPiece(x, y)
     ];
+    this.loading = true;
     this.direction = 'right';
     this.nextDirection = null;
   }
 
+  reset() {
+    this.loading = true;
+    this.x = randomInteger(10, this.world.width - 10);
+    this.y = randomInteger(10, this.world.height - 10);
+    this.pieces = [
+      new PlayerPiece(this.x, this.y)
+    ];
+  }
   /**
    * Returns the x component of the direction vector.
    */

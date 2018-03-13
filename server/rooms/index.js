@@ -75,5 +75,12 @@ module.exports = {
       }
     }); 
 
+    socket.on('spawn', function() {
+      getRoom(socket.current_room).spawn(socket);
+    });
+
+    socket.on('dead', function() {
+      getRoom(socket.current_room).playerDeath(socket);
+    })
   }
 };
