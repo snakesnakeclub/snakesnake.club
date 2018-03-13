@@ -9,13 +9,19 @@ class Room {
     this.id = id;
     this.fee = fee;
     this.players = new Map(); // Socket.id -> player which holds user's data
+    this.loading = new Map();  // socket.id -> player
     this.world = new World(30, 30); // Width length
     this.rewards = [];
     setInterval(this.gameTick.bind(this), 1000 / 6);
   }
 
   spawn(socket) {
-    this.players.get(socket.id).loading = false;
+    var player = this.loading.get(socket.id);
+    this.loading.delete(socket.id);
+    this.players.set(socket.id, player);
+
+    this.rewards.push(new Reward(this.world));
+    this.rewards.push(new Reward(this.world));
   }
 
   addPlayer(socket, data) { // User data and socket
@@ -24,14 +30,15 @@ class Room {
     socket.on('setDirection', direction => {
       player.setDirection(direction);
     });
-    this.players.set(socket.id, player);
-    this.rewards.push(new Reward(this.world));
-    this.rewards.push(new Reward(this.world));
+    this.loading.set(socket.id, player);
   }
 
   playerDeath(socket) {
     socket.emit('death');
-    this.players.get(socket.id).reset();
+    var player = this.players.get(socket.id);
+    player.reset();
+    this.players.delete(socket.id);
+    this.loading.set(socket.id, player);
   }
   
   removePlayer(socket) { // User data and socket
@@ -45,20 +52,19 @@ class Room {
       const head = player.head();
       // If the player's head collided with an apple
       const hitReward = this.rewards.some(reward =>
-        head.isCollidingWith(reward) && !player.loading && reward.respawn()
+        head.isCollidingWith(reward)  && reward.respawn()
       );
 
       if (hitReward) {
         player.grow();
       } else {
-        if (!player.loading) player.move();
+        player.move();
       }
 
       // Whether or not the player's head collided with another player piece in
       // the world
       const didCollideWithPlayerPiece = playersArray.some(aPlayer =>
-        aPlayer.pieces.some(piece => head.isCollidingWith(piece) && 
-        !aPlayer.loading && !player.loading)
+        aPlayer.pieces.some(piece => head.isCollidingWith(piece))
       );
 
       if (didCollideWithPlayerPiece) {
