@@ -1,8 +1,11 @@
 language: node_js
 node_js:
-  - "8"
+- '8'
 deploy:
   provider: script
   script: sh scripts/deploy.sh
   on:
     branch: master
+notifications:
+  slack:
+    secure: AcWcDU/ebh10xaEMY6mdoTV+0cNjPiE9F+U0y6GPmNxGbwnn8ZTgecl16SDyAwkUJqwj5KvHLXoSda4xcRPIsajMbkV+Gh094n5+A0b0FY2gxlTcxIPN3aQ062Ji4YTrvq49GoUmp8uQ8Y11EPcwL5O1H9D73xnhE/0LFlwQ9l/O+0nlNPRUyHYyGNuWnVzx776OdA4ofO+z6o5qb4mWse0rMhMOctnkjehMzUXASRmOuqjtTb6Tbd1PGOfTfYVxX2h2rEvH+Eas8JiR8h29AS/s+O57T9nnigKzOg34++byTXOYxsDK4cUKFq5+1BbMCkO5AQj1cHBqTyiYZR4kMJGlvX4IKZ26UV5gNU7AFLpikCVz+Fmx2ysUWzDQsP5bRhBSSJFV7XcaS2iqTCk/dLiiIZ83IwR7GkDduIl1BwEByZSDyW7C4FPgmh/hmPNtHkGNyBFP25eNova7X3m3owfoQ+hVy3d1gC7dM3ftPBIcGga7T6/AofMDrD/WY7JbBpd3H6mI5JqYmEx+FU7ftRG5CMPYanzxgwgVu2mgx0prkOSiJuKIdASbvl/iOLWgvd+FZD0Dmqu/TfCcQ2CpXrAl7VFnKwSqE/AcE33jBF4GYnJEnpnlp9zaS6fDHx0DKYOM2pE5rYb+9Mg3jPfEBpT38OB9E2KNZclu7Pb9LEE=
