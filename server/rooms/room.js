@@ -5,49 +5,81 @@ const {randomInteger} = require('./helpers.js');
 
 class Room {
   constructor(io, id, fee) {
+    // room details  
     this.io = io;
     this.id = id;
     this.fee = fee;
-    this.players = new Map(); // Socket.id -> player which holds user's data
-    this.loading = new Map();  // socket.id -> player
-    this.world = new World(30, 30); // Width length
+    
+    // objects in room
+    this.alive_players = new Map();
+    this.dead_players = new Map();  
     this.rewards = [];
+
+    this.world = new World(30, 30);
+
     setInterval(this.gameTick.bind(this), 1000 / 6);
   }
 
-  spawn(socket) {
-    var player = this.loading.get(socket.id);
-    this.loading.delete(socket.id);
-    this.players.set(socket.id, player);
+  /**
+   * The player of socket, can now play in the room.
+   * 
+   * @param {socket} socket players socket
+   */
+  spawnPlayer(socket) {
+    var player = this.dead_players.get(socket.id);
+    this.dead_players.delete(socket.id);
 
-    this.rewards.push(new Reward(this.world));
-    this.rewards.push(new Reward(this.world));
+    this.alive_players.set(socket.id, player);
   }
 
-  addPlayer(socket, data) { // User data and socket
+  /**
+   * The player of socket, is dead and cannot play in the room. Player remains
+   * in the room incase of playing again.
+   * 
+   * @param {socket} socket players socket
+   */
+  killPlayer(socket) {
+    socket.emit('death');
+
+    var player = this.alive_players.get(socket.id);
+    player.reset();
+    this.alive_players.delete(socket.id);
+    this.dead_players.set(socket.id, player);
+  }
+
+  /**
+   * Adds a new player to the room, by default in the dead state.
+   * 
+   * @param {socket} socket players socket
+   */
+  addPlayer(socket) {
     socket.join(this.id);
+
     const player = new Player(this.world, socket.id);
     socket.on('setDirection', direction => {
       player.setDirection(direction);
     });
-    this.loading.set(socket.id, player);
-  }
 
-  playerDeath(socket) {
-    socket.emit('death');
-    var player = this.players.get(socket.id);
-    player.reset();
-    this.players.delete(socket.id);
-    this.loading.set(socket.id, player);
+    this.dead_players.set(socket.id, player);
+
+    this.rewards.push(new Reward(this.world));
+    this.rewards.push(new Reward(this.world));
   }
   
+  /**
+   * Removes a player from the room, along with the two rewards.
+   * 
+   * @param {socket} socket players socket
+   */
   removePlayer(socket) { // User data and socket
-    this.players.delete(socket.id);
+    this.alive_players.delete(socket.id);
+
+    this.rewards.pop();
     this.rewards.pop();
   }
 
   gameTick() {
-    const playersArray = Array.from(this.players.values());
+    const playersArray = Array.from(this.alive_players.values());
     playersArray.forEach(player => {
       const head = player.head();
       // If the player's head collided with an apple
@@ -71,10 +103,10 @@ class Room {
         // Socket id of dead player
         const length = player.pieces.length;
         const socket = this.io.sockets.connected[player.id];
-        this.playerDeath(socket);
+        this.kill_player(socket);
         //this.rewards.pop();
 
-        // This.updateBalance(this.players.get(aPlayer.id));
+        // This.updateBalance(this.alive_players.get(aPlayer.id));
         // Across tick length
       }
     });
@@ -85,7 +117,7 @@ class Room {
     return {
       id: this.id,
       world: this.world.serialize(),
-      players: Array.from(this.players.values()).map(player => player.serialize()),
+      players: Array.from(this.alive_players      
       rewards: this.rewards.map(reward => reward.serialize())
     };
   }

@@ -51,7 +51,7 @@ module.exports = {
             }
             user.balance -= selectedRoom.fee
             await user.save()
-            selectedRoom.addPlayer(socket, serialize(user));
+            selectedRoom.addPlayer(socket);
             socket.current_room = room_id;
             socket.emit('play->res', null);
           }
@@ -59,7 +59,7 @@ module.exports = {
       });
     });
 
-    socket.on('disconnect', function() { // player disconnects from game
+    socket.on('disconnect', function() { 
       if (socket.current_room > 0) {
         room = rooms.get(socket.current_room)
         room.removePlayer(socket);
@@ -68,12 +68,12 @@ module.exports = {
 
     socket.on('spawn', function() {
       room = rooms.get(socket.current_room)
-      room.spawn(socket);
+      room.spawnPlayer(socket);
     });
 
     socket.on('dead', function() {
       room = rooms.get(socket.current_room)
-      room.playerDeath(socket);
+      room.killPlayer(socket);
     })
   }
 };
