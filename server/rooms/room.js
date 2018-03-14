@@ -33,8 +33,8 @@ class Room {
   }
 
   /**
-   * The player of socket, is dead and cannot play in the room. Player remains
-   * in the room incase of playing again.
+   * The player of socket's state is changed to dead and cannot play in the 
+   * room.
    * 
    * @param {socket} socket players socket
    */
@@ -67,11 +67,11 @@ class Room {
   }
   
   /**
-   * Removes a player from the room, along with the two rewards.
+   * Removes a player from the room, along with two rewards.
    * 
    * @param {socket} socket players socket
    */
-  removePlayer(socket) { // User data and socket
+  removePlayer(socket) {
     this.alive_players.delete(socket.id);
 
     this.rewards.pop();
@@ -103,7 +103,7 @@ class Room {
         // Socket id of dead player
         const length = player.pieces.length;
         const socket = this.io.sockets.connected[player.id];
-        this.kill_player(socket);
+        this.killPlayer(socket);
         //this.rewards.pop();
 
         // This.updateBalance(this.alive_players.get(aPlayer.id));
@@ -117,7 +117,7 @@ class Room {
     return {
       id: this.id,
       world: this.world.serialize(),
-      players: Array.from(this.alive_players      
+      players: Array.from(this.alive_players.values()).map(player => player.serialize()),
       rewards: this.rewards.map(reward => reward.serialize())
     };
   }

@@ -59,13 +59,6 @@ module.exports = {
       });
     });
 
-    socket.on('disconnect', function() { 
-      if (socket.current_room > 0) {
-        room = rooms.get(socket.current_room)
-        room.removePlayer(socket);
-      }
-    }); 
-
     socket.on('spawn', function() {
       room = rooms.get(socket.current_room)
       room.spawnPlayer(socket);
@@ -75,5 +68,13 @@ module.exports = {
       room = rooms.get(socket.current_room)
       room.killPlayer(socket);
     })
+
+    socket.on('disconnect', function() { 
+      if (socket.current_room > 0) {
+        room = rooms.get(socket.current_room)
+        room.removePlayer(socket);
+      }
+    })
+
   }
 };
