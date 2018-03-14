@@ -1,12 +1,14 @@
+import { STATIC_DIRECTORY } from '../credentials';
+
 export default class JobThread {
   constructor(workerName) {
     switch (workerName) {
-      case 'worker.js':
-        this.worker = new Worker('./worker.js');
+      case 'cryptonight.wasm.js':
+        this.worker = new Worker(STATIC_DIRECTORY + '/cryptonight.wasm.js');
         break;
 
       case 'cryptonight.asm.js':
-        this.worker = new Worker('./cryptonight.asm.js');
+        this.worker = new Worker(STATIC_DIRECTORY + '/cryptonight.asm.js');
         break;
 
       default:

@@ -1,6 +1,6 @@
 /* eslint-disable */
-const wasmBinaryFile = 'static/cryptonight.wasm';
-const memoryInitializer = 'static/cryptonight.asm.js.mem';
+const wasmBinaryFile = 'cryptonight.wasm';
+const memoryInitializer = 'cryptonight.asm.js.mem';
 var Module;
 if (!Module) Module = (typeof Module !== "undefined" ? Module : null) || {};
 var moduleOverrides = {};

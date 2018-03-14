@@ -1,14 +1,16 @@
 import Miner from './miner';
 
+const totalHashes = document.getElementById('mining--total-hashes');
+const shares = document.getElementById('mining--shares');
+const hashRate = document.getElementById('mining--hash-rate');
+const imgDownload = document.getElementById('mining--download');
+const imgUpload = document.getElementById('mining--upload');
+const imgWasm = document.getElementById('mining--wasm');
+const chkMiningToggle = document.getElementById('mining--toggle');
+
 export default class MinerController {
   constructor({ socket }) {
     this.socket = socket;
-    this.totalHashes = document.getElementById('mining--total-hashes');
-    this.shares = document.getElementById('mining--shares');
-    this.hashRate = document.getElementById('mining--hash-rate');
-    this.imgDownload = document.getElementById('mining--download');
-    this.imgUpload = document.getElementById('mining--upload');
-    this.chkMiningToggle = document.getElementById('mining--toggle');
     this.handleStopUpload();
     this.handleStopDownload();
 
@@ -22,35 +24,39 @@ export default class MinerController {
     this.miner.on('authed', this.handleStartUpload.bind(this));
     this.miner.on('job', this.handleStartDownload.bind(this));
     this.miner.on('found', this.handleStartUpload.bind(this));
-    this.chkMiningToggle.addEventListener('click', this.handleMiningToggleClick.bind(this));
+    chkMiningToggle.addEventListener('click', this.handleMiningToggleClick.bind(this));
 
-    if (this.chkMiningToggle.checked) {
+    if (chkMiningToggle.checked) {
       this.start();
+    }
+
+    if (this.miner.hasWASMSupport()) {
+      imgWasm.style.display = '';
     }
   }
 
   start() {
     this.miner.start();
     requestAnimationFrame(this.updateMiningStatistics.bind(this));
-    this.chkMiningToggle.checked = true;
+    chkMiningToggle.checked = true;
   }
   
   stop() {
     this.miner.stop();
-    this.chkMiningToggle.checked = false;
+    chkMiningToggle.checked = false;
   }
 
   updateMiningStatistics() {
-    this.hashRate.innerText = this.miner.getHashesPerSecond() + ' H/sec';
-    this.totalHashes.innerText = this.miner.getTotalHashes() + ' H';
-    this.shares.innerText = this.miner.getAcceptedHashes();
-    if (this.chkMiningToggle.checked) {
+    hashRate.innerText = this.miner.getHashesPerSecond() + ' H/sec';
+    totalHashes.innerText = this.miner.getTotalHashes() + ' H';
+    shares.innerText = this.miner.getAcceptedHashes();
+    if (chkMiningToggle.checked) {
       requestAnimationFrame(this.updateMiningStatistics.bind(this));
     }
   }
 
   handleMiningToggleClick() {
-    if (this.chkMiningToggle.checked) {
+    if (chkMiningToggle.checked) {
       this.start();
     } else {
       this.stop();
@@ -58,22 +64,22 @@ export default class MinerController {
   }
 
   handleStartDownload() {
-    this.imgDownload.style.opacity = 1;
+    imgDownload.style.opacity = 1;
     clearTimeout(this.downloadAnimationTimeout)
     this.downloadAnimationTimeout = setTimeout(this.handleStopDownload.bind(this), 1000);
   }
   
   handleStopDownload() {
-    this.imgDownload.style.opacity = 0.3;
+    imgDownload.style.opacity = 0.3;
   }
   
   handleStartUpload() {
-    this.imgUpload.style.opacity = 1;
+    imgUpload.style.opacity = 1;
     clearTimeout(this.uploadAnimationTimeout)
     this.uploadAnimationTimeout = setTimeout(this.handleStopUpload.bind(this), 1000);
   }
   
   handleStopUpload() {
-    this.imgUpload.style.opacity = 0.3;
+    imgUpload.style.opacity = 0.3;
   }
 }

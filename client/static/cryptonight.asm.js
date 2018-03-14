@@ -1,5 +1,5 @@
 /* eslint-disable */
-const memoryInitializer = 'static/cryptonight.asm.js.mem';
+const memoryInitializer = 'cryptonight.asm.js.mem';
 var Module;
 if (!Module) Module = (typeof Module !== "undefined" ? Module : null) || {};
 var moduleOverrides = {};
