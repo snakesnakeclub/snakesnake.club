@@ -1,5 +1,4 @@
 import JobThread from './job-thread';
-import {LIB_URL, WEBSOCKET_SHARDS} from '../credentials';
 
 const IF_EXCLUSIVE_TAB = 'ifExclusiveTab';
 const FORCE_EXCLUSIVE_TAB = 'forceExclusiveTab';
