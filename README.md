@@ -12,8 +12,17 @@ They can either cash out, transferring all their proceeds to their Monero wallet
 Or they can use the in-game currency as a buy-in to enter paid rooms. In these rooms, it is guaranteed that every player has also paid the buy-in fee. When they defeat another player, they will earn the defeated player's buy-in fee as their own. Allowing the player's to earn money at their own rate.
 
 
-# For Development
+# Development
+
+## Requirements
+
+* Node LTS Carbon
+* NPM
+* MongoDB
+
 ```
+cp server/credentials-sample.js server/credentials.js
+cp client/credentials-sample.js client/credentials.js
 npm install
 npm run watch
 ```
