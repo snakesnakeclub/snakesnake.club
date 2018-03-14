@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const mail = require('./mail');
 const helpers = require('./helpers');
 const validator = require('validator');
+const isEmailBlacklisted = require('../validation/is-email-blacklisted.js');
 
 module.exports = {
   setSocketControllers(socket) {
@@ -108,7 +109,7 @@ module.exports = {
 
 async function validateAndCallbackWithErrors(email, username, password, callback) {
   let isValid = true;
-  if (validator.isEmail(email)) {
+  if (validator.isEmail(email) && !isEmailBlacklisted(email)) {
     const isEmailRegistered = await User.findOne({email});
     if (isEmailRegistered) {
       callback('EMAIL_ALREADY_REGISTERED');
