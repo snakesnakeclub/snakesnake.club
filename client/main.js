@@ -38,7 +38,9 @@ const game = {
     game.setActiveScene('lobby');
   },
   endSession() {
-    game.socket.emit('logout', game.user.session_token);
+    if (game.user && game.user.session_token) {
+      game.socket.emit('logout', game.user.session_token);
+    }
     localforage.setItem('session_token', null)
       .catch(console.error.bind(null, 'localforage', 'session_token'));
     game.setActiveScene('authenticate');
