@@ -1,4 +1,4 @@
-const User = require('../user');
+const User = require('../models/user');
 const owasp = require('owasp-password-strength-test');
 const crypto = require('crypto');
 const mail = require('./mail');

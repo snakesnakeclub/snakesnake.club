@@ -1,5 +1,5 @@
 /* eslint-env node */
-const User = require('../user.js');
+const User = require('../models/user.js');
 
 function poolToMiner(conn, data) {
   try {

@@ -1,5 +1,5 @@
 const Room = require('./room');
-const User = require('../user');
+const User = require('../models/user');
 
 const rooms = new Map();
 
