@@ -16,14 +16,13 @@ Or they can use the in-game currency as a buy-in to enter paid rooms. In these r
 
 ## Requirements
 
+* Make
 * Node LTS Carbon
 * NPM
 * MongoDB
 
 ```
-cp server/credentials-sample.js server/credentials.js
-cp client/credentials-sample.js client/credentials.js
-npm install
+make
 npm run watch
 ```
 

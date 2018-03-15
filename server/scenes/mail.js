@@ -11,7 +11,7 @@ const {
   SMTP_SECURE,
   SMTP_FROM,
   CLIENT_URL,
-} = require('../credentials.js')
+} = require('../credentials.json')
 const verificationMailTemplate = Handlebars.compile(String(fs.readFileSync(
   path.join(__dirname, '../templates/mail-verification.handlebars'))));
 const resetPasswordMailTemplate = Handlebars.compile(String(fs.readFileSync(

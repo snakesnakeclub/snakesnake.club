@@ -62,4 +62,4 @@ dist
 .cache
 .DS_Store
 
-credentials.js
+credentials.json

@@ -1,8 +1,3 @@
-const fetch = require('node-fetch');
-
-fetch('https://api.github.com/users/github')
-  .then(res => res.price_usd);
-
 module.exports = {
   value_of_coin(total_usd_earned, total_num_coins) {
     return total_usd_earned / total_num_coins;
