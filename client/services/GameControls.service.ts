@@ -21,18 +21,49 @@ export default class GameControlsService extends EventEmitter {
     this.touch = null;
   }
 
+  /**
+   * Starts listening to user actions. 'direction' is emitted when user changes
+   * direction.
+   */
   public attach(): void {
     window.addEventListener('keydown', this.handleKeyDown);
     window.addEventListener('touchstart', this.handleTouchStart);
     window.addEventListener('touchend', this.handleTouchEnd);
   }
 
+  /**
+   * Stops listening to user actions. 'direction' will not be emitted.
+   */
   public detach(): void {
     window.removeEventListener('keydown', this.handleKeyDown);
     window.removeEventListener('touchstart', this.handleTouchStart);
     window.removeEventListener('touchend', this.handleTouchEnd);
   }
 
+  private handleKeyDown(event: KeyboardEvent): void {
+    switch (event.keyCode) {
+      case 87: // W
+      case 38: // Up
+        this.emit('direction', 'up');
+        break;
+
+      case 68: // D
+      case 39: // Right
+        this.emit('direction', 'right');
+        break;
+
+      case 83: // S
+      case 40: // Down
+        this.emit('direction', 'down');
+        break;
+
+      case 65: // A
+      case 37: // Left
+        this.emit('direction', 'left');
+        break;
+    }
+  }
+  
   private handleTouchStart(event: TouchEvent): void {
     event.preventDefault();
 
@@ -73,32 +104,7 @@ export default class GameControlsService extends EventEmitter {
           this.emit('direction', 'up');
         }
       }
-    }
-
-    this.touch = null;
-  }
-
-  private handleKeyDown(event: KeyboardEvent): void {
-    switch (event.keyCode) {
-      case 87: // W
-      case 38: // Up
-        this.emit('direction', 'up');
-        break;
-
-      case 68: // D
-      case 39: // Right
-        this.emit('direction', 'right');
-        break;
-
-      case 83: // S
-      case 40: // Down
-        this.emit('direction', 'down');
-        break;
-
-      case 65: // A
-      case 37: // Left
-        this.emit('direction', 'left');
-        break;
+      this.touch = null;
     }
   }
 }
