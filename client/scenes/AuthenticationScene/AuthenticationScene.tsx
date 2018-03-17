@@ -9,26 +9,25 @@ interface PropTypes {
 }
 
 interface StateTypes {
-
 }
 
 export default class AuthenticationScene extends Component<PropTypes, StateTypes> {
+  action: string = 'login';
+  
   constructor(props) {
     super(props);
   }
 
-  handleLogin() {
-    
-  }
+  handleAuthenticate(event) {
+    event.preventDefault();
 
-  handleRegister() {
     
   }
 
   render() {
     return (
       <div className="AuthenticationScene">
-        <form onSubmit={this.handleLogin}
+        <form onSubmit={this.handleAuthenticate}
           className="AuthenticationScene-form"
           autocomplete="on">
           <InputText type="email"
@@ -40,7 +39,14 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
             placeholder="••••••••"
             autocomplete=""
             required />
-          <ButtonText type="submit" value="Login" />
+          <div className="AuthenticationScene-form-buttons">
+            <ButtonText type="submit"
+              value="Login"
+              onClick={() => { this.action = 'login' }} />
+            <ButtonText type="button"
+              value="Register"
+              onClick={() => { this.action = 'register' }}/>
+          </div>
         </form>
       </div>
     )
