@@ -2,7 +2,9 @@ import { h, Component } from 'preact';
 import './InputText.scss';
 
 interface PropTypes {
-    
+  className?: string;
+  label: string;
+  [prop: string]: any;
 }
 
 interface StateTypes {
@@ -10,15 +12,31 @@ interface StateTypes {
 }
 
 export default class InputText extends Component<PropTypes, StateTypes> {
-  constructor(props) {
+  constructor(props: PropTypes) {
     super(props)
   }
 
   render() {
+    const {
+      className,
+      ref,
+      label,
+      ...remainingProps,
+    } = this.props
     return (
-      <input type="text"
-        className="InputText"
-      />
+      <label className="InputText-label">
+        <span className="InputText-label-text">
+          {label}
+        </span>
+        <input type="text"
+          className={`InputText ${className}`}
+          {...remainingProps}
+        />
+      </label>
     )
   }
+}
+
+InputText.defaultProps = {
+  className: '',
 }

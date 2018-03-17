@@ -1,2 +1,2 @@
-import InputText from './InputText.tsx';
+import InputText from './InputText';
 export default InputText

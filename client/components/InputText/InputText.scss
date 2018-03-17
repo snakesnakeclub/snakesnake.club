@@ -2,13 +2,20 @@
   display: block;
   font-family: 'Patua One';
   width: 240px;
-  height: 32px;
+  height: 40px;
   color: indigo;
   background: white;
-  border: 1px solid indigo;
-  margin-top: 7px;
-  margin-bottom: 7px;
+  border: 4px solid indigo;
   padding-left: 7px;
   padding-right: 7px;
   font-size: 18px;
+}
+
+.InputText-label {
+  margin-top: 7px;
+  margin-bottom: 7px;
+}
+
+.InputText-label-text {
+  color: white;
 }
