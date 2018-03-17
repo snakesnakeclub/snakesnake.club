@@ -3,6 +3,7 @@ import './NumberDisplay.scss';
 
 interface PropTypes {
   value: number;
+  suffix?: string;
   [prop: string]: any;
 }
 
@@ -74,6 +75,7 @@ export default class NumberDisplay extends Component<PropTypes, StateTypes> {
       ref,
       // value targetted by animation
       value,
+      suffix,
       ...remainingProps,
     } = this.props;
     const {
@@ -83,10 +85,14 @@ export default class NumberDisplay extends Component<PropTypes, StateTypes> {
     return (
       <div className="NumberDisplay" {...remainingProps}>
         {children}
-        {numberWithCommas(valueDisplay)}
+        {numberWithCommas(valueDisplay)} {suffix}
       </div>
     )
   }
+}
+
+NumberDisplay.defaultProps = {
+  suffix: '',
 }
 
 function numberWithCommas (x: number) {

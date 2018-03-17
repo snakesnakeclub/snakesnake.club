@@ -3,6 +3,7 @@ import './Tooltip.scss';
 
 interface PropTypes {
   id: string;
+  [prop: string]: any;
 }
 
 interface StateTypes {
@@ -23,9 +24,13 @@ export default class Tooltip extends Component<PropTypes, StateTypes> {
     const {
       id,
       children,
+      ...remainingProps,
     } = this.props;
     return (
-      <div id={id} className="Tooltip">
+      <div id={id}
+        className="Tooltip"
+        {...remainingProps}
+      >
         {children}
       </div>
     )

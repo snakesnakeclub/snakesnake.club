@@ -1,6 +1,5 @@
 .Tooltip {
   position: absolute;
-  bottom: -1px;
   padding: 6px;
   border-radius: 4px;
   font-size: 12px;
@@ -13,6 +12,7 @@
   touch-action: none;
   transition: 0.5s opacity ease-in-out;
   opacity: 0;
+  z-index: 1;
 }
 
 .Tooltip-shown {

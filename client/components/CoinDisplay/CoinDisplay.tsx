@@ -29,7 +29,8 @@ export default class CoinDisplay extends Component<PropTypes, StateTypes> {
           src="/static/assets/coin.svg"
           alt=""
         />
-        <Tooltip id="CoinDisplay-tooltip">
+        <Tooltip id="CoinDisplay-tooltip"
+          style={{ width: 140, bottom: -1, right: -6 }}>
           <span style="color: #cfa403;">Gold</span> has real world value.
           <br/>
           You can cash it out for <img className="CoinDisplay-tooltip-monero"
