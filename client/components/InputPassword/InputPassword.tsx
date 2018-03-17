@@ -38,8 +38,8 @@ export default class InputPassword extends Component<PropTypes, StateTypes> {
     } = this.state
     const inputType = visibility ? 'text' : 'password';
     const visibilitySrc = visibility
-      ? '/static/assets/ic_visibility_off_black_24px.svg'
-      : '/static/assets/ic_visibility_black_24px.svg'
+      ? '/static/assets/ic_visibility_off_indigo_24px.svg'
+      : '/static/assets/ic_visibility_indigo_24px.svg'
     const visibilityAlt = visibility
       ? 'Hide Password'
       : 'Show Password'
@@ -48,6 +48,7 @@ export default class InputPassword extends Component<PropTypes, StateTypes> {
         <InputText type={inputType}
           {...remainingProps} />
         <ButtonIcon className="InputPassword-visibility"
+          type="button"
           onClick={this.handleToggleVisibility.bind(this)}
           src={visibilitySrc} 
           alt={visibilityAlt}

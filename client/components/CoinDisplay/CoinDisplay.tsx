@@ -34,7 +34,7 @@ export default class CoinDisplay extends Component<PropTypes, StateTypes> {
           <span style="color: #cfa403;">Gold</span> has real world value.
           <br/>
           You can cash it out for <img className="CoinDisplay-tooltip-monero"
-            src="/static/assets/monero.svg" alt="" /> <a href="https://getmonero.org"
+            src="/static/assets/monero.svg" alt="" /> <a tabIndex={-1} href="https://getmonero.org"
             target="_blank" rel="noopener">Monero</a>.
         </Tooltip>
       </NumberDisplay>

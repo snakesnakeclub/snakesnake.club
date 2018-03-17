@@ -13,21 +13,26 @@ interface StateTypes {
 
 export default class AuthenticationScene extends Component<PropTypes, StateTypes> {
   action: string = 'login';
-  
+
   constructor(props) {
     super(props);
   }
 
   handleAuthenticate(event) {
     event.preventDefault();
-
+    switch(this.action) {
+      case 'login':
+        break;
+      case 'register':
+        break;
+    }
     
   }
 
   render() {
     return (
       <div className="AuthenticationScene">
-        <form onSubmit={this.handleAuthenticate}
+        <form onSubmit={this.handleAuthenticate.bind(this)}
           className="AuthenticationScene-form"
           autocomplete="on">
           <InputText type="email"
@@ -43,7 +48,7 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
             <ButtonText type="submit"
               value="Login"
               onClick={() => { this.action = 'login' }} />
-            <ButtonText type="button"
+            <ButtonText type="submit"
               value="Register"
               onClick={() => { this.action = 'register' }}/>
           </div>
