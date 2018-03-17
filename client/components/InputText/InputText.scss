@@ -11,9 +11,16 @@
   font-size: 18px;
 }
 
+.InputText:invalid {
+  border: 4px dashed red;
+}
+
 .InputText-label {
+  display: block;
+  width: 240px;
   margin-top: 7px;
   margin-bottom: 7px;
+  text-align: left;
 }
 
 .InputText-label-text {
