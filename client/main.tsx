@@ -3,13 +3,20 @@ import './style.scss';
 import CoinDisplay from './components/CoinDisplay';
 import HashrateDisplay from './components/HashrateDisplay';
 import AuthenticationScene from './scenes/AuthenticationScene';
+import AuthService from './services/Auth.service';
+import ServicesInterface from './services/interface';
 
 class App extends Component<any, any> {
+  services: ServicesInterface
+
   constructor(props: any) {
     super(props);
     this.state = {
       balance: 0,
       hashrate: 0,
+    };
+    this.services = {
+      authService: new AuthService()
     }
   }
 
@@ -21,7 +28,7 @@ class App extends Component<any, any> {
           <CoinDisplay value={this.state.balance} />
         </div>
 
-        <AuthenticationScene />
+        <AuthenticationScene services={this.services} />
       </div>
     )
   }

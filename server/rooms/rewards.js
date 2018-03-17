@@ -1,4 +1,4 @@
-const {randomInteger} = require('./helpers.js');
+const {randomInteger} = require('../helpers.js');
 
 class Rewards {
   constructor(world) {

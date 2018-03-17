@@ -11,11 +11,11 @@ const {
   SMTP_SECURE,
   SMTP_FROM,
   CLIENT_URL,
-} = require('../credentials.json')
+} = require('./credentials.json')
 const verificationMailTemplate = Handlebars.compile(String(fs.readFileSync(
-  path.join(__dirname, '../templates/mail-verification.handlebars'))));
+  path.join(__dirname, './templates/mail-verification.handlebars'))));
 const resetPasswordMailTemplate = Handlebars.compile(String(fs.readFileSync(
-  path.join(__dirname, '../templates/mail-reset-password.handlebars'))));
+  path.join(__dirname, './templates/mail-reset-password.handlebars'))));
 
 const transporter = nodemailer.createTransport({
   host: SMTP_HOST,
