@@ -1,0 +1,39 @@
+.ButtonIcon {
+  width: 40px;
+  height: 40px;
+  background: indigo;
+  border: 1px solid white;
+  border-bottom: 4px solid white;
+  border-radius: 4px;
+  margin-top: 7px;
+  margin-bottom: 7px;
+  padding: 0;
+  cursor: pointer;
+  transition: 0.15s transform, 0.15s height, 0.15s margin-top, 0.15s border-bottom;
+}
+
+.ButtonIcon:active {
+  margin-top: 14px;
+  height: 37px;
+  transform: scale(0.95);
+  border-bottom: 1px solid white;
+}
+
+.ButtonIcon:disabled {
+  background: gray;
+}
+
+.ButtonIcon-frameless {
+  background: transparent;
+  border: none;
+}
+
+.ButtonIcon-frameless:disabled {
+  background: transparent;
+  color: gray;
+}
+
+.ButtonIcon-img {
+  width: 36px;
+  height: 36px;
+}
