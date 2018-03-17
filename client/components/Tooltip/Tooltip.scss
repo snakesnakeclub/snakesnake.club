@@ -1,0 +1,22 @@
+.Tooltip {
+  position: absolute;
+  bottom: -1px;
+  padding: 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: left;
+  transform: translateY(100%);
+  color: #393740;
+  background: linen;
+  border: 1px solid indigo;
+  pointer-events: none;
+  touch-action: none;
+  transition: 0.5s opacity ease-in-out;
+  opacity: 0;
+}
+
+.Tooltip-shown {
+  opacity: 1;
+  pointer-events: initial;
+  touch-action: initial;
+}
