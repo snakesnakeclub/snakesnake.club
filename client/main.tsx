@@ -16,14 +16,13 @@ class App extends Component<any, any> {
     this.state = {
       balance: 0,
       hashrate: 0,
-      scene: 'loading',
+      scene: 'authentication',
     };
 
     this.services = {
       authService: new AuthService()
     }
 
-    this.services.authService.on('login-token', (success) => !success && this.setState({ scene: 'lobby' }));
     this.services.authService.on('login', () => this.setState({ scene: 'lobby'}));
     this.services.authService.on('logout', () => this.setState({ scene: 'authentication'}));
   }
@@ -34,7 +33,7 @@ class App extends Component<any, any> {
     } = this.state
     return (
       <div>
-        <div style={{ position:'fixed', top: 0, left: 0, right: 0, display: 'flex', justifyContent: 'flex-end', maxWidth: 768, width: '100%', margin: '0 auto' }}>
+        <div style={{ position:'fixed', top: 0, left: 0, right: 0, display: 'flex', justifyContent: 'flex-end', maxWidth: 768, width: '100%', margin: '0 auto', zIndex: 1 }}>
           <HashrateDisplay value={this.state.hashrate} />
           <CoinDisplay value={this.state.balance} />
         </div>

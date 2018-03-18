@@ -1,9 +1,18 @@
-.LobbyScene {
-  display: flex;
-  justify-content: center;
+.LobbyScene-page {
   align-content: center;
-  width: 100vw;
+  bottom: 0;
+  display: flex;
   height: 100vh;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  align-items: center;
+  flex-direction: column;
+  transition: 0.5s transform ease-in-out;
+  width: 100vw;
+  z-index: 0;
   background-color: #2c4a74;
   background-image: repeating-linear-gradient(120deg, rgba(255,255,255,.1), transparent 1px, transparent 10000px),
   repeating-linear-gradient(60deg, rgba(255,255,255,.1), rgba(255,255,255,.1) 1px, transparent 1px, transparent 10000px),
@@ -12,18 +21,27 @@
   background-size: 50vw 88px;
 }
 
+@media screen and (min-width: 620px) {
+  .LobbyScene-page {
+    background-size: 25vw 88px;
+  }
+}
+
 .LobbyScene-navigation {
-  display: flex;
-  position: fixed;
+  box-sizing: border-box;
+  border-top: 6px solid #475d73;
   bottom: 0;
+  color: white;
+  display: flex;
+  font-weight: bold;
+  justify-content: space-around;
   left: 0;
+  margin: auto;
+  max-width: 384px;
+  position: fixed;
   right: 0;
   width: 100%;
-  justify-content: space-around;
-  color: white;
-  font-weight: bold;
-  border-top: 6px solid #475d73;
-  margin: 0;
+  z-index: 1;
   /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#253f61+0,253f61+25,2c4a74+40,2c4a74+100 */
   background: rgb(37,63,97); /* Old browsers */
   background: -moz-linear-gradient(top, rgba(37,63,97,1) 0%, rgba(37,63,97,1) 25%, rgba(44,74,116,1) 40%, rgba(44,74,116,1) 100%); /* FF3.6-15 */
@@ -32,9 +50,17 @@
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#253f61', endColorstr='#2c4a74',GradientType=0 ); /* IE6-9 */
 }
 
+@media screen and (min-width: 384px) {
+  .LobbyScene-navigation {
+    border-left: 6px solid #475d73;
+    border-right: 6px solid #475d73;
+  }
+}
+
 .LobbyScene-navigation-item {
   flex-grow: 1;
   text-align: center;
+  cursor: pointer;
   padding: 10px 0;
   margin: 0;
   padding-top: 10px;

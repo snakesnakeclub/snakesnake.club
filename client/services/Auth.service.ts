@@ -29,10 +29,8 @@ export default class AuthService extends EventEmitter {
 
     try {
       await this.loginToken(session_token);
-      this.emit('login-token', true);
     } catch (error) {
       localforage.removeItem('session_token');
-      this.emit('login-token', false);
     }
   }
 
