@@ -10,7 +10,7 @@ import { AUTH_REST_SERVER } from '../credentials.json';
  * Emits 'logout' when user logged out.
  */
 export default class AuthService extends EventEmitter {
-  session_token?: string;
+  public user?: any;
 
   constructor() {
     super();
@@ -19,7 +19,7 @@ export default class AuthService extends EventEmitter {
   }
 
   get isLoggedIn() {
-    return !!this.session_token
+    return this.user && this.user.session_token
   }
 
   async handleSessionTokenStorage(session_token) {
@@ -28,9 +28,11 @@ export default class AuthService extends EventEmitter {
     }
 
     try {
-      await this.loginToken(session_token)
+      await this.loginToken(session_token);
+      this.emit('login-token', true);
     } catch (error) {
       localforage.removeItem('session_token');
+      this.emit('login-token', false);
     }
   }
 
@@ -46,8 +48,8 @@ export default class AuthService extends EventEmitter {
       password
     })
       .then(data => {
-        this.session_token = data.user.session_token;
-        localforage.setItem('session_token', this.session_token);
+        this.user = data.user;
+        localforage.setItem('session_token', this.user.session_token);
         this.emit('login');
         return data
       })
@@ -58,8 +60,8 @@ export default class AuthService extends EventEmitter {
       session_token,
     })
       .then(data => {
-        this.session_token = data.user.session_token;
-        localforage.setItem('session_token', this.session_token);
+        this.user = data.user;
+        localforage.setItem('session_token', this.user.session_token);
         this.emit('login');
         return data
       })
@@ -72,8 +74,8 @@ export default class AuthService extends EventEmitter {
       password
     })
       .then(data => {
-        this.session_token = data.user.session_token;
-        localforage.setItem('session_token', this.session_token);
+        this.user = data.user;
+        localforage.setItem('session_token', this.user.session_token);
         this.emit('login');
         return data
       })
@@ -93,10 +95,10 @@ export default class AuthService extends EventEmitter {
 
   logout() {
     return RestServerService.post(AUTH_REST_SERVER, '/logout', {
-      session_token: this.session_token,
+      session_token: this.user.session_token,
     })
       .then(data => {
-        this.session_token = null;
+        this.user.session_token = null;
         localforage.removeItem('session_token');
         this.emit('logout');
         return data

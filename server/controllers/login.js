@@ -83,10 +83,10 @@ module.exports = {
       }
 
       const {
-        token,
+        session_token,
       } = req.body;
 
-      if (!token) {
+      if (!session_token) {
         res.status(400);
         res.json({
           error: true,
@@ -95,7 +95,7 @@ module.exports = {
         return
       }
 
-      User.findOne({ session_token: token }, (error, user) => {
+      User.findOne({ session_token }, (error, user) => {
         if (error) {
           res.status(500);
           res.json({
