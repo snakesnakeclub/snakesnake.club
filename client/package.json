@@ -2,10 +2,12 @@
   "name": "snakesnake.club-client",
   "private": true,
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "localforage": "^1.6.0",
     "preact": "^8.2.7",
     "socket.io-client": "^2.0.4",
-    "validator": "9.4.1"
+    "validator": "9.4.1",
+    "web-ping": "^1.0.0"
   },
   "devDependencies": {
     "fs-extra": "^5.0.0",

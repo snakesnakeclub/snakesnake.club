@@ -85,7 +85,7 @@ export default class NumberDisplay extends Component<PropTypes, StateTypes> {
     return (
       <div className="NumberDisplay" {...remainingProps}>
         {children}
-        {numberWithCommas(valueDisplay)} {suffix}
+        {numberWithSpaces(valueDisplay)} {suffix}
       </div>
     )
   }
@@ -95,6 +95,6 @@ NumberDisplay.defaultProps = {
   suffix: '',
 }
 
-function numberWithCommas (x: number) {
+function numberWithSpaces (x: number) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 }

@@ -57,9 +57,9 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
       <div className="LobbyScene-page"
         style={{ transform: `translateX(${pageTranslateX}vw)` }}>
         <ButtonText value="Practice"
-          style={{ width: 180, height: 50 }} />
+          style={{ width: 180, margin: '5px 0' }} />
         <ButtonText value="Compete"
-          style={{ width: 180, height: 50 }}
+          style={{ width: 180, margin: '5px 0' }}
           disabled />
       </div>
     )
