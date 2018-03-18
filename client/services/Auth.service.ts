@@ -48,7 +48,7 @@ export default class AuthService extends EventEmitter {
       .then(data => {
         this.user = data.user;
         localforage.setItem('session_token', this.user.session_token);
-        this.emit('login');
+        this.emit('login', this.user);
         return data
       })
   }
@@ -60,7 +60,7 @@ export default class AuthService extends EventEmitter {
       .then(data => {
         this.user = data.user;
         localforage.setItem('session_token', this.user.session_token);
-        this.emit('login');
+        this.emit('login', this.user);
         return data
       })
   }
@@ -74,7 +74,7 @@ export default class AuthService extends EventEmitter {
       .then(data => {
         this.user = data.user;
         localforage.setItem('session_token', this.user.session_token);
-        this.emit('login');
+        this.emit('login', this.user);
         return data
       })
   }

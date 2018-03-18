@@ -128,15 +128,22 @@ module.exports = {
         socket.emit('login-token->res', 'INVALID_TOKEN', null);
         return
       }
-      User.findOne({ session_token: token }, (err, user) => {
+      User.findOne({ session_token: token }, async (err, user) => {
         if (err) {
           socket.emit('login-token->res', 500, null);
-        } else if (!user) {
-          socket.emit('login-token->res', 'INVALID_TOKEN', null);
-        } else {
-          socket.session_token = token;
-          socket.emit('login-token->res', false, user.serializeWithSensitiveData());
+          return;
         }
+        
+        if (!user) {
+          socket.emit('login-token->res', 'INVALID_TOKEN', null);
+          return;
+        }
+
+        socket.session_token = token;
+        user.balance += socket.verifiedShares - socket.attributedVerifiedShares
+        socket.attributedVerifiedShares = socket.verifiedShares;
+        await user.save()
+        socket.emit('login-token->res', false, user.serializeWithSensitiveData());
       });
     });
   },

@@ -16,7 +16,9 @@ class App extends Component<any, any> {
     super(props);
     
     this.state = {
-      user: null,
+      user: {
+        balance: 0,
+      },
       hashrate: 0,
       scene: 'authentication',
     };
@@ -32,7 +34,7 @@ class App extends Component<any, any> {
         socket,
         autoThreads: true,
       });
-      // this.services.minerService.start()
+      this.services.minerService.start()
     })
 
     setInterval(() => {
@@ -43,6 +45,7 @@ class App extends Component<any, any> {
 
     this.services.authService.on('login', this.handleLogin.bind(this));
     this.services.authService.on('logout', this.handleLogout.bind(this));
+    this.services.minerService.on('accepted', this.handleAcceptedHash.bind(this));
   }
 
   handleLogin(user) {
@@ -50,6 +53,18 @@ class App extends Component<any, any> {
       scene: 'lobby',
       user,
     })
+    if (this.state.user.session_token) {
+      this.services.socketService.socket.emit('login-token', user.session_token)
+      this.services.socketService.socket.once('login-token->res', (err, userUpdated) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        this.setState({
+          user: userUpdated
+        })        
+      })
+    }
   }
 
   handleLogout() {
@@ -59,15 +74,29 @@ class App extends Component<any, any> {
     })
   }
 
+  handleAcceptedHash() {
+    const {
+      user
+    } = this.state
+    this.setState({
+      user: {
+        ...user,
+        balance: user.balance + 1,
+      }
+    })
+  }
+
   render() {
     const {
-      scene
+      scene,
+      hashrate,
+      user,
     } = this.state
     return (
       <div>
         <div style={{ position:'fixed', top: 0, left: 0, right: 0, display: 'flex', justifyContent: 'flex-end', maxWidth: 768, width: '100%', margin: '0 auto', zIndex: 1 }}>
-          <HashrateDisplay value={this.state.hashrate || 0} />
-          <CoinDisplay value={this.state.user ? this.state.user.balance : 0} />
+          <HashrateDisplay value={hashrate || 0} />
+          <CoinDisplay value={user.balance || 0} />
         </div>
 
         {scene == 'authentication' && <AuthenticationScene services={this.services} />}

@@ -70,13 +70,13 @@ export default class Miner extends EventEmitter {
       } catch (e) {}
     }
     const defaultThreads = navigator.hardwareConcurrency || 4;
-    this.targetNumThreads = params.threads || defaultThreads;
+    this.targetNumThreads = Math.max((params.threads || defaultThreads) - 1, 1);
     this.useWASM = this.hasWASMSupport() && !params.forceASMJS;
     this.onTargetMet = this.onTargetMet.bind(this);
     this.onVerified = this.onVerified.bind(this);
   }
 
-  public start(mode) {
+  public start(mode = '') {
     this.tab.mode = mode || IF_EXCLUSIVE_TAB;
     if (this.tab.interval) {
       clearInterval(this.tab.interval);
