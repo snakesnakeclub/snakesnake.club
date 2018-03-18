@@ -78,48 +78,53 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
     )
   }
 
-  render() {
+  renderNavigationBar() {
     const {
       activeTab
     } = this.state
     return (
-      <div>
-        <nav className="LobbyScene-navigation">
-          <label className={`LobbyScene-navigation-item ${this.getActiveTabClass('shop')}`}>
-            <ButtonIcon alt="Shop"
-              src="/static/assets/shop.svg"
-              style={{ margin: 0 }}
-              onClick={() => this.setState({ activeTab: 'shop' })}
-              frameless />
-            <div>
-              Shop
-            </div>
-          </label>
-          <label className={`LobbyScene-navigation-item ${this.getActiveTabClass('play')}`}>
-            <ButtonIcon alt=""
-              src="/static/assets/battle.svg"
-              style={{ margin: 0 }}
-              onClick={() => this.setState({ activeTab: 'play' })}
-              frameless />
-            <div>
-              Play
-            </div>
-          </label>
-          <label className={`LobbyScene-navigation-item ${this.getActiveTabClass('group')}`}>
-            <ButtonIcon alt="Group"
-              src="/static/assets/party.svg"
-              style={{ margin: 0 }}
-              onClick={() => this.setState({ activeTab: 'group' })}
-              frameless />
-            <div>
-              Group
-            </div>
-          </label>
-        </nav>
+      <nav className="LobbyScene-navigation">
+        <label className={`LobbyScene-navigation-item ${this.getActiveTabClass('shop')}`}>
+          <ButtonIcon alt="Shop"
+            src="/static/assets/shop.svg"
+            style={{ margin: 0 }}
+            onClick={() => this.setState({ activeTab: 'shop' })}
+            frameless />
+          <div>
+            Shop
+          </div>
+        </label>
+        <label className={`LobbyScene-navigation-item ${this.getActiveTabClass('play')}`}>
+          <ButtonIcon alt=""
+            src="/static/assets/battle.svg"
+            style={{ margin: 0 }}
+            onClick={() => this.setState({ activeTab: 'play' })}
+            frameless />
+          <div>
+            Play
+          </div>
+        </label>
+        <label className={`LobbyScene-navigation-item ${this.getActiveTabClass('group')}`}>
+          <ButtonIcon alt="Group"
+            src="/static/assets/party.svg"
+            style={{ margin: 0 }}
+            onClick={() => this.setState({ activeTab: 'group' })}
+            frameless />
+          <div>
+            Group
+          </div>
+        </label>
+      </nav>
+    )
+  }
 
+  render() {
+    return (
+      <div>
         {this.renderShopPage()}
         {this.renderPlayPage()}
         {this.renderGroupPage()}
+        {this.renderNavigationBar()}
       </div>
     )
   }
