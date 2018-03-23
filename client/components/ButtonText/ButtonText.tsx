@@ -5,6 +5,7 @@ interface PropTypes {
   className?: string;
   frameless?: boolean;
   refButton?: (el: HTMLButtonElement) => void;
+  primary?: boolean;
   [prop: string]: any;
 }
 
@@ -23,13 +24,15 @@ export default class ButtonText extends Component<PropTypes, StateTypes> {
       ref,
       refButton,
       frameless,
+      primary,
       ...remainingProps,
     } = this.props
     const framelessClass = frameless ? 'ButtonText-frameless' : ''
+    const primaryClass = primary ? 'ButtonText-primary' : '';
     return (
       <input type="button"
         ref={refButton}
-        className={`ButtonText ${framelessClass} ${className}`}
+        className={`ButtonText ${framelessClass} ${className} ${primaryClass}`}
         {...remainingProps}
       />
     );
@@ -39,4 +42,5 @@ export default class ButtonText extends Component<PropTypes, StateTypes> {
 ButtonText.defaultProps = {
   className: '',
   frameless: false,
+  primary: true,
 }
