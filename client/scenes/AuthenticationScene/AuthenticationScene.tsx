@@ -12,6 +12,7 @@ interface PropTypes {
 
 interface StateTypes {
   validationErrors: Array<string>;
+  isLoading: boolean;
 }
 
 export default class AuthenticationScene extends Component<PropTypes, StateTypes> {
@@ -23,6 +24,7 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
     super(props);
     this.state = {
       validationErrors: [],
+      isLoading: false,
     }
   }
 
@@ -35,18 +37,40 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
     const email = this.email;
     const password = this.password;
 
+    this.setState({
+      isLoading: true
+    });
+
     switch(this.action) {
       case 'login':
         authService.login(email, password)
+          .then(() => {
+            this.setState({
+              validationErrors: [],
+              isLoading: false
+            });
+          })
           .catch((data) => {
-            this.setState({ validationErrors: data.validationErrors })
+            this.setState({
+              validationErrors: data.validationErrors,
+              isLoading: false,
+            })
           })
           break;
 
       case 'register':
         authService.register(email, password)
+          .then(() => {
+            this.setState({
+              validationErrors: [],
+              isLoading: false
+            });
+          })
           .catch((data) => {
-            this.setState({ validationErrors: data.validationErrors })
+            this.setState({
+              validationErrors: data.validationErrors,
+              isLoading: false,
+            })
           })
         break;
     }
@@ -55,6 +79,7 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
   render() {
     const {
       validationErrors,
+      isLoading,
     } = this.state;
     return (
       <div className="AuthenticationScene">
@@ -64,22 +89,22 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
           <InputText name="email"
             type="email"
             label="Email Address"
-            placeholder="john.doe@example.com"
             autocomplete="email"
             onInput={({ target }) => {this.email = target.value}}
             required />
           <InputPassword name="password"
             label="Password"
-            placeholder="••••••••"
             autocomplete="password"
             onInput={({ target }) => {this.password = target.value}}
             required />
           <div className="AuthenticationScene-form-buttons">
             <ButtonText type="submit"
               value="Login"
+              disabled={isLoading}
               onClick={() => { this.action = 'login' }} />
             <ButtonText type="submit"
               value="Register"
+              disabled={isLoading}
               onClick={() => { this.action = 'register' }}/>
           </div>
           <div style={{ width: '100%' }}>

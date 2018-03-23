@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const owasp = require('owasp-password-strength-test');
 const isEmail = require('validator/lib/isEmail');
 const isEmailBlacklisted = require('../validation/is-email-blacklisted.js');
 
@@ -35,10 +34,8 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     require: true,
+    minlength: 8,
     maxlength: 256,
-    validate: {
-      validator: (password) => owasp.test(password).strong
-    },
   },
   verified: {
     type: Boolean,
@@ -76,7 +73,7 @@ UserSchema.statics.authenticate = function (email, password, callback) {
     }
 
     if (!user) {
-      callback('INCORRECT_EMAIL');
+      callback('EMAIL_NOT_FOUND');
       return;
     }
 

@@ -4,6 +4,7 @@ import './ButtonText.scss';
 interface PropTypes {
   className?: string;
   frameless?: boolean;
+  refButton?: (el: HTMLButtonElement) => void;
   [prop: string]: any;
 }
 
@@ -20,12 +21,14 @@ export default class ButtonText extends Component<PropTypes, StateTypes> {
     const {
       className,
       ref,
+      refButton,
       frameless,
       ...remainingProps,
     } = this.props
     const framelessClass = frameless ? 'ButtonText-frameless' : ''
     return (
       <input type="button"
+        ref={refButton}
         className={`ButtonText ${framelessClass} ${className}`}
         {...remainingProps}
       />
