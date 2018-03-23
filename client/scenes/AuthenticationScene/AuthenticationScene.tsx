@@ -89,6 +89,9 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
         <form onSubmit={this.handleAuthenticate.bind(this)}
           className="AuthenticationScene-form"
           autocomplete="on">
+          <img className="AuthenticationScene-form-logo"
+            src="/static/assets/logo.png"
+            alt="SnakeSnake.Club" />
           <InputText name="email"
             label={formAction === 'login' ? "Email Address or Username" : 'Email Address'}
             autocomplete="username"
@@ -118,7 +121,8 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
                     formAction: 'login'
                   })
                 }
-              }} />
+              }}
+              primary={formAction == 'login'} />
             <ButtonText type="submit"
               value="Register"
               disabled={isLoading}
@@ -130,7 +134,8 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
                     formAction: 'register'
                   })
                 }
-              }}/>
+              }}
+              primary={formAction == 'register'} />
           </div>
           <div style={{ width: '100%' }}>
             {validationErrors.map((error) => (
