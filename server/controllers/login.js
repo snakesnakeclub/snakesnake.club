@@ -18,7 +18,8 @@ module.exports = {
         password,
       } = req.body
 
-      User.findOne({ email }, async (err, user) => {
+
+      User.findOne({ $or:[ {email: email}, {username: email}] }, async (err, user) => {
         if (err) {
           res.status(500);
           res.json({
@@ -32,7 +33,7 @@ module.exports = {
             error: true,
             code: 'VALIDATION_ERROR',
             validationErrors: [
-              'INCORRECT_EMAIL'
+              'USER_NOT_FOUND'
             ]
           });
           return;

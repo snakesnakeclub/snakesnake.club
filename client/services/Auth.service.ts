@@ -65,10 +65,10 @@ export default class AuthService extends EventEmitter {
       })
   }
 
-  register(email: string, password: string): Promise<any> {
+  register(email: string, username: string, password: string): Promise<any> {
     return RestServerService.post(AUTH_REST_SERVER, '/register', {
       email,
-      username: email.split('@')[0].replace(/[^\w\d]/g, ''),
+      username,
       password
     })
       .then(data => {

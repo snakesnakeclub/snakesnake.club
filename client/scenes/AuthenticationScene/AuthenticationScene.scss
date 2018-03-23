@@ -4,6 +4,7 @@
   align-content: center;
   width: 100vw;
   height: 100vh;
+  background-color: #38324e;
   background-image: repeating-linear-gradient(120deg, rgba(255,255,255,.1), transparent 1px, transparent 10000px),
   repeating-linear-gradient(60deg, rgba(255,255,255,.1), rgba(255,255,255,.1) 1px, transparent 1px, transparent 10000px),
   linear-gradient(60deg,rgba(0,0,0,.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.1) 75%, rgba(0,0,0,.1)),
@@ -32,4 +33,6 @@
   width: 100%;
   padding: 0 30px;
   box-sizing: border-box;
+  margin: 10px 0;
+  text-align: center;
 }

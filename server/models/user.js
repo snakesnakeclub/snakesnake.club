@@ -67,13 +67,13 @@ UserSchema.pre('save', function (next) {
 });
 
 UserSchema.statics.authenticate = function (email, password, callback) {
-  User.findOne({email}, (err, user) => {
+  User.findOne({ $or:[ {email: email}, {username: email}] }, (err, user) => {
     if (err) {
       return callback(err);
     }
 
     if (!user) {
-      callback('EMAIL_NOT_FOUND');
+      callback('USER_NOT_FOUND');
       return;
     }
 
