@@ -2,44 +2,14 @@
   <head>
     <meta charset="utf8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>snakesnake.club</title>
-    <meta name="description" content="Snake Snake Club">
+    <title>SnakeSnake.Club</title>
     <link href="https://fonts.googleapis.com/css?family=Patua+One" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
   </head>
   <body>
     <div id="game-overlay"></div>
     
     <canvas id="game-canvas"></canvas>
 
-    <table id="mining">
-      <tr>
-        <td>
-          <input id="mining--toggle" type="checkbox" checked>
-        </td>
-        <td>Hash Rate</td>
-        <td>Hashes</td>
-        <td>Shares</td>
-      </tr>
-      <tr>
-        <td>
-          <img id="mining--download"
-            src="assets/ic_cloud_download_red_24px.svg"
-            alt="Download" />
-          <img id="mining--upload"
-            src="assets/ic_cloud_upload_green_24px.svg"
-            alt="Upload" />
-          <img id="mining--wasm"
-            src="assets/ic_flash_on_gold_24px.svg"
-            alt="WASM Supported"
-            style="display: none;" />
-        </td>
-        <td id="mining--hash-rate">0 H/s</td>
-        <td id="mining--total-hashes">0 H</td>
-        <td id="mining--shares">0</td>
-      </tr>
-    </table>
-    
     <script src="https://www.googletagmanager.com/gtag/js?id=UA-115465923-1" async></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -47,6 +17,6 @@
       gtag('js', new Date())
       gtag('config', 'UA-115465923-1');
     </script>
-    <script src="main.js"></script>
+    <script src="main.tsx"></script>
   </body>
 </html>

@@ -9,7 +9,7 @@ const {
   SOCKET_SERVER_PATH
 } = require('./credentials')
 const rooms = require('./rooms');
-const scenes = require('./scenes');
+const controllers = require('./controllers');
 const poolProxySocket = require('./mining/pool-proxy-socket');
 
 mongoose.connect(MONGO_URL);
@@ -32,7 +32,9 @@ rooms.setRooms(io);
 // Start mining proxy
 poolProxySocket(io);
 
+controllers.attachRouteControllers(app);
+
 io.on('connect', socket => {
-  scenes.set(app, socket);
+  controllers.attachSocketControllers(socket);
   rooms.setConnections(socket);
 });

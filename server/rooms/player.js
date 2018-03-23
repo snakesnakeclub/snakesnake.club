@@ -1,5 +1,5 @@
 const PlayerPiece = require('./playerpiece.js');
-const {randomInteger} = require('./helpers.js');
+const {randomInteger} = require('../helpers.js');
 
 class Player {
   constructor(world, id) {

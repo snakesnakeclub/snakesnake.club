@@ -1,0 +1,42 @@
+.ButtonText {
+  font-family: 'Patua One';
+  min-width: 113px;
+  height: 40px;
+  color: white;
+  border: 1px solid white;
+  border-bottom: 8px solid white;
+  border-radius: 4px;
+  margin: 7px;
+  text-transform: uppercase;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.15s transform, 0.15s height, 0.15s margin-top, 0.15s border-bottom;
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#4b0082+0,4b0082+25,3c0069+32,3c0069+100 */
+  background: rgb(75,0,130); /* Old browsers */
+  background: -moz-linear-gradient(top, rgba(75,0,130,1) 0%, rgba(75,0,130,1) 20%, rgba(60,0,105,1) 35%, rgba(60,0,105,1) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, rgba(75,0,130,1) 0%,rgba(75,0,130,1) 20%,rgba(60,0,105,1) 35%,rgba(60,0,105,1) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, rgba(75,0,130,1) 0%,rgba(75,0,130,1) 20%,rgba(60,0,105,1) 35%,rgba(60,0,105,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4b0082', endColorstr='#3c0069',GradientType=0 ); /* IE6-9 */
+}
+
+.ButtonText:active {
+  margin-top: 14px;
+  height: 33px;
+  transform: scale(0.95);
+  border-bottom: 1px solid white;
+}
+
+.ButtonText:disabled {
+  background: gray;
+}
+
+.ButtonText-frameless {
+  background: transparent;
+  border: none;
+  text-transform: lowercase;
+}
+
+.ButtonText-frameless:disabled {
+  background: transparent;
+  color: gray;
+}

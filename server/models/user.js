@@ -1,12 +1,20 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const owasp = require('owasp-password-strength-test');
+const isEmail = require('validator/lib/isEmail');
+const isEmailBlacklisted = require('../validation/is-email-blacklisted.js');
 
 const UserSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
     required: true,
-    lowercase: true
+    trim: true,
+    lowercase: true,
+    maxlength: 254,
+    validate: {
+      validator: (email) => isEmail(email) && !isEmailBlacklisted(email)
+    },
   },
   username: {
     type: String,
@@ -16,7 +24,7 @@ const UserSchema = new mongoose.Schema({
     lowercase: true,
     minlength: 3,
     maxlength: 25,
-    match: /^\w(\w|\d)+$/
+    match: /^\w[\w\d]+$/i
   },
   balance: {
     type: Number
@@ -26,7 +34,11 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    require: true
+    require: true,
+    maxlength: 256,
+    validate: {
+      validator: (password) => owasp.test(password).strong
+    },
   },
   verified: {
     type: Boolean,
@@ -64,18 +76,28 @@ UserSchema.statics.authenticate = function (email, password, callback) {
     }
 
     if (!user) {
-      callback('INVALID_EMAIL');
+      callback('INCORRECT_EMAIL');
       return;
     }
 
     bcrypt.compare(password, user.password, (err, success) => {
       if (!success) {
-        callback('INVALID_PASSWORD');
+        callback('INCORRECT_PASSWORD');
         return;
       }
       callback(null, user);
     });
   });
+};
+
+UserSchema.methods.serializeWithSensitiveData = function () {
+  return {
+    session_token: this.session_token,
+    email: this.email,
+    username: this.username,
+    balance: this.balance,
+    takedowns: this.takedowns
+  }
 };
 
 var User = mongoose.model('User', UserSchema);

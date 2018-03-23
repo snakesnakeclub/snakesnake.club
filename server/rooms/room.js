@@ -1,7 +1,7 @@
 const Player = require('./player');
 const Reward = require('./rewards');
 const World = require('./world');
-const {randomInteger} = require('./helpers.js');
+const {randomInteger} = require('../helpers.js');
 
 class Room {
   constructor(io, id, fee) {
