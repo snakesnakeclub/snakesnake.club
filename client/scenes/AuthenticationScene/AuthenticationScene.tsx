@@ -114,6 +114,7 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
                 if (formAction != 'login') {
                   event.preventDefault();
                   this.setState({
+                    validationErrors: [],
                     formAction: 'login'
                   })
                 }
@@ -125,6 +126,7 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
                 if (formAction != 'register') {
                   event.preventDefault();
                   this.setState({
+                    validationErrors: [],
                     formAction: 'register'
                   })
                 }
