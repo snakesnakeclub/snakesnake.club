@@ -1,5 +1,6 @@
 const Room = require('./room');
 const User = require('../models/user');
+const FreeRoomModerator = require('../moderators/freeroomModerator')
 
 const rooms = new Map();
 
@@ -12,7 +13,7 @@ function serialize(user) {
 
 module.exports = {
   setRooms(io) {
-    rooms.set(1, new Room(io, 1, 0));
+    rooms.set(1, new Room(io, 1, 0, new FreeRoomModerator()))
     // rooms.set(2, new Room(io, 2, 1));
   },
 
@@ -51,7 +52,8 @@ module.exports = {
             }
             user.balance -= selectedRoom.fee
             await user.save()
-            selectedRoom.addPlayer(socket);
+            selectedRoom.getModerator().addPlayer(socket);
+            socket.join(selectedRoom.id);
             socket.current_room = room_id;
             socket.emit('play->res', null);
           }
