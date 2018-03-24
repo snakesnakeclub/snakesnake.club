@@ -25,16 +25,15 @@ class App extends Component<any, any> {
     this.state = this.getInitialState()
 
     this.services.socketService.on('connect', (socket) => {
-      // this.services.minerService.initialize('cryptonight-miner', {
-      //   socket,
-      //   autoThreads: true,
-      // });
-      // this.services.minerService.start()
-      // setInterval(() => {
-      //   this.setState({
-      //     hashrate: this.services.minerService.getHashesPerSecond(),
-      //   })
-      // }, 1000)
+      this.services.minerService.initialize('cryptonight-miner', {
+        socket,
+        autoThreads: true,
+      });
+      setInterval(() => {
+        this.setState({
+          hashrate: this.services.minerService.getHashesPerSecond(),
+        })
+      }, 1000)
     })
 
     this.services.authService.on('ready', this.handleReady.bind(this));
@@ -116,10 +115,10 @@ class App extends Component<any, any> {
           <div style={{ flexGrow: 1 }}>
             {scene == 'lobby' && <LogoutButton onClick={this.services.authService.logout} />}
           </div>
-          <HashrateDisplay value={hashrate || 0} />
-          <CoinDisplay value={user.balance || 0} />
+          {scene != 'authentication' && <HashrateDisplay value={hashrate || 0} />}
+          {scene != 'authentication' && <CoinDisplay value={user.balance || 0} />}
         </div>
-
+        
         {scene == 'authentication' && <AuthenticationScene services={this.services} />}
         {scene == 'lobby' && <LobbyScene services={this.services} />}
       </div>

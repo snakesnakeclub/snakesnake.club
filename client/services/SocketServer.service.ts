@@ -2,10 +2,10 @@ import * as io from 'socket.io-client';
 import ping from 'web-ping';
 import { EventEmitter } from 'events';
 import ServerAddress from '../models/ServerAddress';
-import { GAME_WEBSOCKET_SERVERS } from '../credentials.json';
+const {GAME_WEBSOCKET_SERVERS} = require('../credentials.json');
 
 export default class SocketServerService extends EventEmitter {
-  public socket: Object;
+  public socket: SocketIOClient.Socket;
 
   constructor() {
     super()

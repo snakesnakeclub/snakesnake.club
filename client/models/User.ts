@@ -3,11 +3,12 @@ import isAlpha from 'validator/lib/isAlpha';
 import isAlphanumeric from 'validator/lib/isAlphanumeric';
 
 export default class User {
-  private email: string;
-  private username: string;
-  private balance: number;
-  private takedowns: number;
-  private verified: boolean;
+  public email: string;
+  public username: string;
+  public balance: number;
+  public takedowns: number;
+  public verified: boolean;
+  public session_token?: string;
 
   /**
    * @param email 
@@ -15,14 +16,15 @@ export default class User {
    * @param balance 
    * @param takedowns 
    * @param verified 
+   * @param session_token
    */
-  constructor(
-    email: string,
-    username: string,
-    balance: number,
-    takedowns: number,
-    verified: boolean) {
-
+  constructor(user) {
+    this.email = user.email
+    this.username = user.username
+    this.balance = user.balance
+    this.takedowns = user.takedowns
+    this.verified = user.verified
+    this.session_token = user.session_token
   }
 
   /**
