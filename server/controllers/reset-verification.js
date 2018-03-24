@@ -39,16 +39,11 @@ module.exports = {
         return;
       }
 
-      if (!isEmail(email)) {
-        res.status(400);
-        res.json({
-          error: true,
-          code: 'INVALID_EMAIL'
-        });
-        return;
-      }
+      const {
+        email
+      } = req.body
 
-      User.findOne({ email }, async (err, user) => {
+      User.findOne({ $or:[ { email }, { username: email }] }, async (err, user) => {
         if (err) {
           res.status(500);
           res.json({
@@ -62,7 +57,10 @@ module.exports = {
           res.status(400);
           res.json({
             error: true,
-            code: 'INVALID_EMAIL'
+            code: 'VALIDATION_ERRORS',
+            validationErrors: [
+              'USER_NOT_FOUND'
+            ]
           });
           return;
         }
@@ -71,7 +69,10 @@ module.exports = {
           res.status(400);
           res.json({
             error: true,
-            code: 'USER_ALREADY_VERIFIED'
+            code: 'VALIDATION_ERRORS',
+            validationErrors: [
+              'USER_ALREADY_VERIFIED'
+            ]
           });
           return;
         }
@@ -80,7 +81,7 @@ module.exports = {
           const verification_token = await helpers.randomString(30)
           user.verification_token = verification_token;
           await user.save();
-          await mail.sendEmailVerification(email, verification_token);
+          await mail.sendEmailVerification(user.email, verification_token);
           res.json({
             error: false
           });

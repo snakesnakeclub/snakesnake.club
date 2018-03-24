@@ -27,7 +27,12 @@
 }
 
 .ButtonText:disabled {
-  background: gray;
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#808080+0,808080+64,9e9e9e+92,9e9e9e+92,9e9e9e+100 */
+  background: rgb(128,128,128); /* Old browsers */
+  background: -moz-linear-gradient(45deg, rgba(128,128,128,1) 0%, rgba(128,128,128,1) 64%, rgba(158,158,158,1) 92%, rgba(158,158,158,1) 92%, rgba(158,158,158,1) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(45deg, rgba(128,128,128,1) 0%,rgba(128,128,128,1) 64%,rgba(158,158,158,1) 92%,rgba(158,158,158,1) 92%,rgba(158,158,158,1) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(45deg, rgba(128,128,128,1) 0%,rgba(128,128,128,1) 64%,rgba(158,158,158,1) 92%,rgba(158,158,158,1) 92%,rgba(158,158,158,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#808080', endColorstr='#9e9e9e',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 }
 
 .ButtonText-primary {

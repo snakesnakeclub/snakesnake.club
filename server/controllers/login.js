@@ -18,7 +18,6 @@ module.exports = {
         password,
       } = req.body
 
-
       User.findOne({ $or:[ {email: email}, {username: email}] }, async (err, user) => {
         if (err) {
           res.status(500);

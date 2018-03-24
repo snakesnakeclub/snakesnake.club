@@ -10,7 +10,7 @@ const resetPasswordPageTemplate = Handlebars.compile(String(fs.readFileSync(
 
 module.exports = {
   attachRouteControllers(app) {
-    app.post('reset-password', (req, res) => {
+    app.post('/reset-password', (req, res) => {
       if (!req.body) {
         res.status(400);
         res.json({
@@ -24,24 +24,36 @@ module.exports = {
         email,
       } = req.body
 
-      if (!isEmail(email)) {
-        socket.emit('reset-password->res', 'INVALID_EMAIL')
-        return
-      }
-
-      User.findOne({ email }, async (err, user) => {
+      User.findOne({ $or:[ { email }, { username: email } ] }, async (err, user) => {
         if (err) {
           console.error(err);
-          socket.emit('reset-password->res', 500);
-        } else if (!user) {
-          socket.emit('reset-password->res', 'INVALID_EMAIL');
-        } else {
-          const token = await helpers.randomString(30)
-          socket.emit('reset-password->res', false);
-          user.password_token = token
-          await user.save()
-          await mail.sendPasswordReset(email, token);
+          res.status(500);
+          res.json({
+            error: true,
+            code: '500',
+          })
+          return
         }
+        
+        if (!user) {
+          res.status(400);
+          res.json({
+            error: true,
+            code: 'VALIDATION_ERROR',
+            validationErrors: [
+              'USER_NOT_FOUND',
+            ]
+          })
+          return
+        }
+
+        const token = await helpers.randomString(30)
+        user.password_token = token
+        await user.save()
+        await mail.sendPasswordReset(user.email, token);
+        res.json({
+          error: false
+        })
       });
     });
 
@@ -64,21 +76,40 @@ module.exports = {
     });
 
     app.post('/reset-password/:token', (req, res) => {
+      if (!req.body) {
+        res.status(400);
+        res.json({
+          error: true,
+          code: 'REQUIRE_BODY',
+        })
+        return;
+      }
+      
       const token = req.params.token;
-      const password = req.body.password;
+      const password = req.body['new-password'];
       User.findOne({
         password_token: token
       }, async (err, user) => {
         if (err) {
           res.status(500);
-          return
-        } else if (!user) {
-          res.status(400);
-          res.send('INVALID_TOKEN');
+          res.json({
+            error: true,
+            code: '500'
+          })
           return
         }
-        user.password = password
+        
+        if (!user) {
+          res.status(400);
+          res.send({
+            error: true,
+            code: 'INVALID_TOKEN'
+          });
+          return
+        }
+        
         user.password_token = null
+        user.password = password
         await user.save()
         res.redirect('/');
       });

@@ -2,6 +2,7 @@ import { h, Component } from 'preact';
 import InputText from '../../components/InputText';
 import InputPassword from '../../components/InputPassword';
 import ButtonText from '../../components/ButtonText';
+import Toast from '../../components/Toast';
 import ServicesInterface from '../services/interface';
 import './AuthenticationScene.scss';
 import * as strings from '../../strings.json';
@@ -16,6 +17,7 @@ interface StateTypes {
   password: string;
   formAction: string;
   validationErrors: Array<string>;
+  toast: string;
   isLoading: boolean;
 }
 
@@ -23,12 +25,13 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
   constructor(props: PropTypes) {
     super(props);
     this.state = {
-      formAction: 'login',
-      validationErrors: [],
-      isLoading: false,
       email: '',
       username: '',
       password: '',
+      formAction: 'login',
+      validationErrors: [],
+      toast: null,
+      isLoading: false,
     }
   }
 
@@ -45,6 +48,7 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
     } = this.state;
 
     this.setState({
+      validationErrors: [],
       isLoading: true
     });
 
@@ -83,11 +87,70 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
     }
   }
 
+  handleForgotPasswordClick() {
+    const {
+      authService,
+    } = this.props.services
+    const {
+      email,
+    } = this.state
+
+    this.setState({
+      validationErrors: [],
+      isLoading: true,
+    })
+
+    authService.resetPassword(email)
+      .then(() => {
+        this.setState({
+          toast: 'check your inbox',
+          validationErrors: [],
+          isLoading: false,
+        })
+      })
+      .catch((data) => {
+        this.setState({
+          validationErrors: data.validationErrors,
+          isLoading: false,
+        })
+      })
+  }
+
+  handleResendVerificationClick() {
+    const {
+      authService,
+    } = this.props.services
+    const {
+      email,
+    } = this.state
+
+    this.setState({
+      validationErrors: [],
+      isLoading: true,
+    })
+
+    authService.resetVerification(email)
+      .then(() => {
+        this.setState({
+          toast: 'check your inbox',
+          validationErrors: [],
+          isLoading: false,
+        })
+      })
+      .catch((data) => {
+        this.setState({
+          validationErrors: data.validationErrors,
+          isLoading: false,
+        })
+      })
+  }
+
   render() {
     const {
       formAction,
       validationErrors,
       isLoading,
+      toast,
       email,
       username,
       password,
@@ -148,13 +211,30 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
               }}
               primary={formAction == 'register'} />
           </div>
+          {formAction === 'login' && (
+            <ButtonText value="forgot password"
+              onClick={this.handleForgotPasswordClick.bind(this)}
+              disabled={isLoading}
+              frameless />
+          )}
+          {formAction === 'register' && (
+            <ButtonText value="resend verification"
+              onClick={this.handleResendVerificationClick.bind(this)}
+              disabled={isLoading}
+              frameless />
+          )}
           <div style={{ width: '100%' }}>
-            {validationErrors.map((error) => (
+            {validationErrors.map((errorCode) => (
               <p className="AuthenticationScene-form-errors">
-                {strings[error]}
+                {strings[errorCode] || errorCode}
               </p>
             ))}
           </div>
+          {toast && (
+            <Toast message={toast}
+              duration={5}
+              onDurationEnd={this.setState.bind(this, { toast: null })} />
+          )}
         </form>
       </div>
     )
