@@ -10,7 +10,7 @@ import { AUTH_REST_SERVER } from '../credentials.json';
  * Emits 'logout' when user logged out.
  */
 export default class AuthService extends EventEmitter {
-  public user?: any;
+  public user?: any = null;
 
   constructor() {
     super();
@@ -91,12 +91,12 @@ export default class AuthService extends EventEmitter {
     })
   }
 
-  logout() {
+  logout = () => {
     return RestServerService.post(AUTH_REST_SERVER, '/logout', {
       session_token: this.user.session_token,
     })
       .then(data => {
-        this.user.session_token = null;
+        this.user = null;
         localforage.removeItem('session_token');
         this.emit('logout');
         return data

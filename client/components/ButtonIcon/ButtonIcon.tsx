@@ -6,6 +6,8 @@ interface PropTypes {
   frameless?: boolean;
   src: string;
   alt: string;
+  imgWidth?: number;
+  imgHeight?: number;
   [prop: string]: any;
 }
 
@@ -24,6 +26,8 @@ export default class ButtonIcon extends Component<PropTypes, StateTypes> {
       ref,
       src,
       alt,
+      imgWidth,
+      imgHeight,
       frameless,
       ...remainingProps,
     } = this.props
@@ -35,6 +39,8 @@ export default class ButtonIcon extends Component<PropTypes, StateTypes> {
         <img className="ButtonIcon-img"
           src={src}
           alt={alt}
+          width={imgWidth}
+          height={imgHeight}
         />
       </button>
     );

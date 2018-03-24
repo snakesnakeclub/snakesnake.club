@@ -11,22 +11,24 @@ interface PropTypes {
 }
 
 interface StateTypes {
+  email: string;
+  username: string;
+  password: string;
   formAction: string;
   validationErrors: Array<string>;
   isLoading: boolean;
 }
 
 export default class AuthenticationScene extends Component<PropTypes, StateTypes> {
-  private email: string = '';
-  private username: string = '';
-  private password: string = '';
-
   constructor(props: PropTypes) {
     super(props);
     this.state = {
       formAction: 'login',
       validationErrors: [],
       isLoading: false,
+      email: '',
+      username: '',
+      password: '',
     }
   }
 
@@ -37,6 +39,9 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
     } = this.props.services
     const {
       formAction,
+      email,
+      username,
+      password,
     } = this.state;
 
     this.setState({
@@ -45,7 +50,7 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
 
     switch(formAction) {
       case 'login':
-        authService.login(this.email, this.password)
+        authService.login(email, password)
           .then(() => {
             this.setState({
               validationErrors: [],
@@ -61,7 +66,7 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
           break;
 
       case 'register':
-        authService.register(this.email, this.username, this.password)
+        authService.register(email, username, password)
           .then(() => {
             this.setState({
               validationErrors: [],
@@ -83,6 +88,9 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
       formAction,
       validationErrors,
       isLoading,
+      email,
+      username,
+      password,
     } = this.state;
     return (
       <div className="AuthenticationScene">
@@ -95,22 +103,25 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
           <InputText name="email"
             label={formAction === 'login' ? "Email Address or Username" : 'Email Address'}
             autocomplete="username"
-            onInput={({ target }) => {this.email = target.value}}
+            onInput={({ target }) => this.setState({ email: target.value })}
+            value={email}
             required />
           {formAction === 'register' && (
             <InputText name="username"
               label="Username"
               autocomplete="username"
-              onInput={({ target }) => {this.username = target.value}}
+              onInput={({ target }) => this.setState({ username: target.value })}
+              value={username}
               required />
           )}
           <InputPassword name="password"
             label="Password"
             autocomplete="password"
-            onInput={({ target }) => {this.password = target.value}}
+            onInput={({ target }) => this.setState({ password: target.value })}
+            value={password}
             required />
           <div className="AuthenticationScene-form-buttons">
-            <ButtonText type="submit"
+            <ButtonText type={formAction == 'login' ? 'submit' : 'button'}
               value="Login"
               disabled={isLoading}
               onClick={(event) => {
@@ -123,7 +134,7 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
                 }
               }}
               primary={formAction == 'login'} />
-            <ButtonText type="submit"
+            <ButtonText type={formAction == 'register' ? 'submit' : 'button'}
               value="Register"
               disabled={isLoading}
               onClick={(event) => {
