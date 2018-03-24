@@ -1,6 +1,7 @@
 import { h, Component } from 'preact';
 import ButtonText from '../../components/ButtonText';
 import ButtonIcon from '../../components/ButtonIcon';
+import MiningControls from '../../components/MiningControls';
 import ServicesInterface from '../../services/interface';
 import './LobbyScene.scss';
 
@@ -39,11 +40,14 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
     const {
       activeTab,
     } = this.state;
+    const {
+      minerService
+    } = this.props.services;
     const pageTranslateX = (this.tabIndex('shop') - this.tabIndex(activeTab)) * 100;
     return (
       <div className="LobbyScene-page"
         style={{ transform: `translateX(${pageTranslateX}vw)` }}>
-        
+        <MiningControls minerService={minerService} />
       </div>
     )
   }
