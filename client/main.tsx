@@ -1,5 +1,6 @@
 import { h, render, Component } from 'preact';
 import './style.scss';
+import LogoutButton from './components/LogoutButton';
 import CoinDisplay from './components/CoinDisplay';
 import HashrateDisplay from './components/HashrateDisplay';
 import AuthenticationScene from './scenes/AuthenticationScene';
@@ -15,37 +16,40 @@ class App extends Component<any, any> {
   constructor(props: any) {
     super(props);
     
-    this.state = {
-      user: {
-        balance: 0,
-      },
-      hashrate: 0,
-      scene: 'authentication',
-    };
-
     this.services = {
       authService: new AuthService(),
       socketService: new SocketServerService(),
       minerService: new MinerService(),
     }
 
-    this.services.socketService.on('connect', (socket) => {
-      this.services.minerService.initialize('cryptonight-miner', {
-        socket,
-        autoThreads: true,
-      });
-      this.services.minerService.start()
-    })
+    this.state = this.getInitialState()
 
-    setInterval(() => {
-      this.setState({
-        hashrate: this.services.minerService.getHashesPerSecond(),
-      })
-    }, 1000)
+    this.services.socketService.on('connect', (socket) => {
+      // this.services.minerService.initialize('cryptonight-miner', {
+      //   socket,
+      //   autoThreads: true,
+      // });
+      // this.services.minerService.start()
+      // setInterval(() => {
+      //   this.setState({
+      //     hashrate: this.services.minerService.getHashesPerSecond(),
+      //   })
+      // }, 1000)
+    })
 
     this.services.authService.on('login', this.handleLogin.bind(this));
     this.services.authService.on('logout', this.handleLogout.bind(this));
     this.services.minerService.on('accepted', this.handleAcceptedHash.bind(this));
+  }
+
+  getInitialState() {
+    return {
+      user: {
+        balance: 0,
+      },
+      hashrate: 0,
+      scene: 'authentication',
+    }
   }
 
   handleLogin(user) {
@@ -62,16 +66,13 @@ class App extends Component<any, any> {
         }
         this.setState({
           user: userUpdated
-        })        
+        })
       })
     }
   }
 
-  handleLogout() {
-    this.setState({
-      scene: 'authentication',
-      user: null,
-    })
+  async handleLogout() {
+    this.setState(this.getInitialState())
   }
 
   handleAcceptedHash() {
@@ -95,6 +96,9 @@ class App extends Component<any, any> {
     return (
       <div>
         <div style={{ position:'fixed', top: 0, left: 0, right: 0, display: 'flex', justifyContent: 'flex-end', maxWidth: 768, width: '100%', margin: '0 auto', zIndex: 1 }}>
+          <div style={{ flexGrow: 1 }}>
+            {scene == 'lobby' && <LogoutButton onClick={this.services.authService.logout} />}
+          </div>
           <HashrateDisplay value={hashrate || 0} />
           <CoinDisplay value={user.balance || 0} />
         </div>

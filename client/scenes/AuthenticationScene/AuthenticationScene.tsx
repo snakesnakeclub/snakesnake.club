@@ -11,18 +11,24 @@ interface PropTypes {
 }
 
 interface StateTypes {
+  email: string;
+  username: string;
+  password: string;
+  formAction: string;
   validationErrors: Array<string>;
+  isLoading: boolean;
 }
 
 export default class AuthenticationScene extends Component<PropTypes, StateTypes> {
-  private action: string = 'login';
-  private email: string = '';
-  private password: string = '';
-
   constructor(props: PropTypes) {
     super(props);
     this.state = {
+      formAction: 'login',
       validationErrors: [],
+      isLoading: false,
+      email: '',
+      username: '',
+      password: '',
     }
   }
 
@@ -31,22 +37,47 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
     const {
       authService,
     } = this.props.services
+    const {
+      formAction,
+      email,
+      username,
+      password,
+    } = this.state;
 
-    const email = this.email;
-    const password = this.password;
+    this.setState({
+      isLoading: true
+    });
 
-    switch(this.action) {
+    switch(formAction) {
       case 'login':
         authService.login(email, password)
+          .then(() => {
+            this.setState({
+              validationErrors: [],
+              isLoading: false
+            });
+          })
           .catch((data) => {
-            this.setState({ validationErrors: data.validationErrors })
+            this.setState({
+              validationErrors: data.validationErrors,
+              isLoading: false,
+            })
           })
           break;
 
       case 'register':
-        authService.register(email, password)
+        authService.register(email, username, password)
+          .then(() => {
+            this.setState({
+              validationErrors: [],
+              isLoading: false
+            });
+          })
           .catch((data) => {
-            this.setState({ validationErrors: data.validationErrors })
+            this.setState({
+              validationErrors: data.validationErrors,
+              isLoading: false,
+            })
           })
         break;
     }
@@ -54,33 +85,68 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
 
   render() {
     const {
+      formAction,
       validationErrors,
+      isLoading,
+      email,
+      username,
+      password,
     } = this.state;
     return (
       <div className="AuthenticationScene">
         <form onSubmit={this.handleAuthenticate.bind(this)}
           className="AuthenticationScene-form"
           autocomplete="on">
+          <img className="AuthenticationScene-form-logo"
+            src="/static/assets/logo.png"
+            alt="SnakeSnake.Club" />
           <InputText name="email"
-            type="email"
-            label="Email Address"
-            placeholder="john.doe@example.com"
-            autocomplete="email"
-            onInput={({ target }) => {this.email = target.value}}
+            label={formAction === 'login' ? "Email Address or Username" : 'Email Address'}
+            autocomplete="username"
+            onInput={({ target }) => this.setState({ email: target.value })}
+            value={email}
             required />
+          {formAction === 'register' && (
+            <InputText name="username"
+              label="Username"
+              autocomplete="username"
+              onInput={({ target }) => this.setState({ username: target.value })}
+              value={username}
+              required />
+          )}
           <InputPassword name="password"
             label="Password"
-            placeholder="••••••••"
             autocomplete="password"
-            onInput={({ target }) => {this.password = target.value}}
+            onInput={({ target }) => this.setState({ password: target.value })}
+            value={password}
             required />
           <div className="AuthenticationScene-form-buttons">
-            <ButtonText type="submit"
+            <ButtonText type={formAction == 'login' ? 'submit' : 'button'}
               value="Login"
-              onClick={() => { this.action = 'login' }} />
-            <ButtonText type="submit"
+              disabled={isLoading}
+              onClick={(event) => {
+                if (formAction != 'login') {
+                  event.preventDefault();
+                  this.setState({
+                    validationErrors: [],
+                    formAction: 'login'
+                  })
+                }
+              }}
+              primary={formAction == 'login'} />
+            <ButtonText type={formAction == 'register' ? 'submit' : 'button'}
               value="Register"
-              onClick={() => { this.action = 'register' }}/>
+              disabled={isLoading}
+              onClick={(event) => {
+                if (formAction != 'register') {
+                  event.preventDefault();
+                  this.setState({
+                    validationErrors: [],
+                    formAction: 'register'
+                  })
+                }
+              }}
+              primary={formAction == 'register'} />
           </div>
           <div style={{ width: '100%' }}>
             {validationErrors.map((error) => (

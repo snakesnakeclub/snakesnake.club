@@ -1,8 +1,8 @@
 {
   "EMAIL_EXISTS": "Email address is already registered.",
   "INVALID_EMAIL": "Email address must be valid.",
-  "INVALID_PASSWORD": "Password must be atleast 8 characters long and contain lowercase, uppercase, digit, and special character.",
-  "INCORRECT_EMAIL": "Email address is incorrect.",
+  "INVALID_PASSWORD": "Password must be atleast 8 characters long.",
+  "USER_NOT_FOUND": "Email address or username does not exist.",
   "INCORRECT_PASSWORD": "Password is incorrect.",
   "500": "Internal error. Please try again."
 }

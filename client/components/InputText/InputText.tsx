@@ -4,6 +4,7 @@ import './InputText.scss';
 interface PropTypes {
   className?: string;
   label: string;
+  refInput?: (el: HTMLInputElement) => void;
   [prop: string]: any;
 }
 
@@ -20,6 +21,7 @@ export default class InputText extends Component<PropTypes, StateTypes> {
     const {
       className,
       ref,
+      refInput,
       label,
       ...remainingProps,
     } = this.props
@@ -29,6 +31,7 @@ export default class InputText extends Component<PropTypes, StateTypes> {
           {label}
         </span>
         <input type="text"
+          ref={refInput}
           className={`InputText ${className}`}
           {...remainingProps}
         />
