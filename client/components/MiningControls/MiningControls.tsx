@@ -60,31 +60,47 @@ export default class MiningControls extends Component<PropTypes, StateTypes> {
             ? 'Stop Mining'
             : 'Start Mining'
           }
+          title={minerService.isRunning
+            ? 'Stop Mining'
+            : 'Start Mining'
+          }
           onClick={this.handleMiningToggle.bind(this)}
           imgWidth={24}
           imgHeight={24} 
           style={{ margin: 7 }} />
-        <ButtonIcon src="/static/assets/ic_trending_up_white_24px.svg"
-          alt="Speed Up"
-          onClick={this.handleSpeedUp.bind(this)}
-          imgWidth={24}
-          imgHeight={24}
-          style={{ margin: 7 }} />
-        <ButtonIcon src="/static/assets/ic_trending_down_white_24px.svg"
-          alt="Slow Down"
-          onClick={this.handleSlowDown.bind(this)}
-          imgWidth={24}
-          imgHeight={24} 
-          style={{ margin: 7 }} />
-        <div class="MiningControls--threads">
-          {Array.from(Array(minerService.hardwareConcurrency))
-            .map((_, i) => (
-              <div class={i < minerService.getNumThreads()
-                ? "MiningControls--thread-active"
-                : "MiningControls--thread-inactive"}
+
+        {minerService.isRunning && (
+          <ButtonIcon src="/static/assets/ic_trending_up_white_24px.svg"
+            alt="Speed Up"
+            title="Speed up mining"
+            onClick={this.handleSpeedUp.bind(this)}
+            imgWidth={24}
+            imgHeight={24}
+            style={{ margin: 7 }} />
+        )}
+
+        {minerService.isRunning && (
+          <ButtonIcon src="/static/assets/ic_trending_down_white_24px.svg"
+            alt="Slow Down"
+            title="Slow down mining"
+            onClick={this.handleSlowDown.bind(this)}
+            imgWidth={24}
+            imgHeight={24} 
+            style={{ margin: 7 }} />
+        )}
+
+        {minerService.isRunning && (
+          <div class="MiningControls--threads"
+            title={minerService.getNumThreads() + " active mining threads"}>
+            {Array.from(Array(minerService.hardwareConcurrency))
+              .map((_, i) => (
+                <div class={i < minerService.getNumThreads()
+                  ? "MiningControls--thread-active"
+                  : "MiningControls--thread-inactive"}
               />
             ))}
-        </div>
+          </div>
+        )}
       </div>
     );
   }
