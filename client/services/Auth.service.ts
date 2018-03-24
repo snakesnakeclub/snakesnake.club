@@ -15,7 +15,8 @@ export default class AuthService extends EventEmitter {
   constructor() {
     super();
     localforage.getItem('session_token')
-      .then(this.handleSessionTokenStorage.bind(this));
+      .then(this.handleSessionTokenStorage.bind(this))
+      .then(this.handleReady.bind(this));
   }
 
   get isLoggedIn() {
@@ -32,6 +33,10 @@ export default class AuthService extends EventEmitter {
     } catch (error) {
       localforage.removeItem('session_token');
     }
+  }
+
+  handleReady() {
+    this.emit('ready');
   }
 
   /**

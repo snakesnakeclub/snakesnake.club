@@ -37,6 +37,7 @@ class App extends Component<any, any> {
       // }, 1000)
     })
 
+    this.services.authService.on('ready', this.handleReady.bind(this));
     this.services.authService.on('login', this.handleLogin.bind(this));
     this.services.authService.on('logout', this.handleLogout.bind(this));
     this.services.minerService.on('accepted', this.handleAcceptedHash.bind(this));
@@ -44,12 +45,19 @@ class App extends Component<any, any> {
 
   getInitialState() {
     return {
+      isReady: false,
       user: {
         balance: 0,
       },
       hashrate: 0,
       scene: 'authentication',
     }
+  }
+
+  handleReady() {
+    this.setState({
+      isReady: true,
+    })
   }
 
   handleLogin(user) {
@@ -72,7 +80,10 @@ class App extends Component<any, any> {
   }
 
   async handleLogout() {
-    this.setState(this.getInitialState())
+    this.setState({
+      ...this.getInitialState(),
+      isReady: true,
+    })
   }
 
   handleAcceptedHash() {
@@ -89,10 +100,16 @@ class App extends Component<any, any> {
 
   render() {
     const {
+      isReady,
       scene,
       hashrate,
       user,
     } = this.state
+
+    if (!isReady) {
+      return null;
+    }
+
     return (
       <div>
         <div style={{ position:'fixed', top: 0, left: 0, right: 0, display: 'flex', justifyContent: 'flex-end', maxWidth: 768, width: '100%', margin: '0 auto', zIndex: 1 }}>

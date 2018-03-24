@@ -24,6 +24,7 @@ export default class LogoutButton extends Component<PropTypes, StateTypes> {
         imgWidth={24}
         imgHeight={24}
         title="Logout"
+        style={{ margin: 7 }}
         onClick={onClick} />
     )
   }
