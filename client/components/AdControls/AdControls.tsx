@@ -22,7 +22,8 @@ export default class MiningControls extends Component<PropTypes, StateTypes> {
   }
 
   handleShowAd() {
-    this.setState({
+    let state = this;
+    state.setState({
       showingAd:true,
     })
     const player = new VASTPlayer(document.getElementById("container"));
@@ -35,7 +36,7 @@ export default class MiningControls extends Component<PropTypes, StateTypes> {
     })
     
     player.once('AdStopped', function() {
-      this.setState({
+      state.setState({
         showingAd:false,
       })
     })
