@@ -16,8 +16,5 @@
   },
   "xo": {
     "space": true
-  },
-  "dependencies": {
-    "vast-player": "0.2.10"
   }
 }
