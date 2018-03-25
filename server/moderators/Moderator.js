@@ -1,4 +1,4 @@
-const World = require("../rooms/world")
+const World = require('../game-objects/world');
 
 module.exports = class Moderator {
 

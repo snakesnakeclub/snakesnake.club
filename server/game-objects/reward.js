@@ -1,6 +1,6 @@
 const {randomInteger} = require('../helpers.js');
 
-class Rewards {
+class Reward {
   constructor(world) {
     this.world = world;
     this.respawn(world);
@@ -21,4 +21,4 @@ class Rewards {
   }
 }
 
-module.exports = Rewards;
+module.exports = Reward;

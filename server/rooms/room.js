@@ -1,6 +1,6 @@
-const Player = require('./player');
-const Reward = require('./rewards');
-const World = require('./world');
+const Player = require('../game-objects/player');
+const Reward = require('../game-objects/reward');
+const World = require('../game-objects/world');
 const {randomInteger} = require('../helpers.js');
 
 class Room {

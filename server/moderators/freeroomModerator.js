@@ -1,7 +1,8 @@
 const Moderator = require('./Moderator');
+const Player = require('../game-objects/player');
+const Reward = require('../game-objects/reward');
 
 module.exports = class FreeRoomModerator extends Moderator {
-
   constructor() {
     super();
   }
@@ -32,7 +33,7 @@ module.exports = class FreeRoomModerator extends Moderator {
       player.setDirection(direction);
     });
 
-    this.dead_players.set(socket.id, player);
+    this.deadPlayers.set(socket.id, player);
 
     this.rewards.push(new Reward(this.world));
     this.rewards.push(new Reward(this.world));
@@ -45,10 +46,10 @@ module.exports = class FreeRoomModerator extends Moderator {
    * @param {socket} socket players socket
    */
   spawnPlayer(socket) {
-    var player = this.dead_players.get(socket.id);
-    this.dead_players.delete(socket.id);
+    var player = this.deadPlayers.get(socket.id);
+    this.deadPlayers.delete(socket.id);
   
-    this.alive_players.set(socket.id, player);
+    this.alivePlayers.set(socket.id, player);
   }
 
   /**
@@ -60,10 +61,10 @@ module.exports = class FreeRoomModerator extends Moderator {
   killPlayer(socket) {
     socket.emit('death');
 
-    var player = this.alive_players.get(socket.id);
+    var player = this.alivePlayers.get(socket.id);
     player.reset();
-    this.alive_players.delete(socket.id);
-    this.dead_players.set(socket.id, player);
+    this.alivePlayers.delete(socket.id);
+    this.deadPlayers.set(socket.id, player);
   }
   
   /**
@@ -72,7 +73,7 @@ module.exports = class FreeRoomModerator extends Moderator {
    * @param {socket} socket players socket
    */
   removePlayer(socket) {
-    this.alive_players.delete(socket.id);
+    this.alivePlayers.delete(socket.id);
     this.rewards.pop();
     this.rewards.pop();
   }

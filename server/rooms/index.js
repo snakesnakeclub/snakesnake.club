@@ -24,7 +24,7 @@ module.exports = {
     });
 
     socket.on('play', (room_id, token_session) => {
-      User.findOne({session_token: token_session}, (err, user) => {
+      User.findOne({session_token: token_session}, async (err, user) => {
         if (err) {
           socket.emit('play->res', 500);
           return;
@@ -45,19 +45,12 @@ module.exports = {
           return;
         }
 
-        User.findOne({token_session: user.token_session}, async (err, user) => {
-            if (err || !user) {
-              socket.emit('play->res', 500);
-              return
-            }
-            user.balance -= selectedRoom.fee
-            await user.save()
-            selectedRoom.getModerator().addPlayer(socket);
-            socket.join(selectedRoom.id);
-            socket.current_room = room_id;
-            socket.emit('play->res', null);
-          }
-        );
+        user.balance -= selectedRoom.fee
+        await user.save()
+        selectedRoom.getModerator().addPlayer(socket);
+        socket.join(selectedRoom.id);
+        socket.current_room = room_id;
+        socket.emit('play->res', null);
       });
     });
 
@@ -74,9 +67,8 @@ module.exports = {
     socket.on('disconnect', function() { 
       if (socket.current_room > 0) {
         room = rooms.get(socket.current_room)
-        room.removePlayer(socket);
+        room.getModerator().removePlayer(socket);
       }
     })
-
   }
 };
