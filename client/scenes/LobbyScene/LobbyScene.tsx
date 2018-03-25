@@ -1,6 +1,7 @@
 import { h, Component } from 'preact';
 import ButtonText from '../../components/ButtonText';
 import ButtonIcon from '../../components/ButtonIcon';
+import AdControls from '../../components/AdControls';
 import MiningControls from '../../components/MiningControls';
 import ServicesInterface from '../../services/interface';
 import './LobbyScene.scss';
@@ -48,6 +49,7 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
       <div className="LobbyScene-page"
         style={{ transform: `translateX(${pageTranslateX}vw)` }}>
         <MiningControls minerService={minerService} />
+        <AdControls/>
       </div>
     )
   }
