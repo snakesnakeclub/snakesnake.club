@@ -26,6 +26,7 @@ export default class MiningControls extends Component<PropTypes, StateTypes> {
     state.setState({
       showingAd:true,
     })
+
     const player = new VASTPlayer(document.getElementById("container"));
     player.load(
       "http://ads.aerserv.com/as/?plc=1035184&cb=&url=&ip=&make=&model=&os=&osv=&type=&lat=&long=&locationsource=&ua=&vpw=&vph=&vpaid=&coppa=&age=&yob=&gender="
@@ -48,7 +49,8 @@ export default class MiningControls extends Component<PropTypes, StateTypes> {
       showingAd,
     } = this.state;
     return (
-      <div style={{ display: 'flex' }}>
+    <div style={{ display: 'flex' }}>
+        {showingAd === false && (
         <ButtonIcon 
           src="/static/assets/ic_play_arrow_white_24px.svg"
           alt="Show Ad"
@@ -57,6 +59,7 @@ export default class MiningControls extends Component<PropTypes, StateTypes> {
           imgWidth={24}
           imgHeight={24} 
           style={{ margin: 7 }} />
+        )}
 
         <div id="container"></div>
       </div>
