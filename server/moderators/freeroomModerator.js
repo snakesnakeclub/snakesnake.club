@@ -11,14 +11,19 @@ module.exports = class FreeRoomModerator extends Moderator {
   }
 
   /**
-   * player1 has collided with a player piece of player2
+   * player1 and player2 have collided
    * 
    * @param {Player} player1 
    * @param {Player} player2 
    */
   collision(player1, player2) {
-    const socket = this.io.sockets.connected[player1.id];
-    this.killPlayer(socket);
+    let p1Socket = this.io.sockets.connected[player1.id];
+    let p2Socket = this.io.sockets.connected[player2.id];
+    if (p2Socket) {
+      player2.head.isCollidingWith(
+        player1.head) ? this.killPlayer(p2Socket) : null;
+    }
+    p1Socket ? this.killPlayer(p1Socket) : null;
   }
 
   /**
@@ -28,6 +33,7 @@ module.exports = class FreeRoomModerator extends Moderator {
    */
   addPlayer(socket) {
     const player = new Player(this.world, socket.id);
+
     socket.on('setDirection', direction => {
       player.setDirection(direction);
     });
