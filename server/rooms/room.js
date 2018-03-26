@@ -20,28 +20,24 @@ class Room {
 
   gameTick() {
     const playersArray = Array.from(this.moderator.alivePlayers);
-    
+
     playersArray.forEach(player => {
-      const head = player.head();
 
-      const hitReward = this.rewards.some(reward =>
-        head.isCollidingWith(reward) && reward.respawn()
+      playersArray.some(aPlayer =>
+        aPlayer.pieces.some(piece => 
+          head.isCollidingWith(piece)) ? this.moderator.collision(player, aPlayer) : null
       );
 
-      if (hitReward) this.moderator.rewardPlayer(player);
-      else player.move()
+      if (this.moderator.alivePlayers.get(player)) { // player is still alive
+        let hitReward = rewards.some(reward =>
+          player.head.isCollidingWith(reward) ? this.moderator.reward(player) : null
+        );
 
-      const didCollideWithPlayerPiece = playersArray.some(aPlayer =>
-        aPlayer.pieces.some(piece => head.isCollidingWith(piece))
-      );
-
-      if (didCollideWithPlayerPiece) {
-        // Socket id of dead player & the player who was ran into
-        this.moderator.collision(player, null)
-        // This.updateBalance(this.alive_players.get(aPlayer.id));
-        // Across tick length
+        hitReward ? null : player.move()
       }
+
     });
+
     this.io.to(this.id).emit('room-tick', this.serialize());
   }
 
