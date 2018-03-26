@@ -19,10 +19,11 @@ module.exports = class FreeRoomModerator extends Moderator {
   collision(player1, player2) {
     let p1Socket = this.io.sockets.connected[player1.id];
     let p2Socket = this.io.sockets.connected[player2.id];
-    if (p2Socket) {
-      player2.head.isCollidingWith(
-        player1.head) ? this.killPlayer(p2Socket) : null;
+
+    if (p2Socket && player2.head.isCollidingWith(player1.head)) {
+       this.killPlayer(p2Socket);
     }
+
     p1Socket ? this.killPlayer(p1Socket) : null;
   }
 
