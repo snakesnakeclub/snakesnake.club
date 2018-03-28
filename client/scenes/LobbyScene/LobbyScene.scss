@@ -1,24 +1,30 @@
-.LobbyScene-page {
-  align-content: center;
-  bottom: 0;
+.LobbyScene {
   display: flex;
-  height: 100vh;
-  justify-content: center;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  align-items: center;
-  flex-direction: column;
   transition: .5s transform ease-out;
+  will-change: transform;
+}
+
+.LobbyScene-page {
   width: 100vw;
-  z-index: 0;
+  min-height: 100vh;
   background-color: #2c4a74;
   background-image: repeating-linear-gradient(120deg, rgba(255,255,255,.1), transparent 1px, transparent 10000px),
   repeating-linear-gradient(60deg, rgba(255,255,255,.1), rgba(255,255,255,.1) 1px, transparent 1px, transparent 10000px),
   linear-gradient(60deg,rgba(0,0,0,.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.1) 75%, rgba(0,0,0,.1)),
   linear-gradient(120deg, rgba(0,0,0,.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.1) 75%, rgba(0,0,0,.1));
   background-size: 50vw 88px;
+}
+
+.LobbyScene-page-scrollable {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  flex-direction: column;
+  overflow-y: scroll;
+  padding-top: 55px;
+  padding-bottom: 86px;
+  box-sizing: border-box;
 }
 
 @media screen and (min-width: 620px) {
@@ -37,7 +43,7 @@
   justify-content: space-around;
   left: 0;
   margin: auto;
-  max-width: 384px;
+  max-width: 385px;
   position: fixed;
   right: 0;
   width: 100%;

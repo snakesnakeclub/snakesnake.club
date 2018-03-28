@@ -52,12 +52,12 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
     const {
       minerService
     } = this.props.services;
-    const pageTranslateX = (this.tabIndex('shop') - this.tabIndex(activeTab)) * 100;
     return (
-      <div className="LobbyScene-page"
-        style={{ transform: `translateX(${pageTranslateX}vw)` }}>
-        <MiningControls minerService={minerService} />
-        <AdControls/>
+      <div className="LobbyScene-page">
+        <div className="LobbyScene-page-scrollable">
+          <MiningControls minerService={minerService} />
+          <AdControls/>
+        </div>
       </div>
     )
   }
@@ -66,16 +66,16 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
     const {
       activeTab,
     } = this.state;
-    const pageTranslateX = (this.tabIndex('play') - this.tabIndex(activeTab)) * 100;
     return (
-      <div className="LobbyScene-page"
-        style={{ transform: `translateX(${pageTranslateX}vw)` }}>
-        <ButtonText value="Practice"
-          style={{ width: 180, margin: '5px 0' }}
-          onClick={this.handleFreeRoomJoin.bind(this)} />
-        <ButtonText value="Compete"
-          style={{ width: 180, margin: '5px 0' }}
-          disabled />
+      <div className="LobbyScene-page">
+        <div className="LobbyScene-page-scrollable">
+          <ButtonText value="Practice"
+            style={{ width: 180, margin: '5px 0' }}
+            onClick={this.handleFreeRoomJoin.bind(this)} />
+          <ButtonText value="Compete"
+            style={{ width: 180, margin: '5px 0' }}
+            disabled />
+        </div>
       </div>
     )
   }
@@ -84,11 +84,10 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
     const {
       activeTab,
     } = this.state;
-    const pageTranslateX = (this.tabIndex('group') - this.tabIndex(activeTab)) * 100;
     return (
-      <div className="LobbyScene-page"
-        style={{ transform: `translateX(${pageTranslateX}vw)` }}>
-        
+      <div className="LobbyScene-page">
+        <div className="LobbyScene-page-scrollable">
+        </div>
       </div>
     )
   }
@@ -134,11 +133,17 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
   }
 
   render() {
+    const {
+      activeTab,
+    } = this.state;
     return (
       <div>
-        {this.renderShopPage()}
-        {this.renderPlayPage()}
-        {this.renderGroupPage()}
+        <div className="LobbyScene"
+          style={{ transform: `translateX(${this.tabIndex(activeTab) * -100}vw)` }}>
+          {this.renderShopPage()}
+          {this.renderPlayPage()}
+          {this.renderGroupPage()}
+        </div>
         {this.renderNavigationBar()}
       </div>
     )

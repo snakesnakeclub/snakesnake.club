@@ -148,5 +148,5 @@ class App extends Component<any, any> {
 
 render(
   <App />,
-  document.getElementById('game-overlay')
+  document.getElementById('react')
 );
