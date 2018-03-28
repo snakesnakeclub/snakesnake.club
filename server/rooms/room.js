@@ -11,7 +11,6 @@ class Room {
     this.fee = fee;
     this.moderator = moderator;
 
-    setInterval(this.gameTick.bind(this), 1000 / 6);
   }
 
   getModerator() {
@@ -22,7 +21,6 @@ class Room {
     const playersArray = Array.from(this.moderator.alivePlayers.values());
     
     playersArray.forEach(player => {
-
       playersArray.some(aPlayer =>
         aPlayer.pieces.some(piece => 
           player.head.isCollidingWith(piece)) ? this.moderator.collision(player, aPlayer) : null
@@ -31,7 +29,7 @@ class Room {
       if (this.moderator.alivePlayers.get(player.id)) { // player is still alive
         let hitReward = this.moderator.rewards.some(reward => {
           if (player.head.isCollidingWith(reward)) {
-            this.moderator.rewardPlayer(player)
+            this.moderator.rewardPlayer(player, reward);
             return true;
           }
           return false;
