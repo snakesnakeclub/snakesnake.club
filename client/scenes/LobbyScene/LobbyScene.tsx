@@ -56,7 +56,7 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
       <div className="LobbyScene-page">
         <div className="LobbyScene-page-scrollable">
           <MiningControls minerService={minerService} />
-          <AdControls/>
+          <AdControls />
         </div>
       </div>
     )

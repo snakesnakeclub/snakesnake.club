@@ -1,6 +1,6 @@
 import { h, Component } from 'preact';
 import * as VASTPlayer from 'vast-player';
-import ButtonIcon from '../ButtonIcon';
+import ButtonText from '../ButtonText';
 import './AdControls.scss';
 const {VAST_URL} = require('../../credentials.json');
 
@@ -13,8 +13,6 @@ interface StateTypes {
 }
 
 export default class MiningControls extends Component<PropTypes, StateTypes> {
-  private adContainer: HTMLDivElement = null;
-
   constructor(props) {
     super(props);
     this.state = {
@@ -23,38 +21,70 @@ export default class MiningControls extends Component<PropTypes, StateTypes> {
   }
 
   handleShowAd() {
-    this.setState({ isAdShown: true })
+    this.setState({ isAdShown: true });
+  }
 
-    const player = new VASTPlayer(this.adContainer);
-
-    player.load(VAST_URL)
-      .then(() => player.startAd())
-      .catch(console.error)
-    
-    player.once('AdStopped', this.setState.bind(this, { isAdShown: false }))
+  handleHideAd() {
+    this.setState({ isAdShown: false });
   }
 
   render() {
     const {
       isAdShown,
     } = this.state;
+    const isAdShownClass = isAdShown ? 'AdControls--blackhole-shown' : '';
     return (
-      <div style={{ display: 'flex' }}>
-        {isAdShown === false && (
-          <ButtonIcon 
-            src="/static/assets/ic_play_arrow_white_24px.svg"
-            alt="Show Ad"
-            title="View Ad"
-            onClick={this.handleShowAd.bind(this)}
-            imgWidth={24}
-            imgHeight={24} 
-            style={{ margin: 7 }} />
+      <div>
+        <img className={`AdControls--blackhole ${isAdShownClass}`}
+          src="/static/assets/black-hole.svg"
+          alt="" />
+
+        {!isAdShown && (
+          <div className="AdControls--adhole">
+            <img className="AdControls--adhole-image"
+              src="/static/assets/black-hole-filled.svg"
+              alt="" />
+            <ButtonText className="AdControls--adhole-button"
+              value="Ad Hole"
+              onClick={this.handleShowAd.bind(this)}
+              style={{ margin: 0 }} />
+          </div>
         )}
 
-        <div class="AdControls--interstitial"
-          ref={el => {this.adContainer = el as HTMLDivElement}}
-          style={{ display: isAdShown ? '' : 'none' }} />
+        {isAdShown && <VastVideo onAdStopped={this.handleHideAd.bind(this)} />}
       </div>
     );
+  }
+}
+
+class VastVideo extends Component<any, any> {
+  private adContainer: HTMLDivElement = null;
+
+  constructor(props) {
+    super();
+  } 
+
+  componentDidMount() {
+    const {
+      onAdStopped,
+    } = this.props
+    const player = new VASTPlayer(this.adContainer);
+
+    player.load(VAST_URL)
+      .then(() => player.startAd())
+      .catch(console.error)
+    
+    player.once('AdStopped', onAdStopped);
+  }
+
+  shouldComponentUpdate() {
+    return false;
+  }
+
+  render() {
+    return (
+      <div class="AdControls--interstitial"
+        ref={el => {this.adContainer = el as HTMLDivElement}} />
+    )
   }
 }
