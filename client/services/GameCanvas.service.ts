@@ -10,7 +10,7 @@ export default class GameCanvasService {
   protected animationFrameId: number = null;
   protected lastFrameTime: number = null;
   protected lastTickTime: number = null;
-  protected currentPlayer: Player = null;
+  protected myPlayer: Player = null;
   protected players: Array<Player> = null;
   protected rewards: Array<any> = null;
   protected world: any = null;
@@ -33,9 +33,9 @@ export default class GameCanvasService {
       skin: '_yellow',
     }));
     this.rewards = rewards;
-    this.currentPlayer = this.players.find(p => p.id == playerId);
-    if (this.currentPlayer) {
-      this.currentPlayer.skin = '_green';
+    this.myPlayer = this.players.find(p => p.id == playerId);
+    if (this.myPlayer) {
+      this.myPlayer.skin = '_green';
     }
   }
 
@@ -66,11 +66,11 @@ export default class GameCanvasService {
   }
 
   private camera(tickDt: number) {
-    if (this.currentPlayer) {
+    if (this.myPlayer) {
       const tickP = tickDt / TICK_SPEED;
       return new Camera(
-        (this.currentPlayer.head.x + tickP * this.directionDx) * TILE_SIZE,
-        (this.currentPlayer.head.y + tickP * this.directionDy) * TILE_SIZE
+        (this.myPlayer.head.x + tickP * this.directionDx) * TILE_SIZE,
+        (this.myPlayer.head.y + tickP * this.directionDy) * TILE_SIZE
       )
     } else {
       return new Camera(
