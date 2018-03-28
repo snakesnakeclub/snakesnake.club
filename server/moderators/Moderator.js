@@ -2,7 +2,8 @@ const World = require('../game-objects/world');
 
 module.exports = class Moderator {
 
-  constructor() {
+  constructor(io) {
+    this.io = io;
     this.alivePlayers = new Map()
     this.deadPlayers = new Map()
     this.rewards = []
