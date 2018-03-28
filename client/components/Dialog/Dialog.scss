@@ -1,0 +1,27 @@
+.Dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-height: 100px;
+  background: indigo;
+  padding: 15px;
+  border-radius: 2px;
+  box-shadow: 1px 4px 4px #333333;
+  transition: 0.5s transform ease-in-out, 0.5s opacity ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.Dialog--children {
+  flex-grow: 1;
+}
+
+.Dialog--footer {
+  display: flex;
+}
+
+.Dialog--hidden {
+  transform: translate(-50%, -100%);
+  opacity: 0;
+}

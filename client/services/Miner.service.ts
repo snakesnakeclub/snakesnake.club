@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import SocketServerService from './SocketServer.service';
 const {STATIC_DIRECTORY} = require('../credentials.json');
 
 const IF_EXCLUSIVE_TAB = 'ifExclusiveTab';
@@ -13,7 +14,8 @@ interface Job {
 }
 
 interface MinerParameters {
-  socket: SocketIOClient.Socket;
+  siteKey: string;
+  socketService: SocketServerService;
   throttle?: number;
   threads?: number;
   autoThreads?: boolean;
@@ -21,7 +23,7 @@ interface MinerParameters {
 }
 
 export default class Miner extends EventEmitter {
-  private socket: SocketIOClient.Socket;
+  private socketService: SocketServerService;
   private siteKey: string;
   private user: any;
   private threads: Array<JobThread>;
@@ -40,18 +42,31 @@ export default class Miner extends EventEmitter {
 
   constructor() {
     super();
-  }
-
-  initialize(siteKey: string, params: MinerParameters) {
-    this.socket = params.socket;
-    this.siteKey = siteKey;
     this.user = null;
+    this.verifyThread = null;
     this.threads = [];
     this.hashes = 0;
     this.currentJob = null;
     this.tokenFromServer = null;
     this.goal = 0;
     this.totalHashesFromDeadThreads = 0;
+    this.onTargetMet = this.onTargetMet.bind(this);
+    this.onVerified = this.onVerified.bind(this);
+    if (BroadcastChannel) {
+      try {
+        this.bc = new BroadcastChannel('cryptonight-miner');
+        this.bc.addEventListener('message', msg => {
+          if (msg.data === 'ping') {
+            this.tab.lastPingReceived = Date.now();
+          }
+        });
+      } catch (e) {}
+    }
+  }
+
+  initialize(params: MinerParameters) {
+    this.socketService = params.socketService;
+    this.siteKey = params.siteKey;
     this.throttle = Math.max(0, Math.min(0.99, params.throttle || 0));
     this.autoThreads = {
       enabled: Boolean(params.autoThreads),
@@ -60,7 +75,6 @@ export default class Miner extends EventEmitter {
       adjustEvery: 1e4,
       stats: {}
     };
-    this.verifyThread = null;
     this.tab = {
       ident: Math.random() * 16777215 | 0,
       mode: IF_EXCLUSIVE_TAB,
@@ -72,24 +86,10 @@ export default class Miner extends EventEmitter {
     this.targetNumThreads = Math.max((params.threads || this.hardwareConcurrency) - 1, 1);
     this.useWASM = this.hasWASMSupport() && !params.forceASMJS;
 
-    this.onTargetMet = this.onTargetMet.bind(this);
-    this.onVerified = this.onVerified.bind(this);
-
-    this.socket.on('miner-message', this.onMessage.bind(this));
-    this.socket.on('error', this.onError.bind(this));
-    this.socket.on('disconnect', this.onClose.bind(this));
-    this.socket.on('connect', this.onOpen.bind(this));
-
-    if (BroadcastChannel) {
-      try {
-        this.bc = new BroadcastChannel('cryptonight-miner');
-        this.bc.addEventListener('message', msg => {
-          if (msg.data === 'ping') {
-            this.tab.lastPingReceived = Date.now();
-          }
-        });
-      } catch (e) {}
-    }
+    this.onOpen();
+    this.socketService.socket.on('miner-message', this.onMessage.bind(this));
+    this.socketService.socket.on('error', this.onError.bind(this));
+    this.socketService.socket.on('disconnect', this.onClose.bind(this));
   }
 
   public get hardwareConcurrency() {
@@ -298,7 +298,7 @@ export default class Miner extends EventEmitter {
     return hash >>> 0;
   }
 
-  private onOpen(ev) {
+  private onOpen() {
     this.emit('open');
     const params = {
       site_key: this.siteKey,
@@ -391,7 +391,7 @@ export default class Miner extends EventEmitter {
       params
     };
     console.log('miner', msg);
-    this.socket.emit('miner-message', msg);
+    this.socketService.socket.emit('miner-message', msg);
   }
 }
 

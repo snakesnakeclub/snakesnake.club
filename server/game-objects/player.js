@@ -58,7 +58,7 @@ class Player {
    * Adds a new head in the current direction.
    */
   grow() {
-    const head = this.head();
+    const head = this.head;
     const x = Math.min(Math.max(head.x + this.dx, 0), this.world.width - 1);
     const y = Math.min(Math.max(head.y + this.dy, 0), this.world.height - 1);
     this.pieces.push(new PlayerPiece(x, y));
@@ -78,7 +78,7 @@ class Player {
   /**
    * Returns the head.
    */
-  head() {
+  get head() {
     return this.pieces[this.pieces.length - 1];
   }
 

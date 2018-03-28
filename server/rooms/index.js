@@ -1,6 +1,6 @@
 const Room = require('./room');
 const User = require('../models/user');
-const FreeRoomModerator = require('../moderators/freeroomModerator')
+const FreeRoomModerator = require('../moderators/FreeRoomModerator')
 
 const rooms = new Map();
 
@@ -23,25 +23,25 @@ module.exports = {
         .map(room => room.serializeForLobby()));
     });
 
-    socket.on('play', (room_id, token_session) => {
+    socket.on('joinRoom', (room_id, token_session) => {
       User.findOne({session_token: token_session}, async (err, user) => {
         if (err) {
-          socket.emit('play->res', 500);
+          socket.emit('joinRoom->res', 500);
           return;
         } else if (!user) {
-          socket.emit('play->res', 'INVALID_TOKEN');
+          socket.emit('joinRoom->res', 'INVALID_TOKEN');
           return;
         }
         
         const selectedRoom = rooms.get(room_id);
 
         if (!selectedRoom) {
-          socket.emit('play->res', 'INVALID_ROOM_ID');
+          socket.emit('joinRoom->res', 'INVALID_ROOM_ID');
           return;
         }
 
         if (selectedRoom.fee > user.balance) {
-          socket.emit('play->res', 'INSUFFICIENT_COINS');
+          socket.emit('joinRoom->res', 'INSUFFICIENT_COINS');
           return;
         }
 
@@ -50,18 +50,20 @@ module.exports = {
         selectedRoom.getModerator().addPlayer(socket);
         socket.join(selectedRoom.id);
         socket.current_room = room_id;
-        socket.emit('play->res', null);
+        socket.emit('joinRoom->res', null);
       });
     });
 
     socket.on('spawn', function() {
       room = rooms.get(socket.current_room)
-      room.spawnPlayer(socket);
+      room.getModerator().spawnPlayer(socket);
     });
 
-    socket.on('dead', function() {
-      room = rooms.get(socket.current_room)
-      room.killPlayer(socket);
+    socket.on('leaveRoom', function() {
+      if (socket.current_room > 0) {
+        room = rooms.get(socket.current_room)
+        room.getModerator().removePlayer(socket);
+      }
     })
 
     socket.on('disconnect', function() { 

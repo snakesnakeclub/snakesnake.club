@@ -4,6 +4,7 @@ import ButtonIcon from '../../components/ButtonIcon';
 import AdControls from '../../components/AdControls';
 import MiningControls from '../../components/MiningControls';
 import ServicesInterface from '../../services/interface';
+import Room from '../../models/room';
 import './LobbyScene.scss';
 
 interface PropTypes {
@@ -37,6 +38,13 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
     return tab == activeTab ? 'LobbyScene-navigation-item-active' : ''
   }
 
+  handleFreeRoomJoin() {
+    const {
+      gameService,
+    } = this.props.services;
+    gameService.joinRoom(gameService.freeRoomId);
+  }
+
   renderShopPage() {
     const {
       activeTab,
@@ -63,7 +71,8 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
       <div className="LobbyScene-page"
         style={{ transform: `translateX(${pageTranslateX}vw)` }}>
         <ButtonText value="Practice"
-          style={{ width: 180, margin: '5px 0' }} />
+          style={{ width: 180, margin: '5px 0' }}
+          onClick={this.handleFreeRoomJoin.bind(this)} />
         <ButtonText value="Compete"
           style={{ width: 180, margin: '5px 0' }}
           disabled />

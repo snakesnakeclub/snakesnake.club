@@ -19,19 +19,23 @@ class Room {
   }
 
   gameTick() {
-    const playersArray = Array.from(this.moderator.alivePlayers);
-
+    const playersArray = Array.from(this.moderator.alivePlayers.values());
+    
     playersArray.forEach(player => {
 
       playersArray.some(aPlayer =>
         aPlayer.pieces.some(piece => 
-          head.isCollidingWith(piece)) ? this.moderator.collision(player, aPlayer) : null
+          player.head.isCollidingWith(piece)) ? this.moderator.collision(player, aPlayer) : null
       );
 
-      if (this.moderator.alivePlayers.get(player)) { // player is still alive
-        let hitReward = rewards.some(reward =>
-          player.head.isCollidingWith(reward) ? this.moderator.reward(player) : null
-        );
+      if (this.moderator.alivePlayers.get(player.id)) { // player is still alive
+        let hitReward = this.moderator.rewards.some(reward => {
+          if (player.head.isCollidingWith(reward)) {
+            this.moderator.rewardPlayer(player)
+            return true;
+          }
+          return false;
+        });
 
         hitReward ? null : player.move()
       }
@@ -45,7 +49,7 @@ class Room {
     return {
       id: this.id,
       world: this.moderator.world.serialize(),
-      players: Array.from(this.moderator.alivePlayers).map(player => player.serialize()),
+      players: Array.from(this.moderator.alivePlayers.values()).map(player => player.serialize()),
       rewards: this.moderator.rewards.map(reward => reward.serialize())
     };
   }

@@ -3,7 +3,7 @@ import * as VASTPlayer from 'vast-player';
 import ButtonIcon from '../ButtonIcon';
 import './AdControls.scss';
 const {VAST_URL} = require('../../credentials.json');
-console.log(VASTPlayer)
+
 interface PropTypes {
 
 }

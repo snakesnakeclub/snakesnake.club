@@ -14,7 +14,7 @@ export default class SocketServerService extends EventEmitter {
         this.socket = io(`${server.protocol}://${server.host}:${server.port}`, {
           path: server.path
         })
-        this.emit('connect', this.socket);
+        this.socket.once('connect', () => this.emit('connect'));
       })
   }
 

@@ -140,8 +140,10 @@ module.exports = {
         }
 
         socket.session_token = token;
-        user.balance += socket.verifiedShares - socket.attributedVerifiedShares
-        socket.attributedVerifiedShares = socket.verifiedShares;
+        if (socket.verifiedShares && socket.attributedVerifiedShares) {
+          user.balance += socket.verifiedShares - socket.attributedVerifiedShares;
+          socket.attributedVerifiedShares = socket.verifiedShares;
+        }
         await user.save()
         socket.emit('login-token->res', false, user.serializeWithSensitiveData());
       });
