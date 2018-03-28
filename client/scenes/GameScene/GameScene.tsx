@@ -10,6 +10,7 @@ interface PropTypes {
 
 interface StateTypes {
   isAlive: boolean;
+  deaths: number;
 }
 
 export default class GameScene extends Component<PropTypes, StateTypes> {
@@ -19,6 +20,7 @@ export default class GameScene extends Component<PropTypes, StateTypes> {
     super(props);
     this.state = {
       isAlive: false,
+      deaths: 0,
     }
     this.handleDeath = this.handleDeath.bind(this);
     this.handleWindowResize = this.handleWindowResize.bind(this);
@@ -37,7 +39,11 @@ export default class GameScene extends Component<PropTypes, StateTypes> {
   }
 
   componentWillUnmount() {
-    gameService.removeListener(this.handleDeath);
+    const {
+      gameService,
+    } = this.props.services;
+
+    gameService.removeListener('death', this.handleDeath);
     window.removeEventListener('resize', this.handleWindowResize);
   }
 
@@ -64,14 +70,16 @@ export default class GameScene extends Component<PropTypes, StateTypes> {
   }
 
   handleDeath() {
-    this.setState({
+    this.setState(({ deaths }) => ({
       isAlive: false,
-    })
+      deaths: deaths + 1,
+    }))
   }
 
   render() {
     const {
-      isAlive
+      isAlive,
+      deaths,
     } = this.state;
     return (
       <div>
@@ -87,7 +95,12 @@ export default class GameScene extends Component<PropTypes, StateTypes> {
               onClick={this.handleLeaveRoom.bind(this)}
               primary={false} />,
           ]} >
-
+          {deaths === 0 && (
+            <p>Click play to start.</p>
+          )}
+          {deaths > 0 && (
+            <p>You died! Try again?</p>
+          )}
         </Dialog>
       </div>
     );
