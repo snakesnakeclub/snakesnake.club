@@ -20,16 +20,25 @@ export default class GameScene extends Component<PropTypes, StateTypes> {
     this.state = {
       isAlive: false,
     }
+    this.handleDeath = this.handleDeath.bind(this);
+    this.handleWindowResize = this.handleWindowResize.bind(this);
   }
 
   componentDidMount() {
     const {
       gameService,
     } = this.props.services;
-    gameService.setCanvas(this.canvas);
 
-    window.addEventListener('resize', this.handleWindowResize.bind(this), false);
+    gameService.setCanvas(this.canvas);
+    gameService.on('death', this.handleDeath);
+
+    window.addEventListener('resize', this.handleWindowResize);
     this.handleWindowResize();
+  }
+
+  componentWillUnmount() {
+    gameService.removeListener(this.handleDeath);
+    window.removeEventListener('resize', this.handleWindowResize);
   }
 
   handleWindowResize() {
@@ -52,6 +61,12 @@ export default class GameScene extends Component<PropTypes, StateTypes> {
       gameService,
     } = this.props.services;
     gameService.leaveRoom();
+  }
+
+  handleDeath() {
+    this.setState({
+      isAlive: false,
+    })
   }
 
   render() {

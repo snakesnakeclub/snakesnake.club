@@ -77,6 +77,7 @@ export default class Game extends EventEmitter {
   }
 
   public handleDeath() {
+    this.emit('death');
     this.gameControlsService.detach();
   }
 
