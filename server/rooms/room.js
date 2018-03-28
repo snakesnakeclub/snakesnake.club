@@ -11,6 +11,7 @@ class Room {
     this.fee = fee;
     this.moderator = moderator;
 
+    setInterval(this.gameTick.bind(this), 1000 / 7);
   }
 
   getModerator() {
