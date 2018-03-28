@@ -1,6 +1,7 @@
 import { h, Component } from 'preact';
 import MinerService from '../../services/Miner.service';
 import ButtonIcon from '../ButtonIcon';
+import ButtonText from '../ButtonText';
 import './MiningControls.scss';
 
 interface PropTypes {
@@ -52,22 +53,21 @@ export default class MiningControls extends Component<PropTypes, StateTypes> {
     } = this.props
     return (
       <div style={{ display: 'flex' }}>
-        <ButtonIcon src={minerService.isRunning
-            ? '/static/assets/ic_pause_white_24px.svg'
-            : '/static/assets/ic_play_arrow_white_24px.svg'
-          }
-          alt={minerService.isRunning
-            ? 'Stop Mining'
-            : 'Start Mining'
-          }
-          title={minerService.isRunning
-            ? 'Stop Mining'
-            : 'Start Mining'
-          }
-          onClick={this.handleMiningToggle.bind(this)}
-          imgWidth={24}
-          imgHeight={24} 
-          style={{ margin: 7 }} />
+        {!minerService.isRunning && (
+          <ButtonText value="Start Mining"
+            onClick={this.handleMiningToggle.bind(this)}
+            style={{ margin: 7 }} />
+        )}
+        
+        {minerService.isRunning && (
+          <ButtonIcon src="/static/assets/ic_pause_white_24px.svg"
+            alt="Stop Mining"
+            title="Stop Mining"
+            onClick={this.handleMiningToggle.bind(this)}
+            imgWidth={24}
+            imgHeight={24} 
+            style={{ margin: 7 }} />
+        )}
 
         {minerService.isRunning && (
           <ButtonIcon src="/static/assets/ic_trending_up_white_24px.svg"
