@@ -15,6 +15,7 @@ function removePlayer(socket) {
   if (socket.current_room > 0) {
     room = rooms.get(socket.current_room);
     room.getModerator().removePlayer(socket);
+    socket.current_room = null;
     socket.leave(room.id);
   }
 }

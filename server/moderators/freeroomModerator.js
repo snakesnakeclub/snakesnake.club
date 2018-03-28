@@ -37,16 +37,19 @@ module.exports = class FreeRoomModerator extends Moderator {
    * @param {socket} socket players socket
    */
   addPlayer(socket) {
-    if (socket) {
-      const player = new Player(this.world, socket.id);
-      socket.on('setDirection', direction => {
-        player.setDirection(direction);
-      });
+    if (!socket)
+      return;
+    if (this.alivePlayers.get(socket.id) || this.deadPlayers.get(socket.id))
+      return;
 
-      this.deadPlayers.set(socket.id, player);
-      this.rewards.push(new Reward(this.world));
-      this.rewards.push(new Reward(this.world));
-    }
+    const player = new Player(this.world, socket.id);
+    socket.on('setDirection', direction => {
+      player.setDirection(direction);
+    });
+
+    this.deadPlayers.set(socket.id, player);
+    this.rewards.push(new Reward(this.world));
+    this.rewards.push(new Reward(this.world)); 
   }
   
 
@@ -56,13 +59,15 @@ module.exports = class FreeRoomModerator extends Moderator {
    * @param {socket} socket players socket
    */
   spawnPlayer(socket) {
-    if (socket) {
-      var player = this.deadPlayers.get(socket.id);
-      if (player) {
-        this.deadPlayers.delete(socket.id);
-        this.alivePlayers.set(socket.id, player);
-      }
-    }
+    if (!socket) 
+      return;
+    
+    let player = this.deadPlayers.get(socket.id);
+    if (!player) 
+      return;
+
+    this.deadPlayers.delete(socket.id);
+    this.alivePlayers.set(socket.id, player);
   }
 
   /**
@@ -91,8 +96,11 @@ module.exports = class FreeRoomModerator extends Moderator {
   removePlayer(socket) {
     if (socket) {
       this.alivePlayers.delete(socket.id);
-      this.rewards.pop();
-      this.rewards.pop();
+      socket.current_room = null;
+      if (this.rewards.length > 2) {
+        this.rewards.pop();
+        this.rewards.pop();
+      }
     }
   }
 
