@@ -1,22 +1,83 @@
+import Player from '../models/Player';
+import Camera from '../models/Camera';
+import ClassicRoomTheme from '../room-themes/ClassicRoomTheme';
+import RoomTheme from '../room-themes/RoomTheme';
+
+const TILE_SIZE = 32;
+const TICK_SPEED = 1000 / 7;
 
 export default class GameCanvasService {
   protected animationFrameId: number = null;
   protected lastFrameTime: number = null;
   protected lastTickTime: number = null;
-  protected currentPlayer: any = null;
-  protected players: Array<any> = null;
+  protected currentPlayer: Player = null;
+  protected players: Array<Player> = null;
   protected rewards: Array<any> = null;
   protected world: any = null;
+  protected direction: string = null;
+  protected theme: RoomTheme = null;
+
+  public startDrawing(canvas: HTMLCanvasElement) {
+    this.theme = new ClassicRoomTheme();
+    this.endPaint(canvas, canvas.getContext('2d'));
+  }
+
+  public stopDrawing() {
+    cancelAnimationFrame(this.animationFrameId);
+  }
 
   public setTickData(playerId, { players, rewards }) {
     this.lastTickTime = Date.now();
-    this.players = players;
+    this.players = players.map(player => new Player({
+      ...player,
+      skin: '_yellow',
+    }));
     this.rewards = rewards;
-    this.currentPlayer = players.find(p => p.id == playerId);
+    this.currentPlayer = this.players.find(p => p.id == playerId);
+    if (this.currentPlayer) {
+      this.currentPlayer.skin = '_green';
+    }
   }
 
   public setWorld(world) {
     this.world = world;
+  }
+
+  public setDirection(direction) {
+    this.direction = direction;
+  }
+
+  private get directionDx() {
+    return {
+      right: 1,
+      left: -1,
+      up: 0,
+      down: 0,
+    }[this.direction]
+  }
+
+  private get directionDy() {
+    return {
+      right: 0,
+      left: 0,
+      up: -1,
+      down: 1,
+    }[this.direction]
+  }
+
+  private camera(tickDt: number) {
+    if (this.currentPlayer) {
+      const tickP = tickDt / TICK_SPEED;
+      return new Camera(
+        (this.currentPlayer.head.x + tickP * this.directionDx) * TILE_SIZE,
+        (this.currentPlayer.head.y + tickP * this.directionDy) * TILE_SIZE
+      )
+    } else {
+      return new Camera(
+        Math.floor(this.world.width / 2) * TILE_SIZE,
+        Math.floor(this.world.height / 2) * TILE_SIZE
+      )
+    }
   }
 
   /**
@@ -24,69 +85,71 @@ export default class GameCanvasService {
    * 
    * Calls #endPaint after #paint is completed.
    */
-  public startPaint(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D): void {
+  public startPaint(
+    canvas: HTMLCanvasElement,
+    ctx: CanvasRenderingContext2D
+  ): void {
     const now = Date.now();
     this.paint(canvas, ctx, now - this.lastFrameTime, now - this.lastTickTime);
     this.endPaint(canvas, ctx);
   }
 
   /**
+   * @param canvas 
+   * @param ctx 
    * @param paintDt time since last paint in ms
    * @param tickDt time since last tick in ms
    */
-  protected paint(canvas: HTMLCanvasElement, ctxx: CanvasRenderingContext2D,
-    paintDt: number, tickDt: number
+  protected paint(
+    canvas: HTMLCanvasElement,
+    ctx: CanvasRenderingContext2D,
+    paintDt: number,
+    tickDt: number
   ) {
-    const ctx = canvas.getContext('2d');
-    // Background
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    this.theme.paintBackground(canvas, ctx);
 
-    let seed = 1;
-    // Background - Stars
-    function random() {
-      var x = Math.sin(seed++) * 10000;
-      return x - Math.floor(x);
+    if (!this.world) {
+      return;
     }
-    ctx.fillStyle = 'black';
-    Array.from(Array(Math.floor(canvas.width * canvas.height * 0.00125)))
-      .map(() => [
-        Math.floor(random() * canvas.width),
-        Math.floor(random() * canvas.height),
-        Math.ceil(random() * 3)
-      ])
-      .forEach(([ x, y, size ]) => {
-        ctx.fillRect(x, y, size, size);
-      })
 
-    if (this.world) {
-      // console.log(this.world)
-      // Board
-      Array.from(Array(this.world.height)).forEach((_, y) => {
-        Array.from(Array(this.world.width)).forEach((__, x) => {
-          ctx.fillStyle = 'black';
-          ctx.fillRect(x * 16, y * 16, 16, 16);
-        })
-      })
+    const camera = this.camera(tickDt);
+    
+    const cameraOffsetX = canvas.width / 2 - camera.x;
+    const cameraOffsetY = canvas.height / 2 - camera.y;
 
+    // Board
+    for (let y = 0; y < this.world.height; y++) {
+      for (let x = 0; x < this.world.width; x++) {
+        const tileX = x * TILE_SIZE;
+        const tileY = y * TILE_SIZE;
+        if (camera.inViewport(tileX, tileY, TILE_SIZE, TILE_SIZE)) {
+          this.theme.paintTile(canvas, ctx,
+            Math.floor(tileX + cameraOffsetX),
+            Math.floor(tileY + cameraOffsetY),
+            TILE_SIZE);
+        }
+      }
     }
 
     if (this.rewards) {
       this.rewards.forEach((reward) => {
-        ctx.fillStyle = 'red';
-        ctx.fillRect(reward.x * 16, reward.y * 16, 16, 16);
+        this.theme.paintReward(canvas, ctx,
+          Math.floor(reward.x * TILE_SIZE + cameraOffsetX),
+          Math.floor(reward.y * TILE_SIZE + cameraOffsetY),
+          TILE_SIZE
+        );
       })
     }
 
     if (this.players) {
       this.players.forEach((player) => {
-        if (this.currentPlayer && player.id === this.currentPlayer.id) {
-          ctx.fillStyle = 'green';
-        } else {
-          ctx.fillStyle = 'yellow';
-        }
         player.pieces.forEach((piece) => {
-          ctx.fillRect(piece.x * 16, piece.y * 16, 16, 16);
+          this.theme.paintPlayerPiece(canvas, ctx,
+            Math.floor(piece.x * TILE_SIZE + cameraOffsetX),
+            Math.floor(piece.y * TILE_SIZE + cameraOffsetY),
+            TILE_SIZE,
+            player.skin
+          );
         })
       })
     }
@@ -98,13 +161,5 @@ export default class GameCanvasService {
   public endPaint(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D): void {
     this.lastFrameTime = Date.now();
     this.animationFrameId = requestAnimationFrame(this.startPaint.bind(this, canvas, ctx));
-  }
-
-  public startDrawing(canvas: HTMLCanvasElement) {
-    this.endPaint(canvas, canvas.getContext('2d'));
-  }
-
-  public stopDrawing() {
-    cancelAnimationFrame(this.animationFrameId);
   }
 }
