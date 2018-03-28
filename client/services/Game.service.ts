@@ -72,7 +72,6 @@ export default class Game extends EventEmitter {
 
   public spawn() {
     this.socketService.socket.emit('spawn');
-    this.gameCanvasService.setDirection('right');
     this.gameControlsService.attach();
   }
 
@@ -89,7 +88,6 @@ export default class Game extends EventEmitter {
   private handleChangeDirection(direction) {
     if (this.direction !== direction) {
       this.direction == direction;
-      this.gameCanvasService.setDirection(direction);
       this.socketService.socket.emit('setDirection', direction);
     }
   }

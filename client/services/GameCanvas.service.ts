@@ -1,4 +1,4 @@
-import Player from '../models/Player';
+import Player, {PlayerPiece} from '../models/Player';
 import Camera from '../models/Camera';
 import ClassicRoomTheme from '../room-themes/ClassicRoomTheme';
 import RoomTheme from '../room-themes/RoomTheme';
@@ -7,15 +7,15 @@ const TILE_SIZE = 32;
 const TICK_SPEED = 1000 / 7;
 
 export default class GameCanvasService {
-  protected animationFrameId: number = null;
-  protected lastFrameTime: number = null;
-  protected lastTickTime: number = null;
-  protected myPlayer: Player = null;
-  protected players: Array<Player> = null;
-  protected rewards: Array<any> = null;
-  protected world: any = null;
-  protected direction: string = null;
-  protected theme: RoomTheme = null;
+  protected animationFrameId: number;
+  protected lastFrameTime: number;
+  protected lastTickTime: number;
+  protected myPlayer: Player;
+  protected myPlayerHeadLastTick: PlayerPiece;
+  protected players: Array<Player>;
+  protected rewards: Array<any>;
+  protected world: any;
+  protected theme: RoomTheme;
 
   public startDrawing(canvas: HTMLCanvasElement) {
     this.theme = new ClassicRoomTheme();
@@ -33,8 +33,10 @@ export default class GameCanvasService {
       skin: '_yellow',
     }));
     this.rewards = rewards;
+    this.myPlayerHeadLastTick = this.myPlayer && this.myPlayer.head;
     this.myPlayer = this.players.find(p => p.id == playerId);
     if (this.myPlayer) {
+      this.myPlayerHeadLastTick = this.myPlayerHeadLastTick || this.myPlayer.head;
       this.myPlayer.skin = '_green';
     }
   }
@@ -43,34 +45,14 @@ export default class GameCanvasService {
     this.world = world;
   }
 
-  public setDirection(direction) {
-    this.direction = direction;
-  }
-
-  private get directionDx() {
-    return {
-      right: 1,
-      left: -1,
-      up: 0,
-      down: 0,
-    }[this.direction]
-  }
-
-  private get directionDy() {
-    return {
-      right: 0,
-      left: 0,
-      up: -1,
-      down: 1,
-    }[this.direction]
-  }
-
   private camera(tickDt: number) {
     if (this.myPlayer) {
       const tickP = tickDt / TICK_SPEED;
+      const directionDx = this.myPlayer.head.x - this.myPlayerHeadLastTick.x;
+      const directionDy = this.myPlayer.head.y - this.myPlayerHeadLastTick.y;
       return new Camera(
-        (this.myPlayer.head.x + tickP * this.directionDx) * TILE_SIZE,
-        (this.myPlayer.head.y + tickP * this.directionDy) * TILE_SIZE
+        (this.myPlayerHeadLastTick.x + tickP * directionDx) * TILE_SIZE,
+        (this.myPlayerHeadLastTick.y + tickP * directionDy) * TILE_SIZE
       )
     } else {
       return new Camera(

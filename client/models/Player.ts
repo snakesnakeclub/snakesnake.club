@@ -13,7 +13,7 @@ export default class Player {
   }
 }
 
-interface PlayerPiece {
+export interface PlayerPiece {
   x: number;
   y: number;
 }
