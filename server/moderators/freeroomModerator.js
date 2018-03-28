@@ -3,12 +3,14 @@ const Player = require('../game-objects/player');
 const Reward = require('../game-objects/reward');
 
 module.exports = class FreeRoomModerator extends Moderator {
-  constructor() {
-    super();
+  constructor(io) {
+    super(io);
   }
 
-  rewardPlayer(player) {
+  rewardPlayer(player, reward) {
     player.grow();
+    if (reward)
+      reward.respawn();
   }
 
   /**
@@ -23,8 +25,9 @@ module.exports = class FreeRoomModerator extends Moderator {
 
     if (p2Socket && player2.head.isCollidingWith(player1.head)) {
        this.killPlayer(p2Socket);
+    } else {
+      this.rewardPlayer(player2);
     }
-
     p1Socket ? this.killPlayer(p1Socket) : null;
   }
 
@@ -34,16 +37,16 @@ module.exports = class FreeRoomModerator extends Moderator {
    * @param {socket} socket players socket
    */
   addPlayer(socket) {
-    const player = new Player(this.world, socket.id);
+    if (socket) {
+      const player = new Player(this.world, socket.id);
+      socket.on('setDirection', direction => {
+        player.setDirection(direction);
+      });
 
-    socket.on('setDirection', direction => {
-      player.setDirection(direction);
-    });
-
-    this.deadPlayers.set(socket.id, player);
-
-    this.rewards.push(new Reward(this.world));
-    this.rewards.push(new Reward(this.world));
+      this.deadPlayers.set(socket.id, player);
+      this.rewards.push(new Reward(this.world));
+      this.rewards.push(new Reward(this.world));
+    }
   }
   
 
@@ -53,10 +56,13 @@ module.exports = class FreeRoomModerator extends Moderator {
    * @param {socket} socket players socket
    */
   spawnPlayer(socket) {
-    var player = this.deadPlayers.get(socket.id);
-    this.deadPlayers.delete(socket.id);
-  
-    this.alivePlayers.set(socket.id, player);
+    if (socket) {
+      var player = this.deadPlayers.get(socket.id);
+      if (player) {
+        this.deadPlayers.delete(socket.id);
+        this.alivePlayers.set(socket.id, player);
+      }
+    }
   }
 
   /**
@@ -66,12 +72,15 @@ module.exports = class FreeRoomModerator extends Moderator {
    * @param {socket} socket players socket
    */
   killPlayer(socket) {
-    socket.emit('death');
-
-    var player = this.alivePlayers.get(socket.id);
-    player.reset();
-    this.alivePlayers.delete(socket.id);
-    this.deadPlayers.set(socket.id, player);
+    if (socket) {
+      socket.emit('death');
+      var player = this.alivePlayers.get(socket.id);
+      if (player) {
+        player.reset();
+        this.alivePlayers.delete(socket.id);
+        this.deadPlayers.set(socket.id, player);
+      } 
+    }
   }
   
   /**
@@ -80,8 +89,11 @@ module.exports = class FreeRoomModerator extends Moderator {
    * @param {socket} socket players socket
    */
   removePlayer(socket) {
-    this.alivePlayers.delete(socket.id);
-    this.rewards.pop();
-    this.rewards.pop();
+    if (socket) {
+      this.alivePlayers.delete(socket.id);
+      this.rewards.pop();
+      this.rewards.pop();
+    }
   }
+
 }
