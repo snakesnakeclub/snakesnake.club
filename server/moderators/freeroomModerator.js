@@ -7,10 +7,23 @@ module.exports = class FreeRoomModerator extends Moderator {
     super(io);
   }
 
-  rewardPlayer(player, reward) {
-    player.grow();
-    if (reward)
+  rewardCollision(player, reward) {
+    if (!player.grow()) {
+      this.boundryCollision(player);
+      return false;
+    }
+    if (reward && this.rewards.get(reward))
       reward.respawn();
+    else 
+      this.rewards.delete(reward);
+    return true;
+  }
+
+  boundryCollision(player) {
+    let p1socket = this.io.sockets.connected[player.id];
+    if (p1socket) {
+      this.killPlayer(p1socket);
+    }
   }
 
   /**
@@ -19,14 +32,16 @@ module.exports = class FreeRoomModerator extends Moderator {
    * @param {Player} player1 
    * @param {Player} player2 
    */
-  collision(player1, player2) {
+  playerCollision(player1, player2) {
     let p1Socket = this.io.sockets.connected[player1.id];
     let p2Socket = this.io.sockets.connected[player2.id];
 
     if (p2Socket && player2.head.isCollidingWith(player1.head)) {
        this.killPlayer(p2Socket);
     } else {
-      this.rewardPlayer(player2);
+      if (!player2.grow()) {
+        this.boundryCollision(player2);
+      }
     }
     p1Socket ? this.killPlayer(p1Socket) : null;
   }
@@ -48,8 +63,8 @@ module.exports = class FreeRoomModerator extends Moderator {
     });
 
     this.deadPlayers.set(socket.id, player);
-    this.rewards.push(new Reward(this.world));
-    this.rewards.push(new Reward(this.world)); 
+    this.rewards.set(new Reward(this.world), true);
+    this.rewards.set(new Reward(this.world), true); 
   }
   
 
@@ -81,6 +96,10 @@ module.exports = class FreeRoomModerator extends Moderator {
       socket.emit('death');
       var player = this.alivePlayers.get(socket.id);
       if (player) {
+        player.pieces.forEach(piece => {
+          var deadReward = new Reward(this.world, piece.x, piece.y);
+          this.rewards.set(deadReward, false);
+        })
         player.reset();
         this.alivePlayers.delete(socket.id);
         this.deadPlayers.set(socket.id, player);
@@ -95,12 +114,10 @@ module.exports = class FreeRoomModerator extends Moderator {
    */
   removePlayer(socket) {
     if (socket) {
-      this.alivePlayers.delete(socket.id);
+      let player = this.alivePlayers.delete(socket.id);
       socket.current_room = null;
-      if (this.rewards.length > 2) {
-        this.rewards.pop();
-        this.rewards.pop();
-      }
+      this.rewards.delete(player.reward1);
+      this.rewards.delete(player.reward2);
     }
   }
 

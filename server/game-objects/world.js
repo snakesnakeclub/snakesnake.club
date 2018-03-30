@@ -12,6 +12,12 @@ class World {
     this.width = this.width + amount;
   }
 
+  outside(x, y) {
+    let outsideX = x < 0 || x >= this.width;
+    let outsideY = y < 0 || y >= this.height;
+    return outsideX || outsideY;
+  }
+
   serialize() {
     return {
       width: this.width,

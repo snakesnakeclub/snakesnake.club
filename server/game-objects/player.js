@@ -6,11 +6,7 @@ class Player {
     this.world = world;
     this.id = id;
     // Generate a random x and y position not too close to the edge
-    const x = randomInteger(10, this.world.width - 10);
-    const y = randomInteger(10, this.world.height - 10);
-    this.pieces = [
-      new PlayerPiece(x, y)
-    ];
+    this.reset();
     this.direction = 'right';
     this.nextDirection = null;
   }
@@ -50,8 +46,11 @@ class Player {
    * Deletes the tail and adds a new head in the current direction.
    */
   move() {
-    this.grow();
+    if (!this.grow()) {
+      return false;
+    }
     this.shrink();
+    return true;
   }
 
   /**
@@ -59,13 +58,17 @@ class Player {
    */
   grow() {
     const head = this.head;
-    const x = Math.min(Math.max(head.x + this.dx, 0), this.world.width - 1);
-    const y = Math.min(Math.max(head.y + this.dy, 0), this.world.height - 1);
+    const x = head.x + this.dx;
+    const y = head.y + this.dy;
+    if (this.world.outside(x, y)) {
+      return false;            
+    }
     this.pieces.push(new PlayerPiece(x, y));
     if (this.nextDirection) {
       this.direction = this.nextDirection;
       this.nextDirection = null;
     }
+    return true;
   }
 
   /**
