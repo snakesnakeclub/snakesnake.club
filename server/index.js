@@ -28,7 +28,6 @@ app.use(express.static('dist'));
 server.listen(PORT);
 
 rooms.setRooms(io);
-
 // Start mining proxy
 poolProxySocket(io);
 

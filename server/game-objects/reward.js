@@ -1,9 +1,14 @@
 const {randomInteger} = require('../helpers.js');
 
 class Reward {
-  constructor(world) {
+  constructor(world, x, y) {
     this.world = world;
-    this.respawn(world);
+    if (x != undefined && y != undefined) {
+      this.x = x;
+      this.y = y;
+    } else {
+      this.respawn(world);
+    }
   }
 
   respawn() {
