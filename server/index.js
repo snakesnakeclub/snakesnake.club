@@ -33,8 +33,6 @@ rooms.setRooms(io);
 poolProxySocket(io);
 
 controllers.attachRouteControllers(app);
-
 io.on('connect', socket => {
-  controllers.attachSocketControllers(socket);
   rooms.setConnections(socket);
 });

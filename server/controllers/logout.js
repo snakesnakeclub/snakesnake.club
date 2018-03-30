@@ -44,28 +44,5 @@ module.exports = {
         });
       });
     });
-  },
-
-  attachSocketControllers(socket) {
-    socket.on('logout', session_token => {
-      // Remove the session_token
-      User.findOne({ session_token } , async (err, user) => {
-        if (err) {
-          socket.emit('logout->res', 500);
-          return;
-        }
-        
-        if (!user) {
-          socket.session_token = null;
-          socket.emit('logout->res', 'INVALID_TOKEN');
-          return
-        }
-
-        user.session_token = null;
-        socket.session_token = null;
-        await user.save();
-        socket.emit('logout->res', false);
-      });
-    });
   }
 };

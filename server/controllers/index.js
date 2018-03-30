@@ -13,9 +13,5 @@ module.exports = {
     resetVerification.attachRouteControllers(app);
     logout.attachRouteControllers(app);
     ping.attachRouteControllers(app);
-  },
-  attachSocketControllers: function(socket) {
-    login.attachSocketControllers(socket);
-    logout.attachSocketControllers(socket);
   }
 }
