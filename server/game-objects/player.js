@@ -7,7 +7,7 @@ class Player {
     this.id = id;
     // Generate a random x and y position not too close to the edge
     this.reset();
-    this.direction = 'right';
+    this.direction = null;
     this.nextDirection = null;
   }
 
@@ -27,6 +27,7 @@ class Player {
       case 'right': return 1;
       case 'down': return 0;
       case 'left': return -1;
+      default: return 0;
     }
   }
 
@@ -39,6 +40,7 @@ class Player {
       case 'right': return 0;
       case 'down': return 1;
       case 'left': return 0;
+      default: return 0;
     }
   }
 
