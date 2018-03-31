@@ -5,6 +5,7 @@ class Player {
   constructor(world, id) {
     this.world = world;
     this.id = id;
+    this.boosted = 0;
     // Generate a random x and y position not too close to the edge
     this.reset();
   }
@@ -48,6 +49,9 @@ class Player {
    * Deletes the tail and adds a new head in the current direction.
    */
   move() {
+    if (!this.notBoosted()) {
+      return this.boost();
+    }
     if (!this.grow()) {
       return false;
     }
@@ -60,8 +64,10 @@ class Player {
    */
   grow() {
     const head = this.head;
-    const x = head.x + this.dx;
-    const y = head.y + this.dy;
+    
+    let x = Math.floor(head.x + this.dx);
+    let y = Math.floor(head.y + this.dy);
+    
     if (this.world.outside(x, y)) {
       return false;            
     }
@@ -69,6 +75,32 @@ class Player {
     if (this.nextDirection) {
       this.direction = this.nextDirection;
       this.nextDirection = null;
+    }
+    return true;
+  }
+
+  notBoosted() {
+    return this.boosted == 0;
+  }
+
+  boost() {
+    this.boosted += 1;
+    const head = this.head;
+    let x = head.x + this.dx + (this.dx/3);
+    let y = head.y + this.dy + (this.dy/3);
+    
+    if (this.world.outside(x, y)) {
+      return false;            
+    }
+    this.pieces.push(new PlayerPiece(x, y));
+    this.shrink();
+    if (this.boosted == 3) {
+      this.boosted = 0;
+      this.pieces.forEach(piece => {
+        this.x = Math.floor(this.x);
+        this.y = Math.floor(this.y);
+      })
+      return this.grow();
     }
     return true;
   }
@@ -99,7 +131,7 @@ class Player {
     ) {
       return;
     }
-    this.nextDirection = direction;
+    if (this.notBoosted()) this.nextDirection = direction;
   }
 
   serialize() {

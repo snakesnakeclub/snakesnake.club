@@ -9,7 +9,7 @@ module.exports = class FreeRoomModerator extends Moderator {
   }
 
   rewardCollision(player, reward) {
-    if (!player.grow()) {
+    if (!player.boost()) {
       this.boundryCollision(player);
       return false;
     }
