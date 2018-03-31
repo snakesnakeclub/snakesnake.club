@@ -7,8 +7,6 @@ class Player {
     this.id = id;
     // Generate a random x and y position not too close to the edge
     this.reset();
-    this.direction = null;
-    this.nextDirection = null;
   }
 
   reset() {
@@ -17,6 +15,8 @@ class Player {
     this.pieces = [
       new PlayerPiece(this.x, this.y)
     ];
+    this.direction = null;
+    this.nextDirection = null;
   }
   /**
    * Returns the x component of the direction vector.
