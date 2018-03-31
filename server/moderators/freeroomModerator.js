@@ -5,6 +5,7 @@ const Reward = require('../game-objects/reward');
 module.exports = class FreeRoomModerator extends Moderator {
   constructor(io) {
     super(io);
+    this.playersToIncrease = 6;
   }
 
   rewardCollision(player, reward) {
@@ -12,11 +13,17 @@ module.exports = class FreeRoomModerator extends Moderator {
       this.boundryCollision(player);
       return false;
     }
-    if (reward && this.rewards.get(reward))
+    if (reward) {
+      this.rewardRespawn(reward);
+    }
+    return true;
+  }
+
+  rewardRespawn(reward) {
+    if (this.rewards.get(reward))
       reward.respawn();
     else 
       this.rewards.delete(reward);
-    return true;
   }
 
   boundryCollision(player) {
@@ -24,6 +31,16 @@ module.exports = class FreeRoomModerator extends Moderator {
     if (p1socket) {
       this.killPlayer(p1socket);
     }
+  }
+
+  /**
+   * Increases world limit by 10 units
+   * Returns true to confirm the player can join the room.
+   */
+  limitReached() {
+    this.world.increaseWidth(10);
+    this.world.increaseHeight(10);
+    return true;
   }
 
   /**
@@ -53,9 +70,16 @@ module.exports = class FreeRoomModerator extends Moderator {
    */
   addPlayer(socket) {
     if (!socket)
-      return;
+      return false;
     if (this.alivePlayers.get(socket.id) || this.deadPlayers.get(socket.id))
-      return;
+      return false;
+
+    let numberOfPlayers = this.alivePlayers.size + this.deadPlayers.size;
+    if (numberOfPlayers % this.playersToIncrease == 0) {
+      let addPlayer = this.limitReached();
+      if (!addPlayer)
+        return false;
+    }
 
     const player = new Player(this.world, socket.id);
     socket.on('setDirection', direction => {
@@ -64,9 +88,9 @@ module.exports = class FreeRoomModerator extends Moderator {
 
     this.deadPlayers.set(socket.id, player);
     this.rewards.set(new Reward(this.world), true);
-    this.rewards.set(new Reward(this.world), true); 
+    this.rewards.set(new Reward(this.world), true);
+    return true;
   }
-  
 
   /**
    * The player of socket, can now play in the room.
@@ -76,7 +100,7 @@ module.exports = class FreeRoomModerator extends Moderator {
   spawnPlayer(socket) {
     if (!socket) 
       return;
-    
+
     let player = this.deadPlayers.get(socket.id);
     if (!player) 
       return;
@@ -120,5 +144,4 @@ module.exports = class FreeRoomModerator extends Moderator {
       this.rewards.delete(player.reward2);
     }
   }
-
 }

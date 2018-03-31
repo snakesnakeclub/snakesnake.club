@@ -56,10 +56,13 @@ module.exports = {
 
         user.balance -= selectedRoom.fee
         await user.save()
-        selectedRoom.getModerator().addPlayer(socket);
-        socket.join(selectedRoom.id);
-        socket.current_room = room_id;
-        socket.emit('joinRoom->res', null);
+        if (selectedRoom.getModerator().addPlayer(socket)) {
+          socket.join(selectedRoom.id);
+          socket.current_room = room_id;
+          socket.emit('joinRoom->res', null);
+        } else {
+          socket.emit('joinRoom->res', 'ROOM_FULL');
+        }
       });
     });
 
@@ -74,9 +77,8 @@ module.exports = {
       removePlayer(socket);
     });
 
-    socket.on('disconnect', function() { 
+    socket.on('disconnect', function() {
       removePlayer(socket);
     });
-
   }
 };
