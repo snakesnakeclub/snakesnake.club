@@ -52,7 +52,8 @@ class Player {
     if (!this.notBoosted()) {
       return this.boost();
     }
-    if (!this.grow()) {
+    let playerAlive = this.grow();
+    if (!playerAlive) {
       return false;
     }
     this.shrink();
@@ -79,10 +80,16 @@ class Player {
     return true;
   }
 
+  /**
+   * Returns true if the player is not currently in the boost state.
+   */
   notBoosted() {
     return this.boosted == 0;
   }
 
+  /**
+   * Places the player in a boost state for 3 ticks.
+   */
   boost() {
     this.boosted += 1;
     const head = this.head;
