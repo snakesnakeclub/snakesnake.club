@@ -2,6 +2,7 @@ import { h, Component } from 'preact';
 import ButtonText from '../../components/ButtonText';
 import ButtonIcon from '../../components/ButtonIcon';
 import AdControls from '../../components/AdControls';
+import PlayerSkin from '../../components/PlayerSkin';
 import MiningControls from '../../components/MiningControls';
 import ServicesInterface from '../../services/interface';
 import Room from '../../models/room';
@@ -64,11 +65,16 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
   
   renderPlayPage() {
     const {
+      authService,
+    } = this.props.services
+    const {
       activeTab,
     } = this.state;
+    const user = authService.user;
     return (
       <div className="LobbyScene-page">
         <div className="LobbyScene-page-scrollable">
+          <PlayerSkin skin={user.active_skin} />
           <ButtonText value="Practice"
             style={{ width: 180, margin: '5px 0' }}
             onClick={this.handleFreeRoomJoin.bind(this)} />

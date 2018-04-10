@@ -61,12 +61,7 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
               isLoading: false
             });
           })
-          .catch((data) => {
-            this.setState({
-              validationErrors: data.validationErrors,
-              isLoading: false,
-            })
-          })
+          .catch(this.handleRestApiError.bind(this))
           break;
 
       case 'register':
@@ -77,12 +72,7 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
               isLoading: false
             });
           })
-          .catch((data) => {
-            this.setState({
-              validationErrors: data.validationErrors,
-              isLoading: false,
-            })
-          })
+          .catch(this.handleRestApiError.bind(this))
         break;
     }
   }
@@ -108,12 +98,7 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
           isLoading: false,
         })
       })
-      .catch((data) => {
-        this.setState({
-          validationErrors: data.validationErrors,
-          isLoading: false,
-        })
-      })
+      .catch(this.handleRestApiError.bind(this))
   }
 
   handleResendVerificationClick() {
@@ -137,12 +122,25 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
           isLoading: false,
         })
       })
-      .catch((data) => {
-        this.setState({
-          validationErrors: data.validationErrors,
-          isLoading: false,
-        })
+      .catch(this.handleRestApiError.bind(this))
+  }
+
+  handleRestApiError(data) {
+    if (!data.error) {
+      console.error(data);
+      return;
+    }
+    if (data.code === '500') {
+      this.setState({
+        validationErrors: ['500'],
+        isLoading: false,
       })
+    } else {
+      this.setState({
+        validationErrors: data.validationErrors,
+        isLoading: false,
+      }) 
+    }
   }
 
   render() {
@@ -155,6 +153,7 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
       username,
       password,
     } = this.state;
+    console.log(this.state)
     return (
       <div className="AuthenticationScene">
         <form onSubmit={this.handleAuthenticate.bind(this)}

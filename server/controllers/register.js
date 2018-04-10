@@ -38,7 +38,7 @@ module.exports = {
         await mail.sendEmailVerification(email, verification_token);
         res.json({
           error: false,
-          user: user.serializeWithSensitiveData()
+          user: await user.serializeWithSensitiveData()
         });
       } catch (err) {
         switch (err.name) {
@@ -53,12 +53,14 @@ module.exports = {
             return;
 
           case 'BulkWriteError':
+            const op = err.getOperation();
             res.status(400);
             res.json({
               error: true,
               code: 'VALIDATION_ERROR',
               validationErrors: [
-                'EMAIL_EXISTS'
+                ...(op.email === email ? ['EMAIL_EXISTS'] : []),
+                ...(op.username === username ? ['USERNAME_EXISTS'] : []),
               ],
             })
             return;

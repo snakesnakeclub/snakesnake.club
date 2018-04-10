@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const isEmail = require('validator/lib/isEmail');
 const isEmailBlacklisted = require('../validation/is-email-blacklisted.js');
+const Skin = require('./skin');
 
 const UserSchema = new mongoose.Schema({
   email: {
@@ -49,6 +50,19 @@ const UserSchema = new mongoose.Schema({
   },
   password_token: {
     type: String
+  },
+  active_skin: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Skin',
+    required: false,
+  },
+  owned_skins: {
+    type: [{
+      type: mongoose.Schema.ObjectId,
+      ref: 'Skin',
+    }],
+    required: true,
+    default: [],
   }
 });
 
@@ -87,13 +101,15 @@ UserSchema.statics.authenticate = function (email, password, callback) {
   });
 };
 
-UserSchema.methods.serializeWithSensitiveData = function () {
+UserSchema.methods.serializeWithSensitiveData = async function () {
   return {
     session_token: this.session_token,
     email: this.email,
     username: this.username,
     balance: this.balance,
-    takedowns: this.takedowns
+    takedowns: this.takedowns,
+    active_skin: this.active_skin && await Skin.findOne({ _id: this.active_skin }),
+    owned_skins: this.owned_skins && await Promise.all(this.owned_skins.map(skin => Skin.findOne({ _id: skin }))),
   }
 };
 

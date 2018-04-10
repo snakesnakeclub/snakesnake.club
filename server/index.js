@@ -2,6 +2,9 @@ const express = require('express');
 const app = express();
 const server = require('http').Server(app);
 const mongoose = require('mongoose');
+const User = require('./models/user');
+const Skin = require('./models/skin');
+const skins = require('./skins.json');
 const bodyParser = require('body-parser');
 const {
   MONGO_URL,
@@ -29,9 +32,21 @@ server.listen(PORT);
 
 rooms.setRooms(io);
 // Start mining proxy
-poolProxySocket(io);
+// poolProxySocket(io);
 
 controllers.attachRouteControllers(app);
 io.on('connect', socket => {
   rooms.setConnections(socket);
 });
+
+// Insert skins into database.
+skins.forEach(skin =>
+  new Skin(skin)
+    .save()
+    .catch((err) => {
+      if (err.name !== 'BulkWriteError') {
+        console.error(err);
+        return;
+      }
+      // Don't worry about it if it's already inserted.
+    }))

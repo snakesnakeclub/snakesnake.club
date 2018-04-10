@@ -58,7 +58,7 @@ module.exports = {
             await user.save();
             res.json({
               error: false,
-              user: user.serializeWithSensitiveData(),
+              user: await user.serializeWithSensitiveData(),
             });
           } catch (error) {
             console.error(error);
@@ -95,7 +95,7 @@ module.exports = {
         return
       }
 
-      User.findOne({ session_token }, (error, user) => {
+      User.findOne({ session_token }, async (error, user) => {
         if (error) {
           res.status(500);
           res.json({
@@ -116,7 +116,7 @@ module.exports = {
 
         res.json({
           error: false,
-          user: user.serializeWithSensitiveData()
+          user: await user.serializeWithSensitiveData()
         });
       });
     })

@@ -1,6 +1,7 @@
 import isEmail from 'validator/lib/isEmail';
 import isAlpha from 'validator/lib/isAlpha';
 import isAlphanumeric from 'validator/lib/isAlphanumeric';
+import Skin, {defaultSkin} from './Skin';
 
 export default class User {
   public email: string;
@@ -9,22 +10,28 @@ export default class User {
   public takedowns: number;
   public verified: boolean;
   public session_token?: string;
+  public active_skin: Skin;
+  public owned_skins: Array<Skin>;
 
   /**
-   * @param email 
-   * @param username 
-   * @param balance 
-   * @param takedowns 
-   * @param verified 
-   * @param session_token
+   * @param user.email 
+   * @param user.username 
+   * @param user.balance 
+   * @param user.takedowns 
+   * @param user.verified 
+   * @param user.session_token
+   * @param user.active_skin
+   * @param user.owned_skins
    */
   constructor(user) {
-    this.email = user.email
-    this.username = user.username
-    this.balance = user.balance
-    this.takedowns = user.takedowns
-    this.verified = user.verified
-    this.session_token = user.session_token
+    this.email = user.email;
+    this.username = user.username;
+    this.balance = user.balance;
+    this.takedowns = user.takedowns;
+    this.verified = user.verified;
+    this.session_token = user.session_token;
+    this.active_skin = user.active_skin ? new Skin(user.active_skin) : defaultSkin;
+    this.owned_skins = user.owned_skins.map(skin => new Skin(skin));
   }
 
   /**
