@@ -5,13 +5,18 @@ const Reward = require('../game-objects/reward');
 module.exports = class FreeRoomModerator extends Moderator {
   constructor(io) {
     super(io);
-    this.playersToIncrease = 6;
+    this.playerLimit = 6;
+    // every even indexed piece will be dead on player death
+    this.deadRewardSpawnRate = 2; 
   }
 
   rewardCollision(player, reward) {
-    if (!player.boost()) {
-      this.boundryCollision(player);
-      return false;
+    if (player.notBoosted()) {
+      let alive = player.boost();
+      if (!alive) {
+        this.boundryCollision(player);
+        return false;
+      }
     }
     if (reward) {
       this.rewardRespawn(reward);
@@ -75,9 +80,9 @@ module.exports = class FreeRoomModerator extends Moderator {
       return false;
 
     let numberOfPlayers = this.alivePlayers.size + this.deadPlayers.size;
-    if (numberOfPlayers % this.playersToIncrease == 0) {
-      let addPlayer = this.limitReached();
-      if (!addPlayer)
+    if (numberOfPlayers % this.playerLimit == 0) {
+      let playerCanBeAddedToRoom = this.limitReached();
+      if (!playerCanBeAddedToRoom)
         return false;
     }
 
@@ -120,9 +125,11 @@ module.exports = class FreeRoomModerator extends Moderator {
       socket.emit('death');
       var player = this.alivePlayers.get(socket.id);
       if (player) {
-        player.pieces.forEach(piece => {
-          var deadReward = new Reward(this.world, piece.x, piece.y);
-          this.rewards.set(deadReward, false);
+        player.pieces.forEach((piece, index) => {
+          if (index % this.deadRewardSpawnRate === 0) {
+            var deadReward = new Reward(this.world, piece.x, piece.y);
+            this.rewards.set(deadReward, false);
+          }
         })
         player.reset();
         this.alivePlayers.delete(socket.id);

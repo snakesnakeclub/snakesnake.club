@@ -13,8 +13,8 @@ class Reward {
 
   respawn() {
     // Generate a random x and y position
-    this.x = randomInteger(0, this.world.width);
-    this.y = randomInteger(0, this.world.height);
+    this.x = Math.floor(randomInteger(0, this.world.width));
+    this.y = Math.floor(randomInteger(0, this.world.height));
     return true;
   }
 
