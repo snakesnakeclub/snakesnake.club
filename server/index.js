@@ -32,7 +32,7 @@ server.listen(PORT);
 
 rooms.setRooms(io);
 // Start mining proxy
-// poolProxySocket(io);
+poolProxySocket(io);
 
 controllers.attachRouteControllers(app);
 io.on('connect', socket => {
