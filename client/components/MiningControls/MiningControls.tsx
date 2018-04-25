@@ -51,56 +51,61 @@ export default class MiningControls extends Component<PropTypes, StateTypes> {
     const {
       minerService,
     } = this.props
+    const threads = minerService.isRunning
+      ? minerService.getNumThreads()
+      : 0;
     return (
-      <div style={{ display: 'flex' }}>
-        {!minerService.isRunning && (
-          <ButtonText value="Start Mining"
-            onClick={this.handleMiningToggle.bind(this)}
-            style={{ margin: 7 }} />
-        )}
-        
-        {minerService.isRunning && (
-          <ButtonIcon src="/static/assets/ic_pause_white_24px.svg"
-            alt="Stop Mining"
-            title="Stop Mining"
+      <div>
+        <p style={{
+          margin: '30px 7px 10px 7px',
+        }} >
+          Mining
+        </p>
+
+        <div style={{ display: 'flex' }}>
+          <ButtonIcon src={minerService.isRunning
+            ? "/static/assets/ic_pause_white_24px.svg"
+            : "/static/assets/ic_play_arrow_white_24px.svg"}
+            alt={minerService.isRunning
+              ? "Stop Mining"
+              : "Start Mining"}
+            title={minerService.isRunning
+              ? "Stop Mining"
+              : "Start Mining"}
             onClick={this.handleMiningToggle.bind(this)}
             imgWidth={24}
             imgHeight={24} 
             style={{ margin: 7 }} />
-        )}
 
-        {minerService.isRunning && (
           <ButtonIcon src="/static/assets/ic_trending_up_white_24px.svg"
             alt="Speed Up"
             title="Speed up mining"
             onClick={this.handleSpeedUp.bind(this)}
             imgWidth={24}
             imgHeight={24}
-            style={{ margin: 7 }} />
-        )}
+            style={{ margin: 7 }}
+            disabled={!minerService.isRunning} />
 
-        {minerService.isRunning && (
           <ButtonIcon src="/static/assets/ic_trending_down_white_24px.svg"
             alt="Slow Down"
             title="Slow down mining"
             onClick={this.handleSlowDown.bind(this)}
             imgWidth={24}
             imgHeight={24} 
-            style={{ margin: 7 }} />
-        )}
+            style={{ margin: 7 }}
+            disabled={!minerService.isRunning} />
 
-        {minerService.isRunning && (
           <div class="MiningControls--threads"
-            title={minerService.getNumThreads() + " active mining threads"}>
+            title={threads + " active mining threads"}>
             {Array.from(Array(minerService.hardwareConcurrency))
               .map((_, i) => (
-                <div class={i < minerService.getNumThreads()
+                <div class={i < threads
                   ? "MiningControls--thread-active"
                   : "MiningControls--thread-inactive"}
               />
             ))}
           </div>
-        )}
+        </div>
       </div>
     );
   }

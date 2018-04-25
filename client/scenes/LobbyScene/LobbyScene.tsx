@@ -2,6 +2,7 @@ import { h, Component } from 'preact';
 import ButtonText from '../../components/ButtonText';
 import ButtonIcon from '../../components/ButtonIcon';
 import AdControls from '../../components/AdControls';
+import PlayerBar from '../../components/PlayerBar';
 import PlayerSkin from '../../components/PlayerSkin';
 import MiningControls from '../../components/MiningControls';
 import ServicesInterface from '../../services/interface';
@@ -50,13 +51,9 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
     const {
       activeTab,
     } = this.state;
-    const {
-      minerService
-    } = this.props.services;
     return (
       <div className="LobbyScene-page">
         <div className="LobbyScene-page-scrollable">
-          <MiningControls minerService={minerService} />
           <AdControls />
         </div>
       </div>
@@ -66,6 +63,7 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
   renderPlayPage() {
     const {
       authService,
+      minerService,
     } = this.props.services
     const {
       activeTab,
@@ -74,6 +72,7 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
     return (
       <div className="LobbyScene-page">
         <div className="LobbyScene-page-scrollable">
+          <PlayerBar user={user} />
           <PlayerSkin skin={user.active_skin} />
           <ButtonText value="Practice"
             style={{ width: 180, margin: '5px 0' }}
@@ -81,6 +80,7 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
           <ButtonText value="Compete"
             style={{ width: 180, margin: '5px 0' }}
             disabled />
+          <MiningControls minerService={minerService} />
         </div>
       </div>
     )
@@ -114,6 +114,7 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
             Shop
           </div>
         </label>
+        
         <label className={`LobbyScene-navigation-item ${this.getActiveTabClass('play')}`}>
           <ButtonIcon alt=""
             src="/static/assets/battle.svg"
@@ -124,6 +125,7 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
             Play
           </div>
         </label>
+
         <label className={`LobbyScene-navigation-item ${this.getActiveTabClass('group')}`}>
           <ButtonIcon alt="Group"
             src="/static/assets/party.svg"
@@ -146,11 +148,11 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
       <div>
         <div className="LobbyScene"
           style={{ transform: `translateX(${this.tabIndex(activeTab) * -100}vw)` }}>
-          {this.renderShopPage()}
+          {/* {this.renderShopPage()} */}
           {this.renderPlayPage()}
-          {this.renderGroupPage()}
+          {/* {this.renderGroupPage()} */}
         </div>
-        {this.renderNavigationBar()}
+        {/* {this.renderNavigationBar()} */}
       </div>
     )
   }
