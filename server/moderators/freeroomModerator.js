@@ -72,8 +72,9 @@ module.exports = class FreeRoomModerator extends Moderator {
    * Adds a new player to the room, by default in the dead state.
    * 
    * @param {socket} socket players socket
+   * @param {object} skin
    */
-  addPlayer(socket) {
+  addPlayer(socket, skin) {
     if (!socket)
       return false;
     if (this.alivePlayers.get(socket.id) || this.deadPlayers.get(socket.id))
@@ -86,7 +87,7 @@ module.exports = class FreeRoomModerator extends Moderator {
         return false;
     }
 
-    const player = new Player(this.world, socket.id);
+    const player = new Player(this.world, socket.id, skin);
     socket.on('setDirection', direction => {
       player.setDirection(direction);
     });

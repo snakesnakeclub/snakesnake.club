@@ -33,37 +33,39 @@ module.exports = {
     });
 
     socket.on('joinRoom', (room_id, token_session) => {
-      User.findOne({session_token: token_session}, async (err, user) => {
-        if (err) {
-          socket.emit('joinRoom->res', 500);
-          return;
-        } else if (!user) {
-          socket.emit('joinRoom->res', 'INVALID_TOKEN');
-          return;
-        }
-        
-        const selectedRoom = rooms.get(room_id);
+      User.findOne({session_token: token_session})
+        .populate('active_skin')
+        .exec(async (err, user) => {
+          if (err) {
+            socket.emit('joinRoom->res', 500);
+            return;
+          } else if (!user) {
+            socket.emit('joinRoom->res', 'INVALID_TOKEN');
+            return;
+          }
+          
+          const selectedRoom = rooms.get(room_id);
 
-        if (!selectedRoom) {
-          socket.emit('joinRoom->res', 'INVALID_ROOM_ID');
-          return;
-        }
+          if (!selectedRoom) {
+            socket.emit('joinRoom->res', 'INVALID_ROOM_ID');
+            return;
+          }
 
-        if (selectedRoom.fee > user.balance) {
-          socket.emit('joinRoom->res', 'INSUFFICIENT_COINS');
-          return;
-        }
+          if (selectedRoom.fee > user.balance) {
+            socket.emit('joinRoom->res', 'INSUFFICIENT_COINS');
+            return;
+          }
 
-        user.balance -= selectedRoom.fee
-        await user.save()
-        if (selectedRoom.getModerator().addPlayer(socket)) {
-          socket.join(selectedRoom.id);
-          socket.current_room = room_id;
-          socket.emit('joinRoom->res', null);
-        } else {
-          socket.emit('joinRoom->res', 'ROOM_FULL');
-        }
-      });
+          user.balance -= selectedRoom.fee
+          await user.save()
+          if (selectedRoom.getModerator().addPlayer(socket, user.active_skin)) {
+            socket.join(selectedRoom.id);
+            socket.current_room = room_id;
+            socket.emit('joinRoom->res', null);
+          } else {
+            socket.emit('joinRoom->res', 'ROOM_FULL');
+          }
+        });
     });
 
     socket.on('spawn', function() {

@@ -2,9 +2,10 @@ const PlayerPiece = require('./playerpiece.js');
 const {randomInteger} = require('../helpers.js');
 
 class Player {
-  constructor(world, id) {
+  constructor(world, id, skin) {
     this.world = world;
     this.id = id;
+    this.skin = skin;
     this.boosted = 0;
     // Generate a random x and y position not too close to the edge
     this.reset();
@@ -144,7 +145,8 @@ class Player {
   serialize() {
     return {
       id: this.id,
-      pieces: this.pieces.map(piece => piece.serialize())
+      pieces: this.pieces.map(piece => piece.serialize()),
+      skin: this.skin,
     };
   }
 }

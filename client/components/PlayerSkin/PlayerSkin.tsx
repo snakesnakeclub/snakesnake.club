@@ -25,10 +25,10 @@ export default class PlayerSkin extends Component<PropTypes, StateTypes> {
         <div className="PlayerSkin--snake"
           aria-label={`${skin.name} ${skin.rarity} skin`}
           title={`${skin.name} ${skin.rarity} skin`}>
-          <img src={skin.headUrl}
+          <img src={skin.headImage.src}
             alt={`${skin.name} skin head`}
             className="PlayerSkin--piece" />
-          <img src={skin.bodyUrl}
+          <img src={skin.bodyImage.src}
             alt={`${skin.name} skin body`}
             className="PlayerSkin--piece" />
         </div>

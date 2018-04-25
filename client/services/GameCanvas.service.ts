@@ -2,6 +2,7 @@ import Player, {PlayerPiece} from '../models/Player';
 import Camera from '../models/Camera';
 import ClassicRoomTheme from '../room-themes/ClassicRoomTheme';
 import RoomTheme from '../room-themes/RoomTheme';
+import Skin from '../models/Skin';
 
 const TILE_SIZE = 32;
 const TICK_SPEED = 1000 / 7;
@@ -28,16 +29,12 @@ export default class GameCanvasService {
 
   public setTickData(playerId, { players, rewards }) {
     this.lastTickTime = Date.now();
-    this.players = players.map(player => new Player({
-      ...player,
-      skin: '_yellow',
-    }));
+    this.players = players.map(player => new Player(player));
     this.rewards = rewards;
     this.myPlayerHeadLastTick = this.myPlayer && this.myPlayer.head;
     this.myPlayer = this.players.find(p => p.id == playerId);
     if (this.myPlayer) {
       this.myPlayerHeadLastTick = this.myPlayerHeadLastTick || this.myPlayer.head;
-      this.myPlayer.skin = '_green';
     }
   }
 

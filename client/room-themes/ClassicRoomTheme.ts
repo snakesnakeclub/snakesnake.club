@@ -1,6 +1,7 @@
 import RoomTheme from './RoomTheme';
+import Skin from '../models/Skin';
 
-export default class ClassicRoomTheme implements RoomTheme {
+export default class ClassicRoomTheme extends RoomTheme {
   public paintBackground(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
     // White Background
     ctx.fillStyle = 'white';
@@ -40,17 +41,7 @@ export default class ClassicRoomTheme implements RoomTheme {
     );
   }
 
-  paintPlayerPiece(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, x: number, y: number, tileSize: number, skin: string) {
-    if (skin[0] === '_') {
-      ctx.fillStyle = skin.substr(1);
-    } else {
-      ctx.fillStyle = 'magenta';
-    }
-    ctx.fillRect(
-      x,
-      y,
-      tileSize,
-      tileSize
-    );
+  paintPlayerPiece(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, x: number, y: number, tileSize: number, skin: Skin) {
+    super.paintPlayerPiece(canvas, ctx, x, y, tileSize, skin);
   }
 }
