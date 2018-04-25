@@ -1,4 +1,4 @@
-import Skin from './Skin';
+import Skin, {defaultSkin} from './Skin';
 
 export default class Player {
   public id: number;
@@ -8,7 +8,7 @@ export default class Player {
   constructor(player) {
     this.id = player.id;
     this.pieces = player.pieces;
-    this.skin = new Skin(player.skin);
+    this.skin = player.skin ? new Skin(player.skin) : defaultSkin;
   }
 
   public get head(): PlayerPiece {
