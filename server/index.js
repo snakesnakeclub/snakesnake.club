@@ -1,4 +1,5 @@
 const express = require('express');
+
 const app = express();
 const server = require('http').Server(app);
 const mongoose = require('mongoose');
@@ -10,7 +11,7 @@ const {
   MONGO_URL,
   PORT,
   SOCKET_SERVER_PATH
-} = require('./credentials')
+} = require('./credentials');
 const rooms = require('./rooms');
 const controllers = require('./controllers');
 const poolProxySocket = require('./mining/pool-proxy-socket');
@@ -43,10 +44,9 @@ io.on('connect', socket => {
 skins.forEach(skin =>
   new Skin(skin)
     .save()
-    .catch((err) => {
+    .catch(err => {
       if (err.name !== 'BulkWriteError') {
         console.error(err);
-        return;
       }
       // Don't worry about it if it's already inserted.
-    }))
+    }));

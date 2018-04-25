@@ -5,7 +5,7 @@ const {randomInteger} = require('../helpers.js');
 
 class Room {
   constructor(io, id, fee, moderator) {
-    // room details  
+    // Room details
     this.io = io;
     this.id = id;
     this.fee = fee;
@@ -23,24 +23,23 @@ class Room {
     const rewardsArray = Array.from(this.moderator.rewards.keys());
 
     playersArray.forEach(player => {
-      var playerHasDied = false;
+      let playerHasDied = false;
 
       playersArray.some(aPlayer =>
         aPlayer.pieces.some(piece => {
           if (player.head.isCollidingWith(piece)) {
-            this.moderator.playerCollision(player, aPlayer)
+            this.moderator.playerCollision(player, aPlayer);
             playerHasDied = true;
           }
         }));
 
-      if (!playerHasDied) { // player is still alive, reward detection
-        var hasHitReward = false;
+      if (!playerHasDied) { // Player is still alive, reward detection
+        let hasHitReward = false;
 
         rewardsArray.forEach(reward => {
           if (player.head.isCollidingWith(reward)) {
             hasHitReward = true;
             this.moderator.rewardCollision(player, reward);
-            return;
           }
         });
         if (!hasHitReward && !player.move()) {
@@ -68,7 +67,7 @@ class Room {
     return {
       id: this.id,
       fee: this.fee,
-      world: this.moderator.world.serialize(),
+      world: this.moderator.world.serialize()
     };
   }
 }

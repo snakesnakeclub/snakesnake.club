@@ -5,6 +5,7 @@ const Handlebars = require('handlebars');
 const User = require('../models/user');
 const mail = require('../mail');
 const helpers = require('../helpers');
+
 const resetPasswordPageTemplate = Handlebars.compile(String(fs.readFileSync(
   path.join(__dirname, '../templates/page-reset-password.handlebars'))));
 
@@ -15,45 +16,45 @@ module.exports = {
         res.status(400);
         res.json({
           error: true,
-          code: 'REQUIRE_BODY',
-        })
+          code: 'REQUIRE_BODY'
+        });
         return;
       }
 
       const {
-        email,
-      } = req.body
+        email
+      } = req.body;
 
-      User.findOne({ $or:[ { email }, { username: email } ] }, async (err, user) => {
+      User.findOne({$or: [{email}, {username: email}]}, async (err, user) => {
         if (err) {
           console.error(err);
           res.status(500);
           res.json({
             error: true,
-            code: '500',
-          })
-          return
+            code: '500'
+          });
+          return;
         }
-        
+
         if (!user) {
           res.status(400);
           res.json({
             error: true,
             code: 'VALIDATION_ERROR',
             validationErrors: [
-              'USER_NOT_FOUND',
+              'USER_NOT_FOUND'
             ]
-          })
-          return
+          });
+          return;
         }
 
-        const token = await helpers.randomString(30)
-        user.password_token = token
-        await user.save()
+        const token = await helpers.randomString(30);
+        user.password_token = token;
+        await user.save();
         await mail.sendPasswordReset(user.email, token);
         res.json({
           error: false
-        })
+        });
       });
     });
 
@@ -65,11 +66,11 @@ module.exports = {
           res.status(500);
         } else if (!result) {
           res.status(400);
-          res.send('INVALID_TOKEN')
+          res.send('INVALID_TOKEN');
         } else {
           res.set('Content-Type', 'text/html');
           res.send(resetPasswordPageTemplate({
-            passwordToken: req.params.token,
+            passwordToken: req.params.token
           }));
         }
       });
@@ -80,11 +81,11 @@ module.exports = {
         res.status(400);
         res.json({
           error: true,
-          code: 'REQUIRE_BODY',
-        })
+          code: 'REQUIRE_BODY'
+        });
         return;
       }
-      
+
       const token = req.params.token;
       const password = req.body['new-password'];
       User.findOne({
@@ -95,22 +96,22 @@ module.exports = {
           res.json({
             error: true,
             code: '500'
-          })
-          return
+          });
+          return;
         }
-        
+
         if (!user) {
           res.status(400);
           res.send({
             error: true,
             code: 'INVALID_TOKEN'
           });
-          return
+          return;
         }
-        
-        user.password_token = null
-        user.password = password
-        await user.save()
+
+        user.password_token = null;
+        user.password = password;
+        await user.save();
         res.redirect('/');
       });
     });

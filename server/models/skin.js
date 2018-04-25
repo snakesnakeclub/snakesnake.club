@@ -11,9 +11,9 @@ const SkinSchema = new mongoose.Schema({
   rarity: {
     type: String,
     enum: ['common', 'rare', 'epic', 'legendary'],
-    required: true,
+    required: true
   }
 });
 
-var Skin = mongoose.model('Skin', SkinSchema);
+const Skin = mongoose.model('Skin', SkinSchema);
 module.exports = Skin;

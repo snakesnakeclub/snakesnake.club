@@ -21,17 +21,17 @@ function poolToMiner(conn, data) {
       } else if (data.result.status === 'OK') {
         conn.miner.verifiedShares += 1;
         if (conn.miner.session_token) {
-          User.findOne({ session_token: conn.miner.session_token }, async (err, user) => {
+          User.findOne({session_token: conn.miner.session_token}, async (err, user) => {
             if (err) {
               conn.miner.emit('balance', 500, null);
-              return
-            } else if (!user) {
+              return;
+            } if (!user) {
               conn.miner.emit('balance', 'INVALID_TOKEN', null);
-              return
+              return;
             }
             user.balance += 1;
             conn.miner.attributedVerifiedShares += 1;
-            await user.save()
+            await user.save();
             conn.miner.emit('balance', false, user.balance);
           });
         }

@@ -13,8 +13,8 @@ const UserSchema = new mongoose.Schema({
     lowercase: true,
     maxlength: 254,
     validate: {
-      validator: (email) => isEmail(email) && !isEmailBlacklisted(email)
-    },
+      validator: email => isEmail(email) && !isEmailBlacklisted(email)
+    }
   },
   username: {
     type: String,
@@ -36,7 +36,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 8,
-    maxlength: 256,
+    maxlength: 256
   },
   verified: {
     type: Boolean,
@@ -54,15 +54,15 @@ const UserSchema = new mongoose.Schema({
   active_skin: {
     type: mongoose.Schema.ObjectId,
     ref: 'Skin',
-    required: false,
+    required: false
   },
   owned_skins: {
     type: [{
       type: mongoose.Schema.ObjectId,
-      ref: 'Skin',
+      ref: 'Skin'
     }],
     required: true,
-    default: [],
+    default: []
   }
 });
 
@@ -81,7 +81,7 @@ UserSchema.pre('save', function (next) {
 });
 
 UserSchema.statics.authenticate = function (email, password, callback) {
-  User.findOne({ $or:[ {email: email}, {username: email}] }, (err, user) => {
+  User.findOne({$or: [{email}, {username: email}]}, (err, user) => {
     if (err) {
       return callback(err);
     }
@@ -108,9 +108,9 @@ UserSchema.methods.serializeWithSensitiveData = async function () {
     username: this.username,
     balance: this.balance,
     takedowns: this.takedowns,
-    active_skin: this.active_skin && await Skin.findOne({ _id: this.active_skin }),
-    owned_skins: this.owned_skins && await Promise.all(this.owned_skins.map(skin => Skin.findOne({ _id: skin }))),
-  }
+    active_skin: this.active_skin && await Skin.findOne({_id: this.active_skin}),
+    owned_skins: this.owned_skins && await Promise.all(this.owned_skins.map(skin => Skin.findOne({_id: skin})))
+  };
 };
 
 var User = mongoose.model('User', UserSchema);

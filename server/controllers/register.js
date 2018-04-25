@@ -9,20 +9,20 @@ module.exports = {
         res.status(400);
         res.json({
           error: true,
-          code: 'REQUIRE_BODY',
-        })
+          code: 'REQUIRE_BODY'
+        });
         return;
       }
 
       const {
         email,
         username,
-        password,
-      } = req.body
-      
+        password
+      } = req.body;
+
       try {
-        const verification_token = await helpers.randomString(30)
-        const session_token = await helpers.randomString(30)
+        const verification_token = await helpers.randomString(30);
+        const session_token = await helpers.randomString(30);
         await User.init();
         const user = new User({
           email,
@@ -32,7 +32,7 @@ module.exports = {
           takedowns: 0,
           verified: false,
           verification_token,
-          session_token,
+          session_token
         });
         await user.save();
         await mail.sendEmailVerification(email, verification_token);
@@ -48,8 +48,8 @@ module.exports = {
               error: true,
               code: 'VALIDATION_ERROR',
               validationErrors: Object.values(err.errors)
-                .map((error) => 'INVALID_' + error.path.toUpperCase()),
-            })
+                .map(error => 'INVALID_' + error.path.toUpperCase())
+            });
             return;
 
           case 'BulkWriteError':
@@ -60,9 +60,9 @@ module.exports = {
               code: 'VALIDATION_ERROR',
               validationErrors: [
                 ...(op.email === email ? ['EMAIL_EXISTS'] : []),
-                ...(op.username === username ? ['USERNAME_EXISTS'] : []),
-              ],
-            })
+                ...(op.username === username ? ['USERNAME_EXISTS'] : [])
+              ]
+            });
             return;
 
           default:
@@ -72,7 +72,6 @@ module.exports = {
               error: true,
               code: '500'
             });
-            return;
         }
       }
     });

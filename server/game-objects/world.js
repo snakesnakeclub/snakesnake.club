@@ -13,8 +13,8 @@ class World {
   }
 
   outside(x, y) {
-    let outsideX = x < 0 || x >= this.width;
-    let outsideY = y < 0 || y >= this.height;
+    const outsideX = x < 0 || x >= this.width;
+    const outsideY = y < 0 || y >= this.height;
     return outsideX || outsideY;
   }
 

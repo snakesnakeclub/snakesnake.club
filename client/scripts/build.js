@@ -8,7 +8,7 @@ module.exports = async function build() {
     watch: false
   });
 
-  await fs.remove('./dist')
-  await bundler.bundle()
-  await fs.copy('./client/static', './dist/static')
-}
+  await fs.remove('./dist');
+  await bundler.bundle();
+  await fs.copy('./client/static', './dist/static');
+};

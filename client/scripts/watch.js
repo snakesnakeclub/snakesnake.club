@@ -22,4 +22,4 @@ module.exports = async function watch() {
   await fs.remove('./dist');
   await watchWithBundler();
   await watchStaticDirectory();
-}
+};

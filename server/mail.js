@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
 const Handlebars = require('handlebars');
-const stripTags = require('striptags')
+const stripTags = require('striptags');
 const {
   SMTP_HOST,
   SMTP_PORT,
@@ -10,8 +10,9 @@ const {
   SMTP_PASS,
   SMTP_SECURE,
   SMTP_FROM,
-  CLIENT_URL,
-} = require('./credentials.json')
+  CLIENT_URL
+} = require('./credentials.json');
+
 const verificationMailTemplate = Handlebars.compile(String(fs.readFileSync(
   path.join(__dirname, './templates/mail-verification.handlebars'))));
 const resetPasswordMailTemplate = Handlebars.compile(String(fs.readFileSync(
@@ -23,24 +24,24 @@ const transporter = nodemailer.createTransport({
   secure: SMTP_SECURE,
   auth: {
     user: SMTP_USER,
-    pass: SMTP_PASS,
+    pass: SMTP_PASS
   }
 });
 
 const defaultOptions = {
-  from: `snakesnake.club <${SMTP_FROM}>`,
-}
+  from: `snakesnake.club <${SMTP_FROM}>`
+};
 
 module.exports = {
   sendEmailVerification(toEmail, verificationToken) {
     const html = verificationMailTemplate({
       CLIENT_URL,
-      verificationToken,
-    })
+      verificationToken
+    });
     const subject = 'Email Verification Request';
-    const text = stripTags(html)
+    const text = stripTags(html);
     return new Promise((resolve, reject) => {
-      console.log(`${toEmail}\nSubject: ${subject}\n${text}`)
+      console.log(`${toEmail}\nSubject: ${subject}\n${text}`);
       transporter.sendMail({
         ...defaultOptions,
         to: toEmail,
@@ -49,10 +50,10 @@ module.exports = {
         html
       }, (err, info) => {
         if (err) {
-          reject(err)
-          return
+          reject(err);
+          return;
         }
-        resolve(info)
+        resolve(info);
       });
     });
   },
@@ -60,26 +61,26 @@ module.exports = {
   sendPasswordReset(toEmail, passwordToken) {
     const html = resetPasswordMailTemplate({
       CLIENT_URL,
-      passwordToken,
+      passwordToken
     });
     const subject = 'Reset Password Request';
     const text = stripTags(html);
     return new Promise((resolve, reject) => {
-      console.log(`${toEmail}\nSubject: ${subject}\n${text}`)
+      console.log(`${toEmail}\nSubject: ${subject}\n${text}`);
       transporter.sendMail({
         ...defaultOptions,
         to: toEmail,
         subject,
         text,
-        html,
+        html
       }, (err, info) => {
         if (err) {
-          reject(err)
-          return
+          reject(err);
+          return;
         }
-        resolve(info)
+        resolve(info);
       });
-    })
+    });
   }
 
 };

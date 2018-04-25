@@ -15,4 +15,4 @@ module.exports = function watch() {
   nodemon.on('quit', () => {
     process.exit();
   });
-}
+};

@@ -8,22 +8,22 @@ module.exports = {
         res.status(400);
         res.json({
           error: true,
-          code: 'REQUIRE_BODY',
-        })
+          code: 'REQUIRE_BODY'
+        });
         return;
       }
 
       const {
         email,
-        password,
-      } = req.body
+        password
+      } = req.body;
 
-      User.findOne({ $or:[ {email: email}, {username: email}] }, async (err, user) => {
+      User.findOne({$or: [{email}, {username: email}]}, async (err, user) => {
         if (err) {
           res.status(500);
           res.json({
             error: true,
-            code: '500',
+            code: '500'
           });
           return;
         } if (!user) {
@@ -45,7 +45,7 @@ module.exports = {
               error: true,
               code: 'VALIDATION_ERROR',
               validationErrors: [
-                errorCode,
+                errorCode
               ]
             });
             return;
@@ -53,19 +53,19 @@ module.exports = {
 
           // Give the user a session_token
           try {
-            const token = await helpers.randomString(30)
+            const token = await helpers.randomString(30);
             user.session_token = token;
             await user.save();
             res.json({
               error: false,
-              user: await user.serializeWithSensitiveData(),
+              user: await user.serializeWithSensitiveData()
             });
           } catch (error) {
             console.error(error);
             res.status(500);
             res.json({
               error: true,
-              code: '500',
+              code: '500'
             });
           }
         });
@@ -77,13 +77,13 @@ module.exports = {
         res.status(400);
         res.json({
           error: true,
-          code: 'REQUIRE_BODY',
-        })
+          code: 'REQUIRE_BODY'
+        });
         return;
       }
 
       const {
-        session_token,
+        session_token
       } = req.body;
 
       if (!session_token) {
@@ -92,10 +92,10 @@ module.exports = {
           error: true,
           code: 'INVALID_TOKEN'
         });
-        return
+        return;
       }
 
-      User.findOne({ session_token }, async (error, user) => {
+      User.findOne({session_token}, async (error, user) => {
         if (error) {
           res.status(500);
           res.json({
@@ -119,6 +119,6 @@ module.exports = {
           user: await user.serializeWithSensitiveData()
         });
       });
-    })
+    });
   }
-}
+};

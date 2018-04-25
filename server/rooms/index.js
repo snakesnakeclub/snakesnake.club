@@ -1,6 +1,6 @@
 const Room = require('./room');
 const User = require('../models/user');
-const FreeRoomModerator = require('../moderators/FreeRoomModerator')
+const FreeRoomModerator = require('../moderators/FreeRoomModerator');
 
 const rooms = new Map();
 
@@ -22,8 +22,8 @@ function removePlayer(socket) {
 
 module.exports = {
   setRooms(io) {
-    rooms.set(1, new Room(io, 1, 0, new FreeRoomModerator(io)))
-    // rooms.set(2, new Room(io, 2, 1));
+    rooms.set(1, new Room(io, 1, 0, new FreeRoomModerator(io)));
+    // Rooms.set(2, new Room(io, 2, 1));
   },
 
   setConnections(socket) {
@@ -39,11 +39,11 @@ module.exports = {
           if (err) {
             socket.emit('joinRoom->res', 500);
             return;
-          } else if (!user) {
+          } if (!user) {
             socket.emit('joinRoom->res', 'INVALID_TOKEN');
             return;
           }
-          
+
           const selectedRoom = rooms.get(room_id);
 
           if (!selectedRoom) {
@@ -56,8 +56,8 @@ module.exports = {
             return;
           }
 
-          user.balance -= selectedRoom.fee
-          await user.save()
+          user.balance -= selectedRoom.fee;
+          await user.save();
           if (selectedRoom.getModerator().addPlayer(socket, user.active_skin)) {
             socket.join(selectedRoom.id);
             socket.current_room = room_id;
@@ -68,18 +68,18 @@ module.exports = {
         });
     });
 
-    socket.on('spawn', function() {
-      room = rooms.get(socket.current_room)
+    socket.on('spawn', () => {
+      room = rooms.get(socket.current_room);
       if (room) {
         room.getModerator().spawnPlayer(socket);
       }
     });
 
-    socket.on('leaveRoom', function() {
+    socket.on('leaveRoom', () => {
       removePlayer(socket);
     });
 
-    socket.on('disconnect', function() {
+    socket.on('disconnect', () => {
       removePlayer(socket);
     });
   }

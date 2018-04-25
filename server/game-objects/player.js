@@ -19,6 +19,7 @@ class Player {
     this.direction = null;
     this.nextDirection = null;
   }
+
   /**
    * Returns the x component of the direction vector.
    */
@@ -49,7 +50,7 @@ class Player {
    * Deletes the tail and adds a new head in the current direction.
    */
   move() {
-    let playerAlive = this.grow();
+    const playerAlive = this.grow();
     if (!playerAlive) {
       return false;
     }
@@ -62,12 +63,12 @@ class Player {
    */
   grow() {
     const head = this.head;
-    
-    let x = Math.floor(head.x + this.dx);
-    let y = Math.floor(head.y + this.dy);
-    
+
+    const x = Math.floor(head.x + this.dx);
+    const y = Math.floor(head.y + this.dy);
+
     if (this.world.outside(x, y)) {
-      return false;            
+      return false;
     }
     this.pieces.push(new PlayerPiece(x, y));
     if (this.nextDirection) {
@@ -110,7 +111,7 @@ class Player {
     return {
       id: this.id,
       pieces: this.pieces.map(piece => piece.serialize()),
-      skin: this.skin,
+      skin: this.skin
     };
   }
 }

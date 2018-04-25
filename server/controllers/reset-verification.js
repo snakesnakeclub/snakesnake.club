@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const mail = require('../mail');
-const isEmail = require('validator/lib/isEmail')
+const isEmail = require('validator/lib/isEmail');
 const helpers = require('../helpers');
 
 module.exports = {
@@ -18,13 +18,13 @@ module.exports = {
 
         if (!user) {
           res.status(400);
-          res.send('INVALID_TOKEN')
-          return
+          res.send('INVALID_TOKEN');
+          return;
         }
-        
+
         user.verified = true,
-        user.verification_token = null
-        await user.save()
+        user.verification_token = null;
+        await user.save();
         res.redirect('/');
       });
     });
@@ -34,16 +34,16 @@ module.exports = {
         res.status(400);
         res.json({
           error: true,
-          code: 'REQUIRE_BODY',
-        })
+          code: 'REQUIRE_BODY'
+        });
         return;
       }
 
       const {
         email
-      } = req.body
+      } = req.body;
 
-      User.findOne({ $or:[ { email }, { username: email }] }, async (err, user) => {
+      User.findOne({$or: [{email}, {username: email}]}, async (err, user) => {
         if (err) {
           res.status(500);
           res.json({
@@ -78,7 +78,7 @@ module.exports = {
         }
 
         try {
-          const verification_token = await helpers.randomString(30)
+          const verification_token = await helpers.randomString(30);
           user.verification_token = verification_token;
           await user.save();
           await mail.sendEmailVerification(user.email, verification_token);
@@ -91,7 +91,6 @@ module.exports = {
             error: true,
             code: '500'
           });
-          return;
         }
       });
     });

@@ -6,7 +6,7 @@ const logout = require('./logout');
 const ping = require('./ping');
 
 module.exports = {
-  attachRouteControllers: function (app) {
+  attachRouteControllers(app) {
     login.attachRouteControllers(app);
     register.attachRouteControllers(app);
     resetPassword.attachRouteControllers(app);
@@ -14,4 +14,4 @@ module.exports = {
     logout.attachRouteControllers(app);
     ping.attachRouteControllers(app);
   }
-}
+};
