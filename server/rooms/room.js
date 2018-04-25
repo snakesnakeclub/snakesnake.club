@@ -23,25 +23,31 @@ class Room {
     const rewardsArray = Array.from(this.moderator.rewards.keys());
 
     playersArray.forEach(player => {
-      let player_has_died = false;
+      var playerHasDied = false;
 
       playersArray.some(aPlayer =>
         aPlayer.pieces.some(piece => {
           if (player.head.isCollidingWith(piece)) {
             this.moderator.playerCollision(player, aPlayer)
-            player_has_died = true;
+            playerHasDied = true;
           }
         }));
 
-      if (!player_has_died) { // player is still alive
+      if (!playerHasDied) { // player is still alive, reward detection
+        var hasHitReward = false;
+
         rewardsArray.forEach(reward => {
           if (player.head.isCollidingWith(reward)) {
-            if (!this.moderator.rewardCollision(player, reward)) {
-              return;
-            }
+            hasHitReward = true;
+            this.moderator.rewardCollision(player, reward);
+            return;
           }
         });
-        if (!player.move()) {
+        if (!hasHitReward && !player.move()) {
+          this.moderator.boundryCollision(player);
+        }
+
+        if (playerHasDied) {
           this.moderator.boundryCollision(player);
         }
       }

@@ -6,7 +6,6 @@ class Player {
     this.world = world;
     this.id = id;
     this.skin = skin;
-    this.boosted = 0;
     // Generate a random x and y position not too close to the edge
     this.reset();
   }
@@ -50,9 +49,6 @@ class Player {
    * Deletes the tail and adds a new head in the current direction.
    */
   move() {
-    if (!this.notBoosted()) {
-      return this.boost();
-    }
     let playerAlive = this.grow();
     if (!playerAlive) {
       return false;
@@ -77,38 +73,6 @@ class Player {
     if (this.nextDirection) {
       this.direction = this.nextDirection;
       this.nextDirection = null;
-    }
-    return true;
-  }
-
-  /**
-   * Returns true if the player is not currently in the boost state.
-   */
-  notBoosted() {
-    return this.boosted == 0;
-  }
-
-  /**
-   * Places the player in a boost state for 3 ticks.
-   */
-  boost() {
-    this.boosted += 1;
-    const head = this.head;
-    let x = head.x + this.dx + (this.dx/3);
-    let y = head.y + this.dy + (this.dy/3);
-    
-    if (this.world.outside(x, y)) {
-      return false;            
-    }
-    this.pieces.push(new PlayerPiece(x, y));
-    this.shrink();
-    if (this.boosted == 3) {
-      this.boosted = 0;
-      this.pieces.forEach(piece => {
-        this.x = Math.floor(this.x);
-        this.y = Math.floor(this.y);
-      })
-      return this.grow();
     }
     return true;
   }
@@ -139,7 +103,7 @@ class Player {
     ) {
       return;
     }
-    if (this.notBoosted()) this.nextDirection = direction;
+    this.nextDirection = direction;
   }
 
   serialize() {

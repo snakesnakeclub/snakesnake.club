@@ -11,13 +11,7 @@ module.exports = class FreeRoomModerator extends Moderator {
   }
 
   rewardCollision(player, reward) {
-    if (player.notBoosted()) {
-      let alive = player.boost();
-      if (!alive) {
-        this.boundryCollision(player);
-        return false;
-      }
-    }
+    player.grow() ? null : this.boundryCollision(player);
     if (reward) {
       this.rewardRespawn(reward);
     }
