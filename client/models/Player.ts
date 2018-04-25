@@ -14,6 +14,10 @@ export default class Player {
   public get head(): PlayerPiece {
     return this.pieces[this.pieces.length - 1];
   }
+
+  public get tail(): PlayerPiece {
+    return this.pieces[0];
+  }
 }
 
 export interface PlayerPiece {

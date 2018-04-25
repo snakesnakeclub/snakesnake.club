@@ -7,6 +7,10 @@ import Skin from '../models/Skin';
 const TILE_SIZE = 32;
 const TICK_SPEED = 1000 / 7;
 
+interface PreviousPlayers {
+  [playerId: string]: Player
+}
+
 export default class GameCanvasService {
   protected animationFrameId: number;
   protected lastFrameTime: number;
@@ -14,6 +18,7 @@ export default class GameCanvasService {
   protected myPlayer: Player;
   protected myPlayerHeadLastTick: PlayerPiece;
   protected players: Array<Player>;
+  protected previousPlayers: PreviousPlayers;
   protected rewards: Array<any>;
   protected world: any;
   protected theme: RoomTheme;
@@ -29,6 +34,12 @@ export default class GameCanvasService {
 
   public setTickData(playerId, { players, rewards }) {
     this.lastTickTime = Date.now();
+    if (this.players) {
+      this.previousPlayers = {};
+      this.players.forEach((player) => {
+        this.previousPlayers[player.id] = player;
+      })
+    }
     this.players = players.map(player => new Player(player));
     this.rewards = rewards;
     this.myPlayerHeadLastTick = this.myPlayer && this.myPlayer.head;
@@ -110,6 +121,7 @@ export default class GameCanvasService {
       }
     }
 
+    // Rewards
     if (this.rewards) {
       this.rewards.forEach((reward) => {
         this.theme.paintReward(canvas, ctx,
@@ -120,16 +132,61 @@ export default class GameCanvasService {
       })
     }
 
+    // Players
     if (this.players) {
       this.players.forEach((player) => {
-        player.pieces.forEach((piece) => {
-          this.theme.paintPlayerPiece(canvas, ctx,
-            Math.floor(piece.x * TILE_SIZE + cameraOffsetX),
-            Math.floor(piece.y * TILE_SIZE + cameraOffsetY),
-            TILE_SIZE,
-            player.skin
-          );
-        })
+        const prevPlayer = this.previousPlayers && this.previousPlayers[player.id];
+        // If player is not new
+        if (prevPlayer) {
+          // Paint them with interpolation for head and tail
+          const dt: number = tickDt / TICK_SPEED;
+          const isGrowing = player.tail.x === prevPlayer.tail.x
+            && player.tail.y === prevPlayer.tail.y;
+          if (isGrowing) {
+            this.players.slice(0, -1).forEach((player) => {
+              player.pieces.forEach((piece) => {
+                this.theme.paintPlayerPiece(canvas, ctx,
+                  Math.floor(piece.x * TILE_SIZE + cameraOffsetX),
+                  Math.floor(piece.y * TILE_SIZE + cameraOffsetY),
+                  TILE_SIZE,
+                  player.skin
+                );
+              });
+            });
+            const dx: number = player.head.x - prevPlayer.head.x; 
+            const dy: number = player.head.y - prevPlayer.head.y;
+            this.theme.paintPlayerPiece(canvas, ctx,
+              Math.floor(player.head.x * TILE_SIZE + dx * dt * TILE_SIZE + cameraOffsetX),
+              Math.floor(player.head.y * TILE_SIZE + dy * dt * TILE_SIZE + cameraOffsetY),
+              TILE_SIZE,
+              player.skin
+            );
+          } else {
+            player.pieces.forEach((piece, i) => {
+              const prevPiece = prevPlayer.pieces[i];
+              const dx: number = piece.x - prevPiece.x;
+              const dy: number = piece.y - prevPiece.y;
+              this.theme.paintPlayerPiece(canvas, ctx,
+                Math.floor(prevPiece.x * TILE_SIZE + dx * dt * TILE_SIZE + cameraOffsetX),
+                Math.floor(prevPiece.y * TILE_SIZE + dy * dt * TILE_SIZE + cameraOffsetY),
+                TILE_SIZE,
+                player.skin
+              );
+            });
+          }
+        } else {
+          // Paint them without interpolation
+          this.players.forEach((player) => {
+            player.pieces.forEach((piece) => {
+              this.theme.paintPlayerPiece(canvas, ctx,
+                Math.floor(piece.x * TILE_SIZE + cameraOffsetX),
+                Math.floor(piece.y * TILE_SIZE + cameraOffsetY),
+                TILE_SIZE,
+                player.skin
+              );
+            })
+          })
+        }
       })
     }
   }
