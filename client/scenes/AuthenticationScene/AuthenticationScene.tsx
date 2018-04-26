@@ -153,7 +153,7 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
       username,
       password,
     } = this.state;
-    console.log(this.state)
+    
     return (
       <div className="AuthenticationScene">
         <form onSubmit={this.handleAuthenticate.bind(this)}
