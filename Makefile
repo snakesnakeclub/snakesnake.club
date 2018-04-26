@@ -8,6 +8,7 @@ build:
 deploy:
 	make on-start
 	make build || make on-error
+	npm run deploy
 	make on-success
 
 client/credentials.json: client/credentials-sample.json

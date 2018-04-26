@@ -6,4 +6,4 @@ chmod 600 ~/.ssh/id_rsa
 ssh-add ~/.ssh/id_rsa
 ssh -o 'StrictHostKeyChecking=no' \
   "travis@${SSH_HOST}" \
-  'make -C snakesnake.club'
+  'make -C snakesnake.club deploy'

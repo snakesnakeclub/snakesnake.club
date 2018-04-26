@@ -1,18 +1,21 @@
 {
   "name": "snakesnake.club",
   "private": true,
+  "main": "scripts/start.js",
   "scripts": {
     "start": "NODE_ENV=production node scripts/start.js",
     "build": "NODE_ENV=production node scripts/build.js",
     "watch": "NODE_ENV=development node scripts/watch.js",
+    "deploy": "pm2 start pm2.yml",
     "test": "exit 0",
     "lint": "xo"
   },
   "devDependencies": {
-    "xo": "^0.20.3",
     "@types/node": "^9.6.0",
     "@types/socket.io": "^1.4.32",
-    "@types/socket.io-client": "^1.4.32"
+    "@types/socket.io-client": "^1.4.32",
+    "pm2": "^2.10.2",
+    "xo": "^0.20.3"
   },
   "xo": {
     "space": true
