@@ -1,3 +1,4 @@
+#!/bin/sh -e
 eval $(ssh-agent)
 mkdir ~/.ssh
 echo "${DEPLOY_KEY}" | base64 -d > ~/.ssh/id_rsa

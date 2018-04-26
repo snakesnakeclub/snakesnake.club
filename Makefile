@@ -1,8 +1,14 @@
-all:
+build:
 	make client/credentials.json
 	make server/credentials.json
 	make client/node_modules
 	make server/node_modules
+
+# Requires SLACK_WEBHOOK_URL environment variable
+deploy:
+	make on-start
+	make build || make on-error
+	make on-success
 
 client/credentials.json: client/credentials-sample.json
 	cp client/credentials-sample.json client/credentials.json
@@ -25,4 +31,13 @@ clean:
 		server/node_modules \
 		server/credentials.json
 
-.PHONY: all clean
+on-start:
+	sh scripts/on-deploy-start.sh
+
+on-error:
+	sh scripts/on-deploy-error.sh
+	
+on-success:
+	sh scripts/on-deploy-success.sh
+
+.PHONY: all clean on-start on-error on-success
