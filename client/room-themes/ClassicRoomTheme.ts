@@ -41,7 +41,7 @@ export default class ClassicRoomTheme extends RoomTheme {
     );
   }
 
-  paintPlayerPiece(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, x: number, y: number, tileSize: number, skin: Skin) {
-    super.paintPlayerPiece(canvas, ctx, x, y, tileSize, skin);
+  paintPlayerPiece(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, x: number, y: number, angle: number, isHead: boolean, tileSize: number, skin: Skin) {
+    super.paintPlayerPiece(canvas, ctx, x, y, angle, isHead, tileSize, skin);
   }
 }

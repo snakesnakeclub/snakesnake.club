@@ -140,47 +140,29 @@ export default class GameCanvasService {
         if (prevPlayer) {
           // Paint them with interpolation for head and tail
           const dt: number = tickDt / TICK_SPEED;
-          const isGrowing = player.tail.x === prevPlayer.tail.x
-            && player.tail.y === prevPlayer.tail.y;
-          if (isGrowing) {
-            this.players.slice(0, -1).forEach((player) => {
-              player.pieces.forEach((piece) => {
-                this.theme.paintPlayerPiece(canvas, ctx,
-                  Math.floor(piece.x * TILE_SIZE + cameraOffsetX),
-                  Math.floor(piece.y * TILE_SIZE + cameraOffsetY),
-                  TILE_SIZE,
-                  player.skin
-                );
-              });
-            });
-            const dx: number = player.head.x - prevPlayer.head.x; 
-            const dy: number = player.head.y - prevPlayer.head.y;
+          player.pieces.forEach((piece, i) => {
+            const prevPiece = prevPlayer.pieces[i] || prevPlayer.head;
+            const dx: number = piece.x - prevPiece.x;
+            const dy: number = piece.y - prevPiece.y;
+            const angle: number = Math.atan2(dx, -dy);
             this.theme.paintPlayerPiece(canvas, ctx,
-              Math.floor(player.head.x * TILE_SIZE + dx * dt * TILE_SIZE + cameraOffsetX),
-              Math.floor(player.head.y * TILE_SIZE + dy * dt * TILE_SIZE + cameraOffsetY),
+              Math.floor(prevPiece.x * TILE_SIZE + dx * dt * TILE_SIZE + cameraOffsetX),
+              Math.floor(prevPiece.y * TILE_SIZE + dy * dt * TILE_SIZE + cameraOffsetY),
+              angle,
+              i === player.pieces.length - 1,
               TILE_SIZE,
               player.skin
             );
-          } else {
-            player.pieces.forEach((piece, i) => {
-              const prevPiece = prevPlayer.pieces[i];
-              const dx: number = piece.x - prevPiece.x;
-              const dy: number = piece.y - prevPiece.y;
-              this.theme.paintPlayerPiece(canvas, ctx,
-                Math.floor(prevPiece.x * TILE_SIZE + dx * dt * TILE_SIZE + cameraOffsetX),
-                Math.floor(prevPiece.y * TILE_SIZE + dy * dt * TILE_SIZE + cameraOffsetY),
-                TILE_SIZE,
-                player.skin
-              );
-            });
-          }
+          });
         } else {
           // Paint them without interpolation
           this.players.forEach((player) => {
-            player.pieces.forEach((piece) => {
+            player.pieces.forEach((piece, i) => {
               this.theme.paintPlayerPiece(canvas, ctx,
                 Math.floor(piece.x * TILE_SIZE + cameraOffsetX),
                 Math.floor(piece.y * TILE_SIZE + cameraOffsetY),
+                0,
+                i === player.pieces.length - 1,
                 TILE_SIZE,
                 player.skin
               );
