@@ -12,17 +12,16 @@ module.exports = class FreeRoomModerator extends Moderator {
 
   rewardCollision(player, reward) {
     player.grow() ? null : this.boundryCollision(player);
-    if (reward) {
-      this.rewardRespawn(reward);
-    }
+    this.rewardRespawn(reward);
     return true;
   }
 
   rewardRespawn(reward) {
-    if (this.rewards.get(reward)) {
-      reward.respawn();
-    } else {
-      this.rewards.delete(reward);
+    if (reward) {
+      if (this.rewards.get(reward)) 
+        reward.respawn();
+      else 
+        this.rewards.delete(reward);
     }
   }
 
@@ -50,6 +49,8 @@ module.exports = class FreeRoomModerator extends Moderator {
    * @param {Player} player2
    */
   playerCollision(player1, player2) {
+    if (this.isDead(player1) || this.isDead(player2)) return;
+      
     const p1Socket = this.io.sockets.connected[player1.id];
     const p2Socket = this.io.sockets.connected[player2.id];
 
@@ -64,19 +65,16 @@ module.exports = class FreeRoomModerator extends Moderator {
   /**
    * Adds a new player to the room, by default in the dead state.
    *
-   * @param {socket} socket players socket
-   * @param {object} skin
+   * @param {socket} socket 
+   * @param {object} skin 
    */
   addPlayer(socket, skin) {
-    if (!socket) {
+    if (this.isInRoom(socket))
       return false;
-    }
-    if (this.alivePlayers.get(socket.id) || this.deadPlayers.get(socket.id)) {
-      return false;
-    }
 
-    const numberOfPlayers = this.alivePlayers.size + this.deadPlayers.size;
-    if (numberOfPlayers % this.playerLimit == 0) {
+      const numberOfPlayers = this.alivePlayers.size + this.deadPlayers.size;
+    if (numberOfPlayers > 0 && numberOfPlayers % this.playerLimit == 0) {
+      this.playerLimit *= 2;      
       const playerCanBeAddedToRoom = this.limitReached();
       if (!playerCanBeAddedToRoom) {
         return false;
@@ -89,8 +87,14 @@ module.exports = class FreeRoomModerator extends Moderator {
     });
 
     this.deadPlayers.set(socket.id, player);
-    this.rewards.set(new Reward(this.world), true);
-    this.rewards.set(new Reward(this.world), true);
+    var reward1 = new Reward(this.world);
+    var reward2 = new Reward(this.world);
+
+    player.respawnRewards.push(reward1);
+    player.respawnRewards.push(reward2);
+
+    this.rewards.set(reward1, true);
+    this.rewards.set(reward2, true);
     return true;
   }
 
@@ -100,17 +104,11 @@ module.exports = class FreeRoomModerator extends Moderator {
    * @param {socket} socket players socket
    */
   spawnPlayer(socket) {
-    if (!socket) {
-      return;
+    if (this.isInRoom(socket) && this.isDead(socket)) {
+      const player = this.deadPlayers.get(socket.id);
+      this.deadPlayers.delete(socket.id);
+      this.alivePlayers.set(socket.id, player);
     }
-
-    const player = this.deadPlayers.get(socket.id);
-    if (!player) {
-      return;
-    }
-
-    this.deadPlayers.delete(socket.id);
-    this.alivePlayers.set(socket.id, player);
   }
 
   /**
@@ -120,20 +118,16 @@ module.exports = class FreeRoomModerator extends Moderator {
    * @param {socket} socket players socket
    */
   killPlayer(socket) {
-    if (socket) {
+    if (this.isAlive(socket)) {
       socket.emit('death');
-      const player = this.alivePlayers.get(socket.id);
-      if (player) {
-        player.pieces.forEach((piece, index) => {
-          if (index % this.deadRewardSpawnRate === 0) {
-            const deadReward = new Reward(this.world, piece.x, piece.y);
-            this.rewards.set(deadReward, false);
-          }
-        });
-        player.reset();
-        this.alivePlayers.delete(socket.id);
-        this.deadPlayers.set(socket.id, player);
-      }
+
+      const player = this.getPlayer(socket); 
+
+      this.transformToRewards(player);       
+      player.reset();
+
+      this.alivePlayers.delete(socket.id);
+      this.deadPlayers.set(socket.id, player);
     }
   }
 
@@ -143,11 +137,46 @@ module.exports = class FreeRoomModerator extends Moderator {
    * @param {socket} socket players socket
    */
   removePlayer(socket) {
-    if (socket) {
-      const player = this.alivePlayers.delete(socket.id);
+    if (this.isInRoom(socket)) {    
       socket.current_room = null;
-      this.rewards.delete(player.reward1);
-      this.rewards.delete(player.reward2);
+      var player = this.getPlayer(socket);
+      
+      this.rewards.delete(player.respawnRewards.pop())
+      this.rewards.delete(player.respawnRewards.pop())
+
+      if (this.isDead(socket)) 
+        this.deadPlayers.delete(socket.id);
+      else 
+        this.alivePlayers.delete(socket.id);
     }
   }
+
+  transformToRewards(player) {
+    player.pieces.forEach((piece, index) => {
+      if (index % this.deadRewardSpawnRate === 0) {
+        const deadReward = new Reward(this.world, piece.x, piece.y);
+        this.rewards.set(deadReward, false);
+      }
+    });
+  }
+
+  isDead(socket) {
+    return socket && this.deadPlayers.has(socket.id);
+  }
+
+  isAlive(socket) {
+    return socket && this.alivePlayers.has(socket.id);
+  }
+
+  isInRoom(socket) {
+    return socket && 
+      (this.alivePlayers.has(socket.id) || this.deadPlayers.has(socket.id));
+  }
+
+  getPlayer(socket) {
+    if (!this.isInRoom(socket)) return;
+    if (this.isDead(socket)) return this.deadPlayers.get(socket.id);
+    else return this.alivePlayers.get(socket.id);
+  }
+
 };

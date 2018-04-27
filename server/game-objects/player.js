@@ -6,6 +6,7 @@ class Player {
     this.world = world;
     this.id = id;
     this.skin = skin;
+    this.respawnRewards = [];
     // Generate a random x and y position not too close to the edge
     this.reset();
   }
