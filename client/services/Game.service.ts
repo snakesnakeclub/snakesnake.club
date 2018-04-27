@@ -52,7 +52,14 @@ export default class Game extends EventEmitter {
       this.socketService.socket.emit('joinRoom', roomId, this.authService.user.session_token);
       this.socketService.socket.once('joinRoom->res', (err) => {
         if (err) {
-          console.error(err);
+          switch (err) {
+            case 'ROOM_FULL':
+              this.handleRoomFull();
+              break;
+              
+            default:
+              console.error(err);
+          }
           return
         }
         this.socketService.socket.on('room-tick', this.handleRoomTick);
@@ -90,6 +97,10 @@ export default class Game extends EventEmitter {
       this.direction == direction;
       this.socketService.socket.emit('setDirection', direction);
     }
+  }
+
+  private handleRoomFull() {
+    this.emit('roomFull');
   }
 
   get freeRoomId() {

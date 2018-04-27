@@ -5,6 +5,7 @@ import AdControls from '../../components/AdControls';
 import PlayerBar from '../../components/PlayerBar';
 import PlayerSkin from '../../components/PlayerSkin';
 import MiningControls from '../../components/MiningControls';
+import Toast from '../../components/Toast';
 import ServicesInterface from '../../services/interface';
 import Room from '../../models/room';
 import './LobbyScene.scss';
@@ -15,15 +16,35 @@ interface PropTypes {
 
 interface StateTypes {
   activeTab: string;
+  roomFullToast: boolean;
 }
 
 export default class LobbyScene extends Component<PropTypes, StateTypes> {
   constructor(props: PropTypes) {
     super(props);
     this.state = {
-      activeTab: 'play'
-    }
+      activeTab: 'play',
+      roomFullToast: false
+    };
+    this.handleRoomFull = this.handleRoomFull.bind(this);
   }
+
+  componentDidMount() {
+    const {
+      gameService,
+    } = this.props.services;
+
+    gameService.on('roomFull', this.handleRoomFull);
+  }
+
+  componentWillUnmount() {
+    const {
+      gameService,
+    } = this.props.services;
+
+    gameService.removeListener('roomFull', this.handleRoomFull);
+  }
+
 
   tabIndex(tab) {
     return {
@@ -45,6 +66,12 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
       gameService,
     } = this.props.services;
     gameService.joinRoom(gameService.freeRoomId);
+  }
+
+  handleRoomFull() {
+    this.setState({
+      roomFullToast: true,
+    });
   }
 
   renderShopPage() {
@@ -143,6 +170,7 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
   render() {
     const {
       activeTab,
+      roomFullToast,
     } = this.state;
     return (
       <div>
@@ -153,6 +181,14 @@ export default class LobbyScene extends Component<PropTypes, StateTypes> {
           {/* {this.renderGroupPage()} */}
         </div>
         {/* {this.renderNavigationBar()} */}
+
+        {roomFullToast && <Toast message="Room is full. Try again!"
+          duration={2}
+          onDurationEnd={() => {
+            this.setState({
+              roomFullToast: false,
+            })
+          }} />}
       </div>
     )
   }
