@@ -1,6 +1,6 @@
 const Room = require('./room');
 const User = require('../models/user');
-const FreeRoomModerator = require('../moderators/FreeRoomModerator');
+const FreeRoomModerator = require('../moderators/freeroomModerator');
 
 const rooms = new Map();
 
