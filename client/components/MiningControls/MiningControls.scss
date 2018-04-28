@@ -1,0 +1,31 @@
+.MiningControls--threads {
+  display: flex;
+  flex-direction: column-reverse;
+  flex-wrap: wrap;
+  height: 40px;
+  margin: 7px;
+}
+
+.MiningControls--thread-active {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#a2c07b+1,96b86b+100 */
+  background: rgb(162,192,123); /* Old browsers */
+  background: -moz-radial-gradient(center, ellipse cover, rgba(162,192,123,1) 1%, rgba(150,184,107,1) 100%); /* FF3.6-15 */
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(162,192,123,1) 1%,rgba(150,184,107,1) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: radial-gradient(ellipse at center, rgba(162,192,123,1) 1%,rgba(150,184,107,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a2c07b', endColorstr='#96b86b',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+.MiningControls--thread-inactive {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#4a0e80+0,4a0e80+100 */
+  background: rgb(74,14,128); /* Old browsers */
+  background: -moz-radial-gradient(center, ellipse cover, rgba(74,14,128,1) 0%, rgba(74,14,128,1) 100%); /* FF3.6-15 */
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(74,14,128,1) 0%,rgba(74,14,128,1) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: radial-gradient(ellipse at center, rgba(74,14,128,1) 0%,rgba(74,14,128,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4a0e80', endColorstr='#4a0e80',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}

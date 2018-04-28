@@ -1,0 +1,24 @@
+.InputText {
+  display: block;
+  font-family: 'Patua One';
+  width: 240px;
+  height: 40px;
+  color: indigo;
+  background: white;
+  border: 4px solid indigo;
+  padding-left: 7px;
+  padding-right: 7px;
+  font-size: 18px;
+}
+
+.InputText-label {
+  display: block;
+  width: 240px;
+  margin-top: 7px;
+  margin-bottom: 7px;
+  text-align: left;
+}
+
+.InputText-label-text {
+  color: white;
+}

@@ -1,0 +1,8 @@
+apps:
+  - name: snakesnake.club
+    script: scripts/start.js
+    exec_mode: fork
+    # exec_mode: cluster
+    # instances: max
+    env:
+      NODE_ENV: production

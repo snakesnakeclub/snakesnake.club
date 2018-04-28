@@ -1,0 +1,6 @@
+[
+  { "name": "Potato", "rarity": "common" },
+  { "name": "Tomato", "rarity": "rare" },
+  { "name": "Onion", "rarity": "epic" },
+  { "name": "Carrot", "rarity": "legendary" }
+]

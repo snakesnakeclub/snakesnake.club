@@ -1,0 +1,51 @@
+.PlayerBar {
+  border: 2px solid rgba(60, 60, 60, 0.75);
+  box-shadow: 0 0 2px 0 rgba(70, 140, 255, 0.7);
+  border-radius: 4px;
+  padding: 5px;
+  min-width: 280px;
+  display: flex;
+  margin: 10px 0;
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,ffffff+35,eeeeee+40,eeeeee+100 */
+  background: rgb(90,90,90); /* Old browsers */
+  background: -moz-linear-gradient(top, rgba(90,90,90,0.5) 0%, rgba(90,90,90,0.5) 35%, rgba(60,60,60,0.5) 40%, rgba(60,60,60,0.5) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, rgba(90,90,90,0.5) 0%,rgba(90,90,90,0.5) 35%,rgba(60,60,60,0.5) 40%,rgba(60,60,60,0.5) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, rgba(90,90,90,0.5) 0%,rgba(90,90,90,0.5) 35%,rgba(60,60,60,0.5) 40%,rgba(60,60,60,0.5) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#eeeeee',GradientType=0 ); /* IE6-9 */
+}
+
+.PlayerBar--username {
+  display: inline-block;
+  margin: 0;
+  font-size: 1rem;
+  flex-grow: 1;
+  text-transform: uppercase;
+}
+
+.PlayerBar--takedowns {
+  color: #dddddd;
+  font-size: 1.3rem;
+  padding: 2px;
+  border-radius: 2px;
+  min-width: 100px;
+  display: flex;
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,ffffff+35,eeeeee+40,eeeeee+100 */
+  background: rgb(255,255,255); /* Old browsers */
+  background: -moz-linear-gradient(top, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.25) 35%, rgba(238,238,238,0.25) 40%, rgba(238,238,238,0.25) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, rgba(255,255,255,0.25) 0%,rgba(255,255,255,0.25) 35%,rgba(238,238,238,0.25) 40%,rgba(238,238,238,0.25) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, rgba(255,255,255,0.25) 0%,rgba(255,255,255,0.25) 35%,rgba(238,238,238,0.25) 40%,rgba(238,238,238,0.25) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#eeeeee',GradientType=0 ); /* IE6-9 */
+}
+
+.PlayerBar--takedowns-value {
+  flex-grow: 1;
+  text-align: right;
+  padding: 0 5px;
+}
+
+.PlayerBar--takedowns-icon {
+  width: 24px;
+  height: 24px;
+  vertical-align: text-top;
+  margin: 0 4px;
+}

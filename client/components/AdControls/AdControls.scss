@@ -1,0 +1,57 @@
+.AdControls--interstitial {
+  position: fixed;
+  z-index: 3;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
+.AdControls--blackhole {
+  position: fixed;
+  top: 50vh;
+  left: 50vw;
+  width: 35vmax;
+  height: auto;
+  z-index: 4;
+  transition: 1s transform ease-in-out;
+  transform: translate(-50%, -50%) scale(0) rotate(0);
+}
+
+.AdControls--blackhole-shown {
+  transform: translate(-50%, -50%) scale(4) rotate(720deg);
+}
+
+.AdControls--adhole {
+  margin: 25px 0;
+  position: relative;
+  width: 150px;
+  height: 150px;
+}
+
+.AdControls--adhole-image {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  animation: 5s rotateAndScale infinite;
+  pointer-events: none;
+}
+
+@keyframes rotateAndScale {
+  0% { transform: rotateZ(0deg) scale(1) }
+  50% { transform: rotateZ(135deg) scale(1.15) }
+  100% { transform: rotateZ(0deg) scale(1) }
+}
+
+.AdControls--adhole-button {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}

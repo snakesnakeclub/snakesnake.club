@@ -1,0 +1,70 @@
+$common: silver;
+$rare: orange;
+$epic: magenta;
+$legendary: aqua;
+
+.PlayerSkin {
+  position: relative;
+  margin: 30px 0;
+  padding: 10px;
+  text-align: center;
+  background: silver;
+  border-radius: 2px;
+  border: 2px solid gray;
+}
+
+.PlayerSkin--rarity-fg-common {
+  color: $common;
+}
+
+.PlayerSkin--rarity-fg-rare {
+  color: $rare;
+}
+
+.PlayerSkin--rarity-fg-epic {
+  color: $epic;
+}
+
+.PlayerSkin--rarity-fg-legendary {
+  color: $legendary;
+}
+
+.PlayerSkin--rarity-bg-common {
+  background-color: $common;
+}
+
+.PlayerSkin--rarity-bg-rare {
+  background-color: $rare;
+}
+
+.PlayerSkin--rarity-bg-epic {
+  background-color: $epic;
+}
+
+.PlayerSkin--rarity-bg-legendary {
+  background-color: $legendary;
+}
+
+.PlayerSkin--snake {
+  display: flex;
+  flex-direction: column;
+}
+
+.PlayerSkin--piece {
+  width: 64px;
+  height: 64px;
+  margin: auto;
+}
+
+.PlayerSkin--name {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.PlayerSkin:hover
+> #PlayerSkin-tooltip,
+#PlayerSkin-tooltip:hover {
+  opacity: 1;
+  pointer-events: initial;
+  touch-action: initial;
+}
