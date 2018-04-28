@@ -7,9 +7,14 @@ build:
 # Requires SLACK_WEBHOOK_URL environment variable
 deploy:
 	make on-start
-	make build || make on-error
-	npm run deploy
+	make deploy-build-run || make on-error
 	make on-success
+
+deploy-build-run:
+	make client/node_modules
+	make server/node_modules
+	npm run build
+	npm run deploy
 
 client/credentials.json: client/credentials-sample.json
 	cp client/credentials-sample.json client/credentials.json
