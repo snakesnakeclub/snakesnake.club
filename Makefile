@@ -4,17 +4,27 @@ build:
 	make client/node_modules
 	make server/node_modules
 
-# Requires SLACK_WEBHOOK_URL environment variable
+# Requires scripts/deploy.env with SLACK_WEBHOOK_URL environment variable
 deploy:
-	make on-start
-	make deploy-build-run || make on-error
-	make on-success
+	source scripts/deploy.env
+	make on-deploy-start
+	make deploy-go || make on-deploy-error
+	make on-deploy-success
 
-deploy-build-run:
+deploy-go:
 	make client/node_modules
 	make server/node_modules
 	npm run build
 	npm run deploy
+
+on-deploy-start:
+	sh scripts/on-deploy-start.sh
+
+on-deploy-error:
+	sh scripts/on-deploy-error.sh
+	
+on-deploy-success:
+	sh scripts/on-deploy-success.sh
 
 client/credentials.json: client/credentials-sample.json
 	cp client/credentials-sample.json client/credentials.json
@@ -37,13 +47,4 @@ clean:
 		server/node_modules \
 		server/credentials.json
 
-on-start:
-	sh scripts/on-deploy-start.sh
-
-on-error:
-	sh scripts/on-deploy-error.sh
-	
-on-success:
-	sh scripts/on-deploy-success.sh
-
-.PHONY: all clean on-start on-error on-success
+.PHONY: all clean on-deploy-start on-deploy-error on-deploy-success

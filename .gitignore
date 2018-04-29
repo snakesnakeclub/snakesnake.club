@@ -63,3 +63,4 @@ dist
 .DS_Store
 
 credentials.json
+deploy.env
