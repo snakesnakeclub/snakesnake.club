@@ -1,3 +1,6 @@
+include scripts/deploy.env
+export $(sh sed 's/=.*//' scripts/deploy.env)
+
 build:
 	make client/credentials.json
 	make server/credentials.json
@@ -6,12 +9,13 @@ build:
 
 # Requires scripts/deploy.env with SLACK_WEBHOOK_URL environment variable
 deploy:
-	source scripts/deploy.env
 	make on-deploy-start
 	make deploy-go || make on-deploy-error
 	make on-deploy-success
 
 deploy-go:
+	git stash save "`date +%s`"
+	git pull origin master
 	make client/node_modules
 	make server/node_modules
 	npm run build
