@@ -1,6 +1,6 @@
-const Moderator = require('./Moderator');
-const Player = require('../game-objects/player');
-const Reward = require('../game-objects/reward');
+const Moderator = require('./moderator');
+const Player = require('../../game-objects/player');
+const Reward = require('../../game-objects/reward');
 
 module.exports = class FreeRoomModerator extends Moderator {
   constructor(io) {
@@ -26,7 +26,7 @@ module.exports = class FreeRoomModerator extends Moderator {
   }
 
   boundryCollision(player) {
-    const p1socket = this.io.sockets.connected[player.id];
+    const p1socket = this.io.sockets.connected[player.socketID];
     if (p1socket) {
       this.killPlayer(p1socket);
     }
@@ -51,8 +51,8 @@ module.exports = class FreeRoomModerator extends Moderator {
   playerCollision(player1, player2) {
     if (this.isDead(player1) || this.isDead(player2)) return;
       
-    const p1Socket = this.io.sockets.connected[player1.id];
-    const p2Socket = this.io.sockets.connected[player2.id];
+    const p1Socket = this.io.sockets.connected[player1.socketID];
+    const p2Socket = this.io.sockets.connected[player2.socketID];
 
     if (p2Socket && player2.head.isCollidingWith(player1.head)) {
       this.killPlayer(p2Socket);
@@ -68,11 +68,12 @@ module.exports = class FreeRoomModerator extends Moderator {
    * @param {socket} socket 
    * @param {object} skin 
    */
-  addPlayer(socket, skin) {
+  addPlayer(user) {
+    var socket = user.socket;
     if (this.isInRoom(socket))
       return false;
-
-      const numberOfPlayers = this.alivePlayers.size + this.deadPlayers.size;
+    
+    const numberOfPlayers = this.alivePlayers.size + this.deadPlayers.size;
     if (numberOfPlayers > 0 && numberOfPlayers % this.playerLimit == 0) {
       this.playerLimit *= 2;      
       const playerCanBeAddedToRoom = this.limitReached();
@@ -81,7 +82,8 @@ module.exports = class FreeRoomModerator extends Moderator {
       }
     }
 
-    const player = new Player(this.world, socket.id, skin);
+    var skin = user.active_skin;
+    const player = new Player(this.world, socket.id, user.id, skin);
     socket.on('setDirection', direction => {
       player.setDirection(direction);
     });
@@ -120,9 +122,8 @@ module.exports = class FreeRoomModerator extends Moderator {
   killPlayer(socket) {
     if (this.isAlive(socket)) {
       socket.emit('death');
-
+      
       const player = this.getPlayer(socket); 
-
       this.transformToRewards(player);       
       player.reset();
 
@@ -148,6 +149,8 @@ module.exports = class FreeRoomModerator extends Moderator {
         this.deadPlayers.delete(socket.id);
       else 
         this.alivePlayers.delete(socket.id);
+      this.statTracker.updateTakedowns(player.userID);
+      socket.removeAllListeners('setDirection');
     }
   }
 
@@ -175,8 +178,11 @@ module.exports = class FreeRoomModerator extends Moderator {
 
   getPlayer(socket) {
     if (!this.isInRoom(socket)) return;
-    if (this.isDead(socket)) return this.deadPlayers.get(socket.id);
-    else return this.alivePlayers.get(socket.id);
+
+    if (this.isDead(socket)) 
+      return this.deadPlayers.get(socket.id);
+    else 
+      return this.alivePlayers.get(socket.id);
   }
 
 };

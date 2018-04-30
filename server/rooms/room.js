@@ -23,32 +23,26 @@ class Room {
     const rewardsArray = Array.from(this.moderator.rewards.keys());
 
     playersArray.forEach(player => {
-      let playerHasDied = false;
 
-      playersArray.some(aPlayer =>
-        aPlayer.pieces.some(piece => {
+      var playerHasDied = playersArray.some(aPlayer => {
+        return aPlayer.pieces.some(piece => {
           if (player.head.isCollidingWith(piece)) {
             this.moderator.playerCollision(player, aPlayer);
-            playerHasDied = true;
-          }
-        }));
-
-      if (!playerHasDied) { // Player is still alive, reward detection
-        let hasHitReward = false;
-
-        rewardsArray.forEach(reward => {
-          if (player.head.isCollidingWith(reward)) {
-            hasHitReward = true;
-            this.moderator.rewardCollision(player, reward);
+            return true;
           }
         });
-        if (!hasHitReward && !player.move()) {
-          this.moderator.boundryCollision(player);
-        }
+      });
+      if (playerHasDied) return;
 
-        if (playerHasDied) {
-          this.moderator.boundryCollision(player);
+      var hasHitReward = rewardsArray.some(reward => {
+        if (player.head.isCollidingWith(reward)) {
+          this.moderator.rewardCollision(player, reward);
+          return true;
         }
+      });
+      if (!hasHitReward) {
+        playerHasDied = !player.move();
+        if (playerHasDied) this.moderator.boundryCollision(player);
       }
     });
     this.io.to(this.id).emit('room-tick', this.serialize());
