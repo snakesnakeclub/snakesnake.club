@@ -15,7 +15,7 @@ function removePlayer(socket) {
 
 module.exports = {
   setRooms(io) {
-    rooms.set(1, new Room(io, 1, 0, new FreeRoomModerator(io)));
+    rooms.set(1, new Room(io, 1, 0, new FreeRoomModerator(io), 'classic'));
     // Rooms.set(2, new Room(io, 2, 1));
   },
 

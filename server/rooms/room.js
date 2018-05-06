@@ -4,11 +4,12 @@ const World = require('../game-objects/world');
 const {randomInteger} = require('../helpers.js');
 
 class Room {
-  constructor(io, id, fee, moderator) {
+  constructor(io, id, fee, moderator, theme) {
     // Room details
     this.io = io;
     this.id = id;
     this.fee = fee;
+    this.theme = theme;
     this.moderator = moderator;
 
     setInterval(this.gameTick.bind(this), 1000 / 7);
@@ -61,7 +62,8 @@ class Room {
     return {
       id: this.id,
       fee: this.fee,
-      world: this.moderator.world.serialize()
+      world: this.moderator.world.serialize(),
+      theme: this.theme,
     };
   }
 }
