@@ -11,6 +11,8 @@ import SocketServerService from './services/SocketServer.service';
 import MinerService from './services/Miner.service';
 import GameService from './services/Game.service';
 import ServicesInterface from './services/interface';
+import disableOverscrollGlow from './helpers/disable-overscroll-glow';
+import disablePullToRefresh from './helpers/disable-pull-to-refresh';
 
 class App extends Component<any, any> {
   private services: ServicesInterface;
@@ -150,3 +152,6 @@ render(
   <App />,
   document.getElementById('react')
 );
+
+disableOverscrollGlow();
+disablePullToRefresh();
