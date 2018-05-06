@@ -36,7 +36,7 @@ export default class Miner extends EventEmitter {
   private throttle: number;
   private autoThreads: any;
   private tab: any;
-  private bc: BroadcastChannel;
+  private bc;
   private targetNumThreads: number;
   private useWASM: boolean;
 

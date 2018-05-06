@@ -65,8 +65,8 @@ export default class GameCanvasService {
       )
     } else {
       return new Camera(
-        Math.floor(this.world.width / 2) * TILE_SIZE,
-        Math.floor(this.world.height / 2) * TILE_SIZE
+        Math.round(this.world.width / 2) * TILE_SIZE,
+        Math.round(this.world.height / 2) * TILE_SIZE
       )
     }
   }
@@ -115,8 +115,8 @@ export default class GameCanvasService {
         const tileY = y * TILE_SIZE;
         if (camera.inViewport(tileX, tileY, TILE_SIZE, TILE_SIZE)) {
           this.theme.paintTile(canvas, ctx,
-            Math.floor(tileX + cameraOffsetX),
-            Math.floor(tileY + cameraOffsetY),
+            Math.round(tileX + cameraOffsetX),
+            Math.round(tileY + cameraOffsetY),
             TILE_SIZE);
         }
       }
@@ -128,24 +128,24 @@ export default class GameCanvasService {
         switch (reward.type) {
           case RewardTypes['grow-respawn']:
             this.theme.paintRewardGrowRespawn(canvas, ctx,
-              Math.floor(reward.x * TILE_SIZE + cameraOffsetX),
-              Math.floor(reward.y * TILE_SIZE + cameraOffsetY),
+              Math.round(reward.x * TILE_SIZE + cameraOffsetX),
+              Math.round(reward.y * TILE_SIZE + cameraOffsetY),
               TILE_SIZE
             );
             break;
 
           case RewardTypes['grow']:
             this.theme.paintRewardGrow(canvas, ctx,
-              Math.floor(reward.x * TILE_SIZE + cameraOffsetX),
-              Math.floor(reward.y * TILE_SIZE + cameraOffsetY),
+              Math.round(reward.x * TILE_SIZE + cameraOffsetX),
+              Math.round(reward.y * TILE_SIZE + cameraOffsetY),
               TILE_SIZE
             );
             break;
 
           case RewardTypes['takedown']:
             this.theme.paintRewardTakedown(canvas, ctx,
-              Math.floor(reward.x * TILE_SIZE + cameraOffsetX),
-              Math.floor(reward.y * TILE_SIZE + cameraOffsetY),
+              Math.round(reward.x * TILE_SIZE + cameraOffsetX),
+              Math.round(reward.y * TILE_SIZE + cameraOffsetY),
               TILE_SIZE
             );
             break;
@@ -169,8 +169,8 @@ export default class GameCanvasService {
             const dy: number = piece.y - prevPiece.y;
             const angle: number = Math.atan2(dx, -dy);
             this.theme.paintPlayerPiece(canvas, ctx,
-              Math.floor(prevPiece.x * TILE_SIZE + dx * dt * TILE_SIZE + cameraOffsetX),
-              Math.floor(prevPiece.y * TILE_SIZE + dy * dt * TILE_SIZE + cameraOffsetY),
+              Math.round(prevPiece.x * TILE_SIZE + dx * dt * TILE_SIZE + cameraOffsetX),
+              Math.round(prevPiece.y * TILE_SIZE + dy * dt * TILE_SIZE + cameraOffsetY),
               angle,
               i === player.pieces.length - 1,
               TILE_SIZE,
@@ -182,8 +182,8 @@ export default class GameCanvasService {
           this.players.forEach((player) => {
             player.pieces.forEach((piece, i) => {
               this.theme.paintPlayerPiece(canvas, ctx,
-                Math.floor(piece.x * TILE_SIZE + cameraOffsetX),
-                Math.floor(piece.y * TILE_SIZE + cameraOffsetY),
+                Math.round(piece.x * TILE_SIZE + cameraOffsetX),
+                Math.round(piece.y * TILE_SIZE + cameraOffsetY),
                 0,
                 i === player.pieces.length - 1,
                 TILE_SIZE,
