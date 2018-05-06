@@ -6,7 +6,7 @@ module.exports = class Moderator {
     this.io = io;
     this.alivePlayers = new Map();
     this.deadPlayers = new Map();
-    this.rewards = new Map();
+    this.rewards = new Set();
     this.statTracker = new StatTracker();
     this.world = new World(30, 30);
   }

@@ -1,8 +1,9 @@
 const {randomInteger} = require('../helpers.js');
 
 class Reward {
-  constructor(world, x, y) {
+  constructor(world, type, x, y) {
     this.world = world;
+    this.type = type;
     if (x != undefined && y != undefined) {
       this.x = x;
       this.y = y;
@@ -21,7 +22,8 @@ class Reward {
   serialize() {
     return {
       x: this.x,
-      y: this.y
+      y: this.y,
+      type: this.type,
     };
   }
 }

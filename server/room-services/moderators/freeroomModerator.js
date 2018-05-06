@@ -11,17 +11,18 @@ module.exports = class FreeRoomModerator extends Moderator {
   }
 
   rewardCollision(player, reward) {
-    player.grow() ? null : this.boundryCollision(player);
-    this.rewardRespawn(reward);
-    return true;
-  }
-
-  rewardRespawn(reward) {
-    if (reward) {
-      if (this.rewards.get(reward)) 
+    switch (reward.type) {
+      case 'grow-respawn':
         reward.respawn();
-      else 
+        break;
+      case 'takedown':
+        this.statTracker.increaseTakedowns(player.userID);
+      case 'grow':
         this.rewards.delete(reward);
+    }
+
+    if (!player.grow()) {
+      this.boundryCollision(player);
     }
   }
 
@@ -89,14 +90,14 @@ module.exports = class FreeRoomModerator extends Moderator {
     });
 
     this.deadPlayers.set(socket.id, player);
-    var reward1 = new Reward(this.world);
-    var reward2 = new Reward(this.world);
+    var reward1 = new Reward(this.world, 'grow-respawn');
+    var reward2 = new Reward(this.world, 'grow-respawn');
 
     player.respawnRewards.push(reward1);
     player.respawnRewards.push(reward2);
 
-    this.rewards.set(reward1, true);
-    this.rewards.set(reward2, true);
+    this.rewards.add(reward1);
+    this.rewards.add(reward2);
     return true;
   }
 
@@ -156,9 +157,16 @@ module.exports = class FreeRoomModerator extends Moderator {
 
   transformToRewards(player) {
     player.pieces.forEach((piece, index) => {
-      if (index % this.deadRewardSpawnRate === 0) {
-        const deadReward = new Reward(this.world, piece.x, piece.y);
-        this.rewards.set(deadReward, false);
+      if (index === (player.pieces.length - 1)) {
+        this.rewards.add(
+          new Reward(this.world, 'takedown', piece.x, piece.y)
+        );
+      } else {
+        if (index % this.deadRewardSpawnRate === 0) {
+          this.rewards.add(
+            new Reward(this.world, 'grow', piece.x, piece.y)
+          );
+        }
       }
     });
   }

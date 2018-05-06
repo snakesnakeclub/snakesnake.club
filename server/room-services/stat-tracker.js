@@ -16,12 +16,12 @@ module.exports = class StatTracker {
   }
 
   async updateTakedowns(userID) {
-    var user = await User.findOne({_id : userID})
-      .catch(err => {
-        console.log(err);
-        return;
-      });
-    if (this.trackingPlayers.has(userID)) {
+    if (this.trackingPlayers.has(userID)) {  
+      var user = await User.findOne({_id : userID})
+        .catch(err => {
+          console.log(err);
+          return;
+        });
       var newTakedowns = this.trackingPlayers.get(userID);
       this.trackingPlayers.delete(userID);
       user.takedowns += newTakedowns;
