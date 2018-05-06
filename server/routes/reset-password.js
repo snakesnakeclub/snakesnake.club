@@ -12,7 +12,14 @@ const resetPasswordPageTemplate = Handlebars.compile(String(fs.readFileSync(
 module.exports = {
   attachRoute(app, recaptcha) {
     app.post('/reset-password', recaptcha.middleware.verify, (req, res) => {
-      if (req.recaptcha.error) return;
+      if (req.recaptcha.error) {
+        res.status(400);
+        res.json({
+          message: 'Failed recaptcha test.'
+        });
+        next(null);
+        return
+      }
       
       if (!req.body) {
         res.status(400);

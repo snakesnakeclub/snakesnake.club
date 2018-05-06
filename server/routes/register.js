@@ -5,7 +5,14 @@ const helpers = require('../helpers');
 module.exports = {
   attachRoute(app, recaptcha) {
     app.post('/register', recaptcha.middleware.verify, async (req, res) => {
-      if (req.recaptcha.error) return;
+      if (req.recaptcha.error) {
+        res.status(400)
+        res.json({
+          message: 'Failed recaptcha test.'
+        })
+        next(null)
+        return
+      }
 
       if (!req.body) {
         res.status(400);

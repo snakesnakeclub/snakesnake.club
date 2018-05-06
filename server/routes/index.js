@@ -10,7 +10,7 @@ module.exports = {
     login.attachRoute(app);
     register.attachRoute(app, recaptcha);
     resetPassword.attachRoute(app, recaptcha);
-    resetVerification.attachRoute(app);
+    resetVerification.attachRoute(app, recaptcha);
     logout.attachRoute(app);
     ping.attachRoute(app);
   }
