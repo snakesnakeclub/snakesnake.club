@@ -19,5 +19,6 @@
   },
   "xo": {
     "space": true
-  }
+  },
+  "dependencies": {}
 }

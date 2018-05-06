@@ -4,7 +4,7 @@ const isEmail = require('validator/lib/isEmail');
 const helpers = require('../helpers');
 
 module.exports = {
-  attachRouteControllers(app) {
+  attachRoute(app) {
     app.get('/verification/:token', (req, res) => {
       const token = req.params.token;
 
