@@ -11,12 +11,13 @@ module.exports = class FreeRoomModerator extends Moderator {
   }
 
   rewardCollision(player, reward) {
+    let playerSocket = this.getSocket(player.socketID);
     switch (reward.type) {
       case 'grow-respawn':
         reward.respawn();
         break;
       case 'takedown':
-        this.statTracker.increaseTakedowns(player.userID);
+        this.statTracker.increaseTakedowns(player.userID, playerSocket);
       case 'grow':
         this.rewards.delete(reward);
     }
@@ -27,7 +28,7 @@ module.exports = class FreeRoomModerator extends Moderator {
   }
 
   boundryCollision(player) {
-    const p1socket = this.io.sockets.connected[player.socketID];
+    const p1socket = this.getSocket(player.socketID);
     if (p1socket) {
       this.killPlayer(p1socket);
     }
@@ -52,8 +53,8 @@ module.exports = class FreeRoomModerator extends Moderator {
   playerCollision(player1, player2) {
     if (this.isDead(player1) || this.isDead(player2)) return;
       
-    const p1Socket = this.io.sockets.connected[player1.socketID];
-    const p2Socket = this.io.sockets.connected[player2.socketID];
+    const p1Socket = this.getSocket(player1.socketID);
+    const p2Socket = this.getSocket(player2.socketID);
 
     if (p2Socket && player2.head.isCollidingWith(player1.head)) {
       this.killPlayer(p2Socket);
@@ -191,6 +192,10 @@ module.exports = class FreeRoomModerator extends Moderator {
       return this.deadPlayers.get(socket.id);
     else 
       return this.alivePlayers.get(socket.id);
+  }
+
+  getSocket(socketID) {
+    return this.io.sockets.connected[socketID];
   }
 
 };

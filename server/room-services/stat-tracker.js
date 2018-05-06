@@ -6,13 +6,14 @@ module.exports = class StatTracker {
     this.trackingPlayers = new Map();
   }
 
-  increaseTakedowns(userID) {
+  increaseTakedowns(userID, socket) {
     if (this.trackingPlayers.has(userID)) {
       var takedownCount = this.trackingPlayers.get(userID);
     } else {
       var takedownCount = 0;
     }
     this.trackingPlayers.set(userID, takedownCount+1);
+    socket.emit('takedown');
   }
 
   async updateTakedowns(userID) {
