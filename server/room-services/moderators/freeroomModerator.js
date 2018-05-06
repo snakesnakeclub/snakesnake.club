@@ -12,19 +12,24 @@ module.exports = class FreeRoomModerator extends Moderator {
 
   rewardCollision(player, reward) {
     let playerSocket = this.getSocket(player.socketID);
+    var shouldGrow = true;
     switch (reward.type) {
       case 'grow-respawn':
         reward.respawn();
         break;
       case 'takedown':
         this.statTracker.increaseTakedowns(player.userID, playerSocket);
+        shouldGrow = false;
       case 'grow':
         this.rewards.delete(reward);
     }
-
-    if (!player.grow()) {
-      this.boundryCollision(player);
+    if (shouldGrow) {
+      var hasDied = !player.grow();
+    } else {
+      var hasDied = !player.move();
     }
+
+    if (hasDied) this.boundryCollision(player);
   }
 
   boundryCollision(player) {
