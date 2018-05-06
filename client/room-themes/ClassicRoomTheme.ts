@@ -2,6 +2,24 @@ import RoomTheme from './RoomTheme';
 import Skin from '../models/Skin';
 
 export default class ClassicRoomTheme extends RoomTheme {
+  public static readonly id: string = 'classic';
+  private tileImage;
+  private rewardGrowRespawnImage;
+  private rewardGrowImage;
+  private rewardTakedownImage;
+
+  constructor() {
+    super();
+    this.tileImage = new Image(512, 512);
+    this.tileImage.src = '/static/assets/rooms/classic/tile.png';
+    this.rewardGrowRespawnImage = new Image(512, 512);
+    this.rewardGrowRespawnImage.src = '/static/assets/rooms/classic/rewards/grow-respawn.png';
+    this.rewardGrowImage = new Image(512, 512);
+    this.rewardGrowImage.src = '/static/assets/rooms/classic/rewards/grow.png';
+    this.rewardTakedownImage = new Image(512, 512);
+    this.rewardTakedownImage.src = '/static/assets/rooms/classic/rewards/takedown.png';
+  }
+  
   public paintBackground(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
     // White Background
     ctx.fillStyle = 'white';
@@ -27,18 +45,19 @@ export default class ClassicRoomTheme extends RoomTheme {
   }
 
   paintTile(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, x: number, y: number, tileSize: number) {
-    ctx.fillStyle = 'black';
-    ctx.fillRect(x, y, tileSize, tileSize);
+    ctx.drawImage(this.tileImage, x, y, tileSize, tileSize);
   }
 
-  paintReward(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, x: number, y: number, tileSize: number) {
-    ctx.fillStyle = 'red';
-    ctx.fillRect(
-      x,
-      y,
-      tileSize,
-      tileSize
-    );
+  paintRewardGrowRespawn(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, x: number, y: number, tileSize: number) {
+    ctx.drawImage(this.rewardGrowRespawnImage, x, y, tileSize, tileSize);
+  }
+
+  paintRewardGrow(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, x: number, y: number, tileSize: number) {
+    ctx.drawImage(this.rewardGrowImage, x, y, tileSize, tileSize);
+  }
+
+  paintRewardTakedown(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, x: number, y: number, tileSize: number) {
+    ctx.drawImage(this.rewardTakedownImage, x, y, tileSize, tileSize);
   }
 
   paintPlayerPiece(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, x: number, y: number, angle: number, isHead: boolean, tileSize: number, skin: Skin) {

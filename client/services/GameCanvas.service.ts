@@ -3,6 +3,7 @@ import Camera from '../models/Camera';
 import ClassicRoomTheme from '../room-themes/ClassicRoomTheme';
 import RoomTheme from '../room-themes/RoomTheme';
 import Skin from '../models/Skin';
+import Reward, {RewardTypes} from '../models/Reward';
 
 const TILE_SIZE = 32;
 const TICK_SPEED = 1000 / 7;
@@ -19,7 +20,7 @@ export default class GameCanvasService {
   protected myPlayerHeadLastTick: PlayerPiece;
   protected players: Array<Player>;
   protected previousPlayers: PreviousPlayers;
-  protected rewards: Array<any>;
+  protected rewards: Array<Reward>;
   protected world: any;
   protected theme: RoomTheme;
 
@@ -41,7 +42,7 @@ export default class GameCanvasService {
       })
     }
     this.players = players.map(player => new Player(player));
-    this.rewards = rewards;
+    this.rewards = rewards.map(reward => new Reward(reward));
     this.myPlayerHeadLastTick = this.myPlayer && this.myPlayer.head;
     this.myPlayer = this.players.find(p => p.id == playerId);
     if (this.myPlayer) {
@@ -124,11 +125,33 @@ export default class GameCanvasService {
     // Rewards
     if (this.rewards) {
       this.rewards.forEach((reward) => {
-        this.theme.paintReward(canvas, ctx,
-          Math.floor(reward.x * TILE_SIZE + cameraOffsetX),
-          Math.floor(reward.y * TILE_SIZE + cameraOffsetY),
-          TILE_SIZE
-        );
+        switch (reward.type) {
+          case RewardTypes['grow-respawn']:
+            this.theme.paintRewardGrowRespawn(canvas, ctx,
+              Math.floor(reward.x * TILE_SIZE + cameraOffsetX),
+              Math.floor(reward.y * TILE_SIZE + cameraOffsetY),
+              TILE_SIZE
+            );
+            break;
+
+          case RewardTypes['grow']:
+            this.theme.paintRewardGrow(canvas, ctx,
+              Math.floor(reward.x * TILE_SIZE + cameraOffsetX),
+              Math.floor(reward.y * TILE_SIZE + cameraOffsetY),
+              TILE_SIZE
+            );
+            break;
+
+          case RewardTypes['takedown']:
+            this.theme.paintRewardTakedown(canvas, ctx,
+              Math.floor(reward.x * TILE_SIZE + cameraOffsetX),
+              Math.floor(reward.y * TILE_SIZE + cameraOffsetY),
+              TILE_SIZE
+            );
+            break;
+
+          default:
+        }
       })
     }
 
