@@ -20,5 +20,7 @@
   "xo": {
     "space": true
   },
-  "dependencies": {}
+  "dependencies": {
+    "preact-google-recaptcha": "^0.2.0"
+  }
 }

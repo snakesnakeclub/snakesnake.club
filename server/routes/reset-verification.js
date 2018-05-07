@@ -33,9 +33,9 @@ module.exports = {
       if (req.recaptcha.error) {
         res.status(400)
         res.json({
-          message: 'Failed recaptcha test.'
-        })
-        next(null)
+          error: true,
+          code: 'INVALID_RECAPTCHA'
+        });
         return
       }
 

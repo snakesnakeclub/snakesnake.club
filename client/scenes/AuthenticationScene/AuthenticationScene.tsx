@@ -1,11 +1,13 @@
 import { h, Component } from 'preact';
+import Recaptcha from 'preact-google-recaptcha';
+import ServicesInterface from '../../services/interface';
 import InputText from '../../components/InputText';
 import InputPassword from '../../components/InputPassword';
 import ButtonText from '../../components/ButtonText';
 import Toast from '../../components/Toast';
-import ServicesInterface from '../services/interface';
 import './AuthenticationScene.scss';
 import * as strings from '../../strings.json';
+const {RECAPTCHA_PUBLIC} = require('../../credentials.json');
 
 interface PropTypes {
   services: ServicesInterface;
@@ -22,6 +24,9 @@ interface StateTypes {
 }
 
 export default class AuthenticationScene extends Component<PropTypes, StateTypes> {
+  private recaptcha;
+  private handleRecaptchaChange: Function;
+
   constructor(props: PropTypes) {
     super(props);
     this.state = {
@@ -65,14 +70,18 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
           break;
 
       case 'register':
-        authService.register(email, username, password)
-          .then(() => {
-            this.setState({
-              validationErrors: [],
-              isLoading: false
-            });
-          })
-          .catch(this.handleRestApiError.bind(this))
+        this.handleRecaptchaChange = (gRecaptchaValue) => {
+          authService.register(gRecaptchaValue, email, username, password)
+            .then(() => {
+              this.setState({
+                validationErrors: [],
+                isLoading: false
+              });
+            })
+            .catch(this.handleRestApiError.bind(this))
+          this.recaptcha.reset();
+        };
+        this.recaptcha.execute();
         break;
     }
   }
@@ -90,15 +99,19 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
       isLoading: true,
     })
 
-    authService.resetPassword(email)
-      .then(() => {
-        this.setState({
-          toast: 'check your inbox',
-          validationErrors: [],
-          isLoading: false,
+    this.handleRecaptchaChange = (gRecaptchaValue) => {
+      authService.resetPassword(gRecaptchaValue, email)
+        .then(() => {
+          this.setState({
+            toast: 'check your inbox',
+            validationErrors: [],
+            isLoading: false,
+          })
         })
-      })
-      .catch(this.handleRestApiError.bind(this))
+        .catch(this.handleRestApiError.bind(this))
+      this.recaptcha.reset();
+    };
+    this.recaptcha.execute();
   }
 
   handleResendVerificationClick() {
@@ -114,15 +127,19 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
       isLoading: true,
     })
 
-    authService.resetVerification(email)
-      .then(() => {
-        this.setState({
-          toast: 'check your inbox',
-          validationErrors: [],
-          isLoading: false,
+    this.handleRecaptchaChange = (gRecaptchaValue) => {
+      authService.resetVerification(gRecaptchaValue, email)
+        .then(() => {
+          this.setState({
+            toast: 'check your inbox',
+            validationErrors: [],
+            isLoading: false,
+          })
         })
-      })
-      .catch(this.handleRestApiError.bind(this))
+        .catch(this.handleRestApiError.bind(this))
+      this.recaptcha.reset();
+    };
+    this.recaptcha.execute();
   }
 
   handleRestApiError(data) {
@@ -135,9 +152,14 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
         validationErrors: ['500'],
         isLoading: false,
       })
-    } else {
+    } else if (data.validationErrors) {
       this.setState({
         validationErrors: data.validationErrors,
+        isLoading: false,
+      }) 
+    } else {
+      this.setState({
+        validationErrors: [data.code],
         isLoading: false,
       }) 
     }
@@ -235,6 +257,15 @@ export default class AuthenticationScene extends Component<PropTypes, StateTypes
               onDurationEnd={this.setState.bind(this, { toast: null })} />
           )}
         </form>
+
+        <Recaptcha
+          ref={el => {this.recaptcha = el}}
+          sitekey={RECAPTCHA_PUBLIC}
+          size="invisible"
+          badge="bottom-right"
+          theme="dark"
+          onChange={this.handleRecaptchaChange}
+        />
       </div>
     )
   }
