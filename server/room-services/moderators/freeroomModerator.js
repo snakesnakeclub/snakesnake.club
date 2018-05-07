@@ -116,6 +116,7 @@ module.exports = class FreeRoomModerator extends Moderator {
     if (this.isInRoom(socket) && this.isDead(socket)) {
       const player = this.deadPlayers.get(socket.id);
       this.deadPlayers.delete(socket.id);
+      this.setValidPosition(player);      
       this.alivePlayers.set(socket.id, player);
     }
   }
@@ -129,10 +130,9 @@ module.exports = class FreeRoomModerator extends Moderator {
   killPlayer(socket) {
     if (this.isAlive(socket)) {
       socket.emit('death');
-      
+
       const player = this.getPlayer(socket); 
       this.transformToRewards(player);       
-      player.reset();
 
       this.alivePlayers.delete(socket.id);
       this.deadPlayers.set(socket.id, player);
@@ -175,6 +175,19 @@ module.exports = class FreeRoomModerator extends Moderator {
         }
       }
     });
+  }
+
+  setValidPosition(player) {
+    var valid = false;
+    do {
+      player.reset();
+      var alivePlayers = Array.from(this.alivePlayers);
+      valid = !alivePlayers.some(alivePlayer => {
+        return alivePlayer.pieces.some(piece => {
+          return piece.isCollidingWith(player.pieces[0]);
+        });
+      });
+    } while (!valid)
   }
 
   isDead(socket) {
