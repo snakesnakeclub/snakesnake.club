@@ -181,7 +181,7 @@ module.exports = class FreeRoomModerator extends Moderator {
     var valid = false;
     do {
       player.reset();
-      var alivePlayers = Array.from(this.alivePlayers.keys());
+      var alivePlayers = Array.from(this.alivePlayers.values());
       valid = !alivePlayers.some(alivePlayer => {
         return alivePlayer.pieces.some(piece => {
           return piece.isCollidingWith(player.pieces[0]);
