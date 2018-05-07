@@ -10,8 +10,17 @@ const resetPasswordPageTemplate = Handlebars.compile(String(fs.readFileSync(
   path.join(__dirname, '../templates/page-reset-password.handlebars'))));
 
 module.exports = {
-  attachRouteControllers(app) {
-    app.post('/reset-password', (req, res) => {
+  attachRoute(app, recaptcha) {
+    app.post('/reset-password', recaptcha.middleware.verify, (req, res) => {
+      if (req.recaptcha.error) {
+        res.status(400);
+        res.json({
+          error: true,
+          code: 'INVALID_RECAPTCHA'
+        });
+        return
+      }
+      
       if (!req.body) {
         res.status(400);
         res.json({

@@ -1,8 +1,9 @@
 const express = require('express');
-
 const app = express();
 const server = require('http').Server(app);
+const Recaptcha = require('express-recaptcha').Recaptcha;
 const mongoose = require('mongoose');
+
 const User = require('./models/user');
 const Skin = require('./models/skin');
 const skins = require('./skins.json');
@@ -10,10 +11,12 @@ const bodyParser = require('body-parser');
 const {
   MONGO_URL,
   PORT,
-  SOCKET_SERVER_PATH
+  SOCKET_SERVER_PATH,
+  RECAPTCHA_PUBLIC,
+  RECAPTCHA_SECRET,
 } = require('./credentials');
 const rooms = require('./rooms');
-const controllers = require('./controllers');
+const routes = require('./routes');
 const poolProxySocket = require('./mining/pool-proxy-socket');
 
 mongoose.connect(MONGO_URL);
@@ -35,7 +38,11 @@ rooms.setRooms(io);
 // Start mining proxy
 poolProxySocket(io);
 
-controllers.attachRouteControllers(app);
+var recaptcha = new Recaptcha(
+  RECAPTCHA_PUBLIC,
+  RECAPTCHA_SECRET);
+
+routes.attachRoutes(app, recaptcha);
 io.on('connect', socket => {
   rooms.setConnections(socket);
 });

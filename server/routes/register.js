@@ -3,8 +3,17 @@ const mail = require('../mail');
 const helpers = require('../helpers');
 
 module.exports = {
-  attachRouteControllers(app) {
-    app.post('/register', async (req, res) => {
+  attachRoute(app, recaptcha) {
+    app.post('/register', recaptcha.middleware.verify, async (req, res) => {
+      if (req.recaptcha.error) {
+        res.status(400)
+        res.json({
+          error: true,
+          code: 'INVALID_RECAPTCHA'
+        });
+        return
+      }
+
       if (!req.body) {
         res.status(400);
         res.json({

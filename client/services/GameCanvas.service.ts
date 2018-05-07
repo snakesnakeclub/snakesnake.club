@@ -3,6 +3,7 @@ import Camera from '../models/Camera';
 import ClassicRoomTheme from '../room-themes/ClassicRoomTheme';
 import RoomTheme from '../room-themes/RoomTheme';
 import Skin from '../models/Skin';
+import Reward, {RewardTypes} from '../models/Reward';
 
 const TILE_SIZE = 32;
 const TICK_SPEED = 1000 / 7;
@@ -19,7 +20,7 @@ export default class GameCanvasService {
   protected myPlayerHeadLastTick: PlayerPiece;
   protected players: Array<Player>;
   protected previousPlayers: PreviousPlayers;
-  protected rewards: Array<any>;
+  protected rewards: Array<Reward>;
   protected world: any;
   protected theme: RoomTheme;
 
@@ -41,7 +42,7 @@ export default class GameCanvasService {
       })
     }
     this.players = players.map(player => new Player(player));
-    this.rewards = rewards;
+    this.rewards = rewards.map(reward => new Reward(reward));
     this.myPlayerHeadLastTick = this.myPlayer && this.myPlayer.head;
     this.myPlayer = this.players.find(p => p.id == playerId);
     if (this.myPlayer) {
@@ -64,8 +65,8 @@ export default class GameCanvasService {
       )
     } else {
       return new Camera(
-        Math.floor(this.world.width / 2) * TILE_SIZE,
-        Math.floor(this.world.height / 2) * TILE_SIZE
+        Math.round(this.world.width / 2) * TILE_SIZE,
+        Math.round(this.world.height / 2) * TILE_SIZE
       )
     }
   }
@@ -114,8 +115,8 @@ export default class GameCanvasService {
         const tileY = y * TILE_SIZE;
         if (camera.inViewport(tileX, tileY, TILE_SIZE, TILE_SIZE)) {
           this.theme.paintTile(canvas, ctx,
-            Math.floor(tileX + cameraOffsetX),
-            Math.floor(tileY + cameraOffsetY),
+            Math.round(tileX + cameraOffsetX),
+            Math.round(tileY + cameraOffsetY),
             TILE_SIZE);
         }
       }
@@ -124,11 +125,33 @@ export default class GameCanvasService {
     // Rewards
     if (this.rewards) {
       this.rewards.forEach((reward) => {
-        this.theme.paintReward(canvas, ctx,
-          Math.floor(reward.x * TILE_SIZE + cameraOffsetX),
-          Math.floor(reward.y * TILE_SIZE + cameraOffsetY),
-          TILE_SIZE
-        );
+        switch (reward.type) {
+          case RewardTypes['grow-respawn']:
+            this.theme.paintRewardGrowRespawn(canvas, ctx,
+              Math.round(reward.x * TILE_SIZE + cameraOffsetX),
+              Math.round(reward.y * TILE_SIZE + cameraOffsetY),
+              TILE_SIZE
+            );
+            break;
+
+          case RewardTypes['grow']:
+            this.theme.paintRewardGrow(canvas, ctx,
+              Math.round(reward.x * TILE_SIZE + cameraOffsetX),
+              Math.round(reward.y * TILE_SIZE + cameraOffsetY),
+              TILE_SIZE
+            );
+            break;
+
+          case RewardTypes['takedown']:
+            this.theme.paintRewardTakedown(canvas, ctx,
+              Math.round(reward.x * TILE_SIZE + cameraOffsetX),
+              Math.round(reward.y * TILE_SIZE + cameraOffsetY),
+              TILE_SIZE
+            );
+            break;
+
+          default:
+        }
       })
     }
 
@@ -146,8 +169,8 @@ export default class GameCanvasService {
             const dy: number = piece.y - prevPiece.y;
             const angle: number = Math.atan2(dx, -dy);
             this.theme.paintPlayerPiece(canvas, ctx,
-              Math.floor(prevPiece.x * TILE_SIZE + dx * dt * TILE_SIZE + cameraOffsetX),
-              Math.floor(prevPiece.y * TILE_SIZE + dy * dt * TILE_SIZE + cameraOffsetY),
+              Math.round(prevPiece.x * TILE_SIZE + dx * dt * TILE_SIZE + cameraOffsetX),
+              Math.round(prevPiece.y * TILE_SIZE + dy * dt * TILE_SIZE + cameraOffsetY),
               angle,
               i === player.pieces.length - 1,
               TILE_SIZE,
@@ -159,8 +182,8 @@ export default class GameCanvasService {
           this.players.forEach((player) => {
             player.pieces.forEach((piece, i) => {
               this.theme.paintPlayerPiece(canvas, ctx,
-                Math.floor(piece.x * TILE_SIZE + cameraOffsetX),
-                Math.floor(piece.y * TILE_SIZE + cameraOffsetY),
+                Math.round(piece.x * TILE_SIZE + cameraOffsetX),
+                Math.round(piece.y * TILE_SIZE + cameraOffsetY),
                 0,
                 i === player.pieces.length - 1,
                 TILE_SIZE,

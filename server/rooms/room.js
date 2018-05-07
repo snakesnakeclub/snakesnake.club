@@ -4,11 +4,12 @@ const World = require('../game-objects/world');
 const {randomInteger} = require('../helpers.js');
 
 class Room {
-  constructor(io, id, fee, moderator) {
+  constructor(io, id, fee, moderator, theme) {
     // Room details
     this.io = io;
     this.id = id;
     this.fee = fee;
+    this.theme = theme;
     this.moderator = moderator;
 
     setInterval(this.gameTick.bind(this), 1000 / 7);
@@ -23,32 +24,26 @@ class Room {
     const rewardsArray = Array.from(this.moderator.rewards.keys());
 
     playersArray.forEach(player => {
-      let playerHasDied = false;
 
-      playersArray.some(aPlayer =>
-        aPlayer.pieces.some(piece => {
+      var playerHasDied = playersArray.some(aPlayer => {
+        return aPlayer.pieces.some(piece => {
           if (player.head.isCollidingWith(piece)) {
             this.moderator.playerCollision(player, aPlayer);
-            playerHasDied = true;
-          }
-        }));
-
-      if (!playerHasDied) { // Player is still alive, reward detection
-        let hasHitReward = false;
-
-        rewardsArray.forEach(reward => {
-          if (player.head.isCollidingWith(reward)) {
-            hasHitReward = true;
-            this.moderator.rewardCollision(player, reward);
+            return true;
           }
         });
-        if (!hasHitReward && !player.move()) {
-          this.moderator.boundryCollision(player);
-        }
+      });
+      if (playerHasDied) return;
 
-        if (playerHasDied) {
-          this.moderator.boundryCollision(player);
+      var hasHitReward = rewardsArray.some(reward => {
+        if (player.head.isCollidingWith(reward)) {
+          this.moderator.rewardCollision(player, reward);
+          return true;
         }
+      });
+      if (!hasHitReward) {
+        playerHasDied = !player.move();
+        if (playerHasDied) this.moderator.boundryCollision(player);
       }
     });
     this.io.to(this.id).emit('room-tick', this.serialize());
@@ -67,7 +62,8 @@ class Room {
     return {
       id: this.id,
       fee: this.fee,
-      world: this.moderator.world.serialize()
+      world: this.moderator.world.serialize(),
+      theme: this.theme,
     };
   }
 }

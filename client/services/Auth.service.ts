@@ -108,12 +108,13 @@ export default class AuthService extends EventEmitter {
   /**
    * Returns a promise that resolves if register succeeded and rejects if it fails.
    * 
+   * @param recaptchaValue
    * @param email is a valid email or username
    * @param username is a valid username
    * @param password is a valid password
    */
-  register(email: string, username: string, password: string): Promise<any> {
-    return RestServerService.post(AUTH_REST_SERVER, '/register', {
+  register(recaptchaValue: string, email: string, username: string, password: string): Promise<any> {
+    return RestServerService.post(AUTH_REST_SERVER, `/register?g-recaptcha-response=${recaptchaValue}`, {
       email,
       username,
       password
@@ -125,10 +126,11 @@ export default class AuthService extends EventEmitter {
    * Returns a promise that resolves if reset password succeeded and rejects
    * if it fails.
    * 
+   * @param recaptchaValue
    * @param email is a valid email or username
    */
-  resetPassword(email: string): Promise<any> {
-    return RestServerService.post(AUTH_REST_SERVER, '/reset-password', {
+  resetPassword(recaptchaValue: string, email: string): Promise<any> {
+    return RestServerService.post(AUTH_REST_SERVER, `/reset-password?g-recaptcha-response=${recaptchaValue}`, {
       email,
     })
   }
@@ -137,10 +139,11 @@ export default class AuthService extends EventEmitter {
    * Returns a promise that resolves if reset verification succeeded and rejects
    * if it fails.
    * 
+   * @param recaptchaValue
    * @param email is a valid email or username
    */
-  resetVerification(email: string): Promise<any> {
-    return RestServerService.post(AUTH_REST_SERVER, '/reset-verification', {
+  resetVerification(recaptchaValue: string, email: string): Promise<any> {
+    return RestServerService.post(AUTH_REST_SERVER, `/reset-verification?g-recaptcha-response=${recaptchaValue}`, {
       email,
     })
   }

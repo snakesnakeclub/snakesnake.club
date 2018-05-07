@@ -2,7 +2,7 @@ const User = require('../models/user');
 const helpers = require('../helpers');
 
 module.exports = {
-  attachRouteControllers(app) {
+  attachRoute(app) {
     app.post('/login', (req, res) => {
       if (!req.body) {
         res.status(400);

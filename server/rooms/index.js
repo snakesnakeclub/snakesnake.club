@@ -1,15 +1,8 @@
 const Room = require('./room');
 const User = require('../models/user');
-const FreeRoomModerator = require('../moderators/freeroomModerator');
+const FreeRoomModerator = require('../room-services/moderators/freeroomModerator');
 
 const rooms = new Map();
-
-function serialize(user) {
-  return {
-    id: user.id,
-    balance: user.balance
-  };
-}
 
 function removePlayer(socket) {
   if (socket.current_room > 0) {
@@ -22,7 +15,7 @@ function removePlayer(socket) {
 
 module.exports = {
   setRooms(io) {
-    rooms.set(1, new Room(io, 1, 0, new FreeRoomModerator(io)));
+    rooms.set(1, new Room(io, 1, 0, new FreeRoomModerator(io), 'classic'));
     // Rooms.set(2, new Room(io, 2, 1));
   },
 
@@ -43,7 +36,6 @@ module.exports = {
             socket.emit('joinRoom->res', 'INVALID_TOKEN');
             return;
           }
-
           const selectedRoom = rooms.get(room_id);
 
           if (!selectedRoom) {
@@ -58,7 +50,9 @@ module.exports = {
 
           user.balance -= selectedRoom.fee;
           await user.save();
-          if (selectedRoom.getModerator().addPlayer(socket, user.active_skin)) {
+          
+          var filteredUser = filterInformation(user, socket);
+          if (selectedRoom.getModerator().addPlayer(filteredUser)) {
             socket.join(selectedRoom.id);
             socket.current_room = room_id;
             socket.emit('joinRoom->res', null);
@@ -84,3 +78,11 @@ module.exports = {
     });
   }
 };
+
+function filterInformation(user, socket) {
+  return {
+    "id": user._id,
+    "active_skin": user.active_skin,
+    "socket" : socket,
+  }
+}

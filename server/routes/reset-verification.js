@@ -4,7 +4,7 @@ const isEmail = require('validator/lib/isEmail');
 const helpers = require('../helpers');
 
 module.exports = {
-  attachRouteControllers(app) {
+  attachRoute(app, recaptcha) {
     app.get('/verification/:token', (req, res) => {
       const token = req.params.token;
 
@@ -29,7 +29,16 @@ module.exports = {
       });
     });
 
-    app.post('/reset-verification', (req, res) => {
+    app.post('/reset-verification', recaptcha.middleware.verify, (req, res) => {
+      if (req.recaptcha.error) {
+        res.status(400)
+        res.json({
+          error: true,
+          code: 'INVALID_RECAPTCHA'
+        });
+        return
+      }
+
       if (!req.body) {
         res.status(400);
         res.json({

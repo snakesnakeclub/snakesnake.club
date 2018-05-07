@@ -1,7 +1,7 @@
 const User = require('../models/user');
 
 module.exports = {
-  attachRouteControllers(app) {
+  attachRoute(app) {
     app.post('/logout', (req, res) => {
       if (!req.body) {
         res.status(400);
